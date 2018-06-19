@@ -138,8 +138,8 @@ for i in range(1000000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.gradient(x_batch, t_batch)
-    # mlp.feedback_alignment(x_batch,t_batch)
+    # mlp.gradient(x_batch, t_batch)
+    mlp.feedback_alignment(x_batch,t_batch)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
