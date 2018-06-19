@@ -18,6 +18,9 @@ train, test = chainer.datasets.get_mnist()
 x_train, t_train = train._datasets
 x_test, t_test = test._datasets
 
+x_train = cp.asarray(x_train)
+x_test = cp.asarray(x_test)
+
 t_train = cp.identity(10)[t_train.astype(int)]
 t_test = cp.identity(10)[t_test.astype(int)]
 
