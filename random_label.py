@@ -18,7 +18,7 @@ train, test = chainer.datasets.get_mnist()
 x_train, t_train = train._datasets
 x_test, t_test = test._datasets
 
-t_train = np.random.purmutation(t_train)
+t_train = np.random.permutation(t_train)
 
 x_train = cp.asarray(x_train)
 x_test = cp.asarray(x_test)
