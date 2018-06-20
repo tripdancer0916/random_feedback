@@ -151,3 +151,14 @@ for i in range(1000000):
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+plt.plot(train_acc_list,label="train_acc")
+plt.plot(test_acc_list,label="test_acc")
+plt.plot(train_loss_list,label="train_loss")
+plt.plot(test_loss_list,label="test_loss")
+plt.legend()
+
+plt.savefig("random_label_FA.png")
+
+
+
