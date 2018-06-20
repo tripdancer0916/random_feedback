@@ -134,6 +134,7 @@ test_acc_list = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
+print("epoch", "\t", "train acc", "\t", "test acc", "train loss", "test loss")
 for i in range(10000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
@@ -150,5 +151,5 @@ for i in range(10000):
         test_loss_list.append(test_loss)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
-        print("epoch", "\t", "train acc", "\t", "test acc", "train loss", "test loss")
+
         print(int(i / iter_per_epoch), "\t", train_acc, "\t", test_acc, "\t", train_loss, "\t", test_loss)
