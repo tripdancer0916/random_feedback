@@ -123,7 +123,7 @@ class MLP:
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha = 0.1
-        self.W_f1 -= alpha * delta_Wf1
+        # self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
 
