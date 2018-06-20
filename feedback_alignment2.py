@@ -1,5 +1,6 @@
 # coding:utf-8
 import matplotlib as mpl
+
 mpl.use('Agg')
 import numpy as cp
 import cupy as cp
@@ -138,7 +139,7 @@ for i in range(10000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch,t_batch)
+    mlp.feedback_alignment(x_batch, t_batch)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
@@ -149,12 +150,5 @@ for i in range(10000):
         test_loss_list.append(test_loss)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
-plt.plot(train_acc_list,label="train_acc")
-plt.plot(test_acc_list,label="test_acc")
-plt.plot(train_loss_list,label="train_loss")
-plt.plot(test_loss_list,label="test_loss")
-plt.legend()
-
-plt.savefig("mnist_FA.png")
+        print("epoch", "\t", "train acc", "\t", "test acc", "train loss", "test loss")
+        print(int(i / iter_per_epoch), "\t", train_acc, "\t", test_acc, "\t", train_loss, "\t", test_loss)
