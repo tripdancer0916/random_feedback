@@ -1,5 +1,6 @@
 # coding:utf-8
-
+import matplotlib as mpl
+mpl.use('Agg')
 import numpy as np
 import cupy as cp
 import chainer
