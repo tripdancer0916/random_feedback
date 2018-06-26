@@ -147,9 +147,9 @@ for i in range(10000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         train_loss_list.append(cuda.to_cpu(train_loss))
-        test_loss_list.append(test_loss)
-        train_acc_list.append(train_acc)
-        test_acc_list.append(test_acc)
+        test_loss_list.append(cuda.to_cpu(test_loss))
+        train_acc_list.append(cuda.to_cpu(train_acc))
+        test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
 plt.plot(train_acc_list, label="train acc")
