@@ -206,9 +206,9 @@ plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
 # plt.savefig("mnistBP.png")
 
 
-plt.plot(train_acc_list_FA[20:], label="RFA train acc", linestyle="dashed", color="orange")
+plt.plot(train_acc_list_FA[20:], label="RFA train acc", linestyle="dotted", color="orange")
 plt.plot(test_acc_list_FA[20:], label="RFA test acc", color="orange")
-plt.title("BP/RFA for MNIST")
+plt.title("BP/RFA for MNIST tanh")
 plt.legend()
 
 plt.savefig("./result/BP-RFA_for_mnist_20start-tanh.png")
