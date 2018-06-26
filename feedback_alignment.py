@@ -146,7 +146,7 @@ for i in range(10000):
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        train_loss_list.append(train_loss)
+        train_loss_list.append(cuda.to_cpu(train_loss))
         test_loss_list.append(test_loss)
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
