@@ -1,6 +1,6 @@
 # coding:utf-8
 
-import numpy as cp
+import numpy as np
 import cupy as cp
 import chainer
 from chainer.backends import cuda
@@ -11,6 +11,8 @@ import chainer.functions as F
 import chainer.links as L
 from chainer.training import extensions
 import PIL
+import matplotlib as mpl
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
 # Load the MNIST dataset
@@ -67,7 +69,7 @@ class MLP:
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 10)
         self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B2 = weight_init_std * cp.random.randn(hidden_unit, 784)
+        # self.B2 = weight_init_std * cp.random.randn(hidden_unit, 784)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -94,7 +96,7 @@ class MLP:
         h2 = cp.dot(h1_, self.W_f2)
         output = softmax(h2)
 
-        delta2 = (output - target) / 100
+        delta2 = (output - target) / batch_size
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
         delta1 = cp.dot(delta2, self.W_f2.T)
@@ -111,7 +113,7 @@ class MLP:
         h2 = cp.dot(h1_, self.W_f2)
         output = softmax(h2)
 
-        delta2 = (output - target) / 100
+        delta2 = (output - target) / batch_size
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
         delta1 = cp.dot(delta2, self.B1)
@@ -149,3 +151,10 @@ for i in range(10000):
         train_acc_list.append(train_acc)
         test_acc_list.append(test_acc)
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+plt.plot(train_acc_list, label="train acc")
+plt.plot(test_acc_list, label="test acc")
+plt.title("BP for MNIST")
+plt.legend()
+
+plt.savefig("mnistBP.png")
