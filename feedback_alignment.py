@@ -200,6 +200,7 @@ plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
 # plt.legend()
 
 # plt.savefig("mnistBP.png")
+plt.figure()
 
 plt.plot(train_acc_list_FA[20:], label="RFA train acc", linestyle="dashed", color="orange")
 plt.plot(test_acc_list_FA[20:], label="RFA test acc", color="orange")
