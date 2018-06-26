@@ -135,7 +135,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("epoch", "\t", "train_acc", "\t", "test_acc", "train_loss", "test_loss")
-for i in range(250000):
+for i in range(1000000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -163,7 +163,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("epoch", "\t", "train_acc", "\t", "test_acc", "train_loss", "test_loss")
-for i in range(250000):
+for i in range(1000000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -193,22 +193,8 @@ plt.plot(train_acc_list_FA, label="RFA train acc",color="red")
 plt.title("BP/RFA for random labeled MNIST")
 plt.legend()
 
-plt.savefig("./result/BP-RFA_for_randommnist.png")
-plt.figure()
-plt.plot(train_acc_list[20:], label="BP train acc", color="blue")
-# plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
+plt.savefig("./result/BP-RFA_for_randommnist2.png")
 
-# plt.savefig("mnistBP.png")
-
-
-plt.plot(train_acc_list_FA[20:], label="RFA train acc", color="red")
-# plt.plot(test_acc_list_FA[20:], label="RFA test acc", color="orange")
-plt.title("BP/RFA for random labeled MNIST")
-plt.legend()
-
-plt.savefig("./result/BP-RFA_for_randommnist_20start.png")
 
 
 

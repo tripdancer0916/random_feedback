@@ -200,12 +200,12 @@ plt.plot(test_acc_list, label="BP test acc", color="blue")
 
 # plt.savefig("mnistBP.png")
 
-plt.plot(train_acc_list_FA, label="RFA train acc", linestyle="dotted", color="orange")
-plt.plot(test_acc_list_FA, label="RFA test acc", color="orange")
+plt.plot(train_acc_list_FA, label="DFA train acc", linestyle="dotted", color="orange")
+plt.plot(test_acc_list_FA, label="DFA test acc", color="orange")
 plt.title("BP/DFA for MNIST relu")
 plt.legend()
 
-plt.savefig("./result/BP-RFA_for_mnist.png")
+plt.savefig("./result/BP-DFA_for_mnist.png")
 plt.figure()
 plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dotted", color="blue")
 plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
@@ -220,4 +220,4 @@ plt.plot(test_acc_list_FA[20:], label="DFA test acc", color="orange")
 plt.title("BP/DFA for MNIST relu start 20")
 plt.legend()
 
-plt.savefig("./result/BP-RFA_for_mnist_20start.png")
+plt.savefig("./result/BP-DFA_for_mnist_20start.png")
