@@ -193,3 +193,17 @@ plt.title("BP/RFA for MNIST")
 plt.legend()
 
 plt.savefig("BP-RFA_for_mnist.png")
+
+plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dashed", color="blue")
+plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
+# plt.title("BP for MNIST")
+# plt.legend()
+
+# plt.savefig("mnistBP.png")
+
+plt.plot(train_acc_list_FA[20:], label="RFA train acc", linestyle="dashed", color="orange")
+plt.plot(test_acc_list_FA[20:], label="RFA test acc", color="orange")
+plt.title("BP/RFA for MNIST")
+plt.legend()
+
+plt.savefig("BP-RFA_for_mnist_20start.png")
