@@ -148,11 +148,13 @@ for i in range(100000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     mlp.gradient(x_batch, t_batch)
-    angle = mlp.angle(mlp.W_f2.T, mlp.B1)
-    print(angle)
+
     # mlp.feedback_alignment(x_batch,t_batch)
 
     if i % iter_per_epoch == 0:
+        angle = mlp.angle(mlp.W_f2.T, mlp.B1)
+        print(angle)
+        angle_list.append(cuda.to_cpu(angle))
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
@@ -162,6 +164,10 @@ for i in range(100000):
         train_acc_list.append(cuda.to_cpu(train_acc))
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+plt.plot(angle_list)
+plt.title("alignment angle")
+plt.savefig("./result/alignment_angle.png")
 
 """
 mlp = MLP()
