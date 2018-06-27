@@ -124,12 +124,21 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
+    def angle(self,A,B):
+        fp = A*B
+        fp = cp.sum(fp)
+        norm_a = cp.sqrt(cp.sum(A*A))
+        norm_b = cp.sqrt(cp.sum(B*B))
+        cos_theta = fp/(norm_a*norm_b)
+        return cp.arccos(cos_theta)
+
 
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
 train_acc_list = []
 test_acc_list = []
+angle_list = []
 
 train_size = x_train.shape[0]
 batch_size = 100
@@ -139,6 +148,8 @@ for i in range(100000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     mlp.gradient(x_batch, t_batch)
+    angle = mlp.angle(mlp.W_f2.T, mlp.B1)
+    print(angle)
     # mlp.feedback_alignment(x_batch,t_batch)
 
     if i % iter_per_epoch == 0:
@@ -152,7 +163,7 @@ for i in range(100000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-
+"""
 mlp = MLP()
 train_loss_list_FA = []
 test_loss_list_FA = []
@@ -208,3 +219,6 @@ plt.title("BP/RFA for MNIST relu")
 plt.legend()
 
 plt.savefig("./result/BP-RFA_for_mnist_20start.png")
+
+
+"""
