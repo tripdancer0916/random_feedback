@@ -69,18 +69,18 @@ class MLP:
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, 10)
-        """
+
         self.B3 = cp.random.randn(10, hidden_unit)
         self.B3[self.B3 > 0] = 1
         self.B3[self.B3 < 0] = -1
         self.B3 = weight_init_std * self.B3
-        self.B2 = cp.random.randn(10, hidden_unit)
-        self.B2[self.B2 > 0] = 1
-        self.B2[self.B2 < 0] = -1
-        self.B2 = weight_init_std * self.B2
-        """
-        self.B3 = weight_init_std * cp.ones([10, hidden_unit])
-        self.B2 = weight_init_std * cp.ones([10, hidden_unit])
+        # self.B2 = cp.random.randn(10, hidden_unit)
+        # self.B2[self.B2 > 0] = 1
+        # self.B2[self.B2 < 0] = -1
+        # self.B2 = weight_init_std * self.B2
+
+        # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
+        # self.B2 = weight_init_std * cp.ones([10, hidden_unit])
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -139,7 +139,7 @@ class MLP:
         delta2 = cp.dot(delta3, self.B3)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta3, self.B2)
+        delta1 = cp.dot(delta3, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha = 0.1
@@ -190,7 +190,7 @@ for i in range(100000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch,t_batch)
+    mlp.feedback_alignment(x_batch, t_batch)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
@@ -231,4 +231,4 @@ plt.plot(test_acc_list_FA[20:], label="DFA test acc", color="orange")
 plt.title("DFA for MNIST relu start from 20")
 plt.legend()
 
-plt.savefig("./result/0704/DFA_onesmatrix_for_mnist_20start.png")
+plt.savefig("./result/0704/DFA_random_but_sameonesmatrix_for_mnist_20start.png")
