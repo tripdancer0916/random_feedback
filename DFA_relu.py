@@ -181,7 +181,7 @@ test_acc_list_FA = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(20000):
+for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -227,4 +227,4 @@ plt.plot(test_acc_list_FA[20:], label="DFA test acc", color="orange")
 plt.title("DFA for MNIST relu start from 20")
 plt.legend()
 
-plt.savefig("./result/0704/DFA_onesmatrix_for_mnist_20start.png")
+plt.savefig("./result/0704/DFA_randomonesmatrix_for_mnist_20start.png")
