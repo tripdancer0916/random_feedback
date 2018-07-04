@@ -221,4 +221,4 @@ plt.plot(test_acc_list_FA[20:], label="DFA test acc", color="orange")
 plt.title("DFA for MNIST relu start from 20")
 plt.legend()
 
-plt.savefig("./result/0704/BP-DFA_for_mnist_20start.png")
+plt.savefig("./result/0704/DFA_onesmatrix_for_mnist_20start.png")
