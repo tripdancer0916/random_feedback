@@ -69,15 +69,21 @@ class MLP:
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, 10)
-        self.B3 = weight_init_std * cp.ones([10, hidden_unit])
-        self.B2 = weight_init_std * cp.ones([10, hidden_unit])
+        self.B3 = cp.random.randn(10,hidden_unit)
+        self.B3[self.B3 > 0] = 1
+        self.B3[self.B3 < 0] = -1
+        self.B3 = weight_init_std * self.B3
+        self.B2 = cp.random.randn(10, hidden_unit)
+        self.B2[self.B2 > 0] = 1
+        self.B2[self.B2 < 0] = -1
+        self.B2 = weight_init_std * self.B2
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
         h1 = relu(h1)
         h2 = cp.dot(h1, self.W_f2)
         h2 = relu(h2)
-        h3 = cp.dot(h2,self.W_f3)
+        h3 = cp.dot(h2, self.W_f3)
         output = softmax(h3)
         return output
 
