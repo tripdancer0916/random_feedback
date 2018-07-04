@@ -137,7 +137,7 @@ class MLP:
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
 
-
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -164,7 +164,7 @@ for i in range(20000):
         train_acc_list.append(cuda.to_cpu(train_acc))
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
+"""
 
 mlp = MLP()
 train_loss_list_FA = []
@@ -192,7 +192,7 @@ for i in range(20000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
+"""
 plt.plot(train_acc_list, label="BP train acc", linestyle="dashed", color="blue")
 plt.plot(test_acc_list, label="BP test acc", color="blue")
 # plt.title("BP for MNIST")
@@ -206,9 +206,10 @@ plt.title("BP/DFA for MNIST relu")
 plt.legend()
 
 plt.savefig("./result/BP-DFA_for_mnist.png")
+"""
 plt.figure()
-plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dotted", color="blue")
-plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
+# plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dotted", color="blue")
+# plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
 # plt.title("BP for MNIST")
 # plt.legend()
 
@@ -217,7 +218,7 @@ plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
 
 plt.plot(train_acc_list_FA[20:], label="DFA train acc", linestyle="dotted", color="orange")
 plt.plot(test_acc_list_FA[20:], label="DFA test acc", color="orange")
-plt.title("BP/DFA for MNIST relu start 20")
+plt.title("DFA for MNIST relu start from 20")
 plt.legend()
 
-plt.savefig("./result/BP-DFA_for_mnist_20start.png")
+plt.savefig("./result/0704/BP-DFA_for_mnist_20start.png")
