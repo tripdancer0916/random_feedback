@@ -159,9 +159,9 @@ class MLP:
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha = 0.1
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
+        # self.W_f1 -= alpha * delta_Wf1
+        # self.W_f2 -= alpha * delta_Wf2
+        # self.W_f3 -= alpha * delta_Wf3
         self.W_f4 -= alpha * delta_Wf4
 
 """
@@ -250,4 +250,4 @@ plt.legend()
 
 os.makedirs('./result/0705/', exist_ok=True)
 
-plt.savefig("./result/0705/DFA_onesmatrix.png")
+plt.savefig("./result/0705/DFA_freezing.png")
