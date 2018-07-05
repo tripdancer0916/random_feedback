@@ -259,4 +259,4 @@ plt.legend()
 
 os.makedirs('./result/0705/', exist_ok=True)
 
-plt.savefig("./result/0705/time_scaling_randomones.png")
+plt.savefig("./result/0705/quasi_random.png")
