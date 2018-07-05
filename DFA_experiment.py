@@ -77,12 +77,12 @@ class MLP:
         self.B3[self.B3 < 0] = -1
         self.B3 = weight_init_std * self.B3
         """
-        self.B3 = weight_init_std * cp.ones([hidden_unit, 10])
-        for i in range(hidden_unit):
+        self.B3 = weight_init_std * cp.ones([10, hidden_unit])
+        for i in range(10):
             if cp.random.rand() > 0.5:
                 self.B3[i] *= -1
 
-        self.B3 = self.B3.T
+        # self.B3 = self.B3.T
         print(self.B3)
         # self.B2 = cp.random.randn(10, hidden_unit)
         # self.B2[self.B2 > 0] = 1
@@ -260,4 +260,4 @@ plt.legend()
 
 os.makedirs('./result/0705/', exist_ok=True)
 
-plt.savefig("./result/0705/quasi_random.png")
+plt.savefig("./result/0705/quasi_random2.png")
