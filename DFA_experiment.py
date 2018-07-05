@@ -83,6 +83,7 @@ class MLP:
                 self.B3[i] *= -1
 
         self.B3 = self.B3.T
+        print(self.B3)
         # self.B2 = cp.random.randn(10, hidden_unit)
         # self.B2[self.B2 > 0] = 1
         # self.B2[self.B2 < 0] = -1
