@@ -71,18 +71,18 @@ class MLP:
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, 10)
-        """
+
         self.B3 = cp.random.randn(10, hidden_unit)
         self.B3[self.B3 > 0] = 1
         self.B3[self.B3 < 0] = -1
         self.B3 = weight_init_std * self.B3
-        """
+
         # self.B2 = cp.random.randn(10, hidden_unit)
         # self.B2[self.B2 > 0] = 1
         # self.B2[self.B2 < 0] = -1
         # self.B2 = weight_init_std * self.B2
 
-        self.B3 = weight_init_std * cp.ones([10, hidden_unit])
+        # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
         # self.B2 = weight_init_std * cp.ones([10, hidden_unit])
 
     def predict(self, x):
@@ -158,10 +158,10 @@ class MLP:
         delta1 = cp.dot(delta4, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
-        alpha1 = 0.1
-        alpha2 = 0.05
-        alpha3 = 0.02
-        alpha4 = 0.01
+        alpha1 = 0.2
+        alpha2 = 0.1
+        alpha3 = 0.05
+        alpha4 = 0.03
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha2 * delta_Wf2
         self.W_f3 -= alpha3 * delta_Wf3
@@ -253,4 +253,4 @@ plt.legend()
 
 os.makedirs('./result/0705/', exist_ok=True)
 
-plt.savefig("./result/0705/time_scaling.png")
+plt.savefig("./result/0705/time_scaling_randomones.png")
