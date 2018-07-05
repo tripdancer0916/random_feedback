@@ -164,14 +164,14 @@ class MLP:
         delta1 = cp.dot(delta4, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
-        alpha1 = 0.2
-        alpha2 = 0.1
-        alpha3 = 0.05
-        alpha4 = 0.03
+        alpha1 = 0.1
+        # alpha2 = 0.1
+        # alpha3 = 0.05
+        # alpha4 = 0.03
         self.W_f1 -= alpha1 * delta_Wf1
-        self.W_f2 -= alpha2 * delta_Wf2
-        self.W_f3 -= alpha3 * delta_Wf3
-        self.W_f4 -= alpha4 * delta_Wf4
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
 
 """
 mlp = MLP()
