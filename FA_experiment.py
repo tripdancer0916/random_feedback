@@ -174,7 +174,7 @@ class MLP:
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
         self.W_f3 -= alpha1 * delta_Wf3
-        self.W_f4 -= alpha1 * delta_Wf4
+        # self.W_f4 -= alpha1 * delta_Wf4
 
 """
 mlp = MLP()
