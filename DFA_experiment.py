@@ -243,6 +243,7 @@ test_acc_list_FA = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
+"""
 for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
@@ -260,8 +261,9 @@ for i in range(50000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+"""
 
-for i in range(50000, 100000):
+for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
