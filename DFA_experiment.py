@@ -151,10 +151,10 @@ class MLP:
         delta3 = cp.dot(delta4, self.B3)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta3, self.B3)
+        delta2 = cp.dot(delta4, self.B3)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta3, self.B3)
+        delta1 = cp.dot(delta4, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha = 0.1
