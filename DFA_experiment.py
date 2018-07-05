@@ -143,7 +143,7 @@ class MLP:
         self.W_f3 -= alpha * delta_Wf3
         # self.W_f4 -= alpha * delta_Wf4
 
-    def feedback_alignment_freeze(self, x, target):
+    def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -169,10 +169,10 @@ class MLP:
         # alpha2 = 0.1
         # alpha3 = 0.05
         # alpha4 = 0.03
-        self.W_f1 -= alpha1 * delta_Wf1
-        self.W_f2 -= alpha1 * delta_Wf2
-        self.W_f3 -= alpha1 * delta_Wf3
-        # self.W_f4 -= alpha1 * delta_Wf4
+        # self.W_f1 -= alpha1 * delta_Wf1
+        # self.W_f2 -= alpha1 * delta_Wf2
+        # self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
 
     def only_last_layer(self, x, target):
         h1 = cp.dot(x, self.W_f1)
@@ -243,13 +243,13 @@ test_acc_list_FA = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-"""
+
 for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment_freeze(x_batch, t_batch)
+    mlp.feedback_alignment(x_batch, t_batch)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
@@ -280,6 +280,7 @@ for i in range(100000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+"""
 """
 plt.plot(train_acc_list, label="BP train acc", linestyle="dashed", color="blue")
 plt.plot(test_acc_list, label="BP test acc", color="blue")
