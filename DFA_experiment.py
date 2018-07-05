@@ -309,4 +309,4 @@ plt.legend()
 
 os.makedirs('./result/0705/', exist_ok=True)
 
-plt.savefig("./result/0705/BPfreezing_last_layer.png")
+plt.savefig("./result/0705/alternating_freezing.png")
