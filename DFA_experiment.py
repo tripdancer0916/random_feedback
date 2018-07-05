@@ -141,7 +141,7 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
-        self.W_f4 -= alpha * delta_Wf4
+        # self.W_f4 -= alpha * delta_Wf4
 
     def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
@@ -260,4 +260,4 @@ plt.legend()
 
 os.makedirs('./result/0705/', exist_ok=True)
 
-plt.savefig("./result/0705/quasi_random2.png")
+plt.savefig("./result/0705/freezing_last_layer.png")
