@@ -79,14 +79,14 @@ class MLP:
         """
         tmp = [-1, 1]
         d = np.random.choice(tmp, 10)
-        d *= weight_init_std
+        # d *= weight_init_std
         self.B3 = []
         for i in range(1000):
             if np.random.rand() > 0.5:
                 self.B3.append(d)
             else:
                 self.B3.append(-d)
-        self.B3 = cp.array(self.B3)
+        self.B3 = weight_init_std * cp.array(self.B3)
         # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
         # for i in range(10):
         #     if cp.random.rand() > 0.5:
