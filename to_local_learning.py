@@ -87,6 +87,7 @@ class MLP:
             else:
                 self.B3.append(-d)
         self.B3 = weight_init_std * cp.array(self.B3)
+        self.B3 = self.B3.T
         # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
         # for i in range(10):
         #     if cp.random.rand() > 0.5:
