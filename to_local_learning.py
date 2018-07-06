@@ -88,6 +88,24 @@ class MLP:
                 self.B3.append(-d)
         self.B3 = weight_init_std * cp.array(self.B3)
         self.B3 = self.B3.T
+
+        self.B2 = []
+        for i in range(1000):
+            if np.random.rand() > 0.5:
+                self.B2.append(d)
+            else:
+                self.B2.append(-d)
+        self.B2 = weight_init_std * cp.array(self.B2)
+        self.B2 = self.B2.T
+
+        self.B1 = []
+        for i in range(1000):
+            if np.random.rand() > 0.5:
+                self.B1.append(d)
+            else:
+                self.B1.append(-d)
+        self.B1 = weight_init_std * cp.array(self.B1)
+        self.B1 = self.B1.T
         # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
         # for i in range(10):
         #     if cp.random.rand() > 0.5:
@@ -170,10 +188,10 @@ class MLP:
         delta3 = cp.dot(delta4, self.B3)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta4, self.B3)
+        delta2 = cp.dot(delta4, self.B2)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B3)
+        delta1 = cp.dot(delta4, self.B1)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -271,4 +289,4 @@ plt.legend()
 
 os.makedirs('./result/0706/', exist_ok=True)
 
-plt.savefig("./result/0706/to_local_learning.png")
+plt.savefig("./result/0706/to_local_learning2.png")
