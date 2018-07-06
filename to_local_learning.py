@@ -82,28 +82,22 @@ class MLP:
         # d *= weight_init_std
         self.B3 = []
         for i in range(1000):
-            if np.random.rand() > 0.5:
-                self.B3.append(d)
-            else:
-                self.B3.append(-d)
+            magnification = np.random.rand() * 2 - 1
+            self.B3.append(d*magnification)
         self.B3 = weight_init_std * cp.array(self.B3)
         self.B3 = self.B3.T
 
         self.B2 = []
         for i in range(1000):
-            if np.random.rand() > 0.5:
-                self.B2.append(d)
-            else:
-                self.B2.append(-d)
+            magnification = np.random.rand() * 2 - 1
+            self.B3.append(d * magnification)
         self.B2 = weight_init_std * cp.array(self.B2)
         self.B2 = self.B2.T
 
         self.B1 = []
         for i in range(1000):
-            if np.random.rand() > 0.5:
-                self.B1.append(d)
-            else:
-                self.B1.append(-d)
+            magnification = np.random.rand() * 2 - 1
+            self.B3.append(d * magnification)
         self.B1 = weight_init_std * cp.array(self.B1)
         self.B1 = self.B1.T
         # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
@@ -289,4 +283,4 @@ plt.legend()
 
 os.makedirs('./result/0706/', exist_ok=True)
 
-plt.savefig("./result/0706/to_local_learning2.png")
+plt.savefig("./result/0706/to_local_learning4.png")
