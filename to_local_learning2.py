@@ -77,38 +77,48 @@ class MLP:
         self.B3[self.B3 < 0] = -1
         self.B3 = weight_init_std * self.B3
         """
-        # tmp = [-1, 1]
+        tmp = [0, 1, 2]
         # d = np.random.choice(tmp, 10)
         d1 = np.random.rand(10) * 2 - 1
         d2 = np.random.rand(10) * 2 - 1
+        d3 = np.random.rand(10) * 2 - 1
         # d *= weight_init_std
         self.B3 = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            if np.random.rand() > 0.5:
+            selecter = np.random.choice(tmp)
+            if selecter == 0:
                 self.B3.append(d1*magnification)
-            else:
+            elif selecter == 1:
                 self.B3.append(d2*magnification)
+            else:
+                self.B3.append(d3 * magnification)
         self.B3 = weight_init_std * cp.array(self.B3)
         self.B3 = self.B3.T
 
         self.B2 = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            if np.random.rand() > 0.5:
-                self.B2.append(d1*magnification)
+            selecter = np.random.choice(tmp)
+            if selecter == 0:
+                self.B2.append(d1 * magnification)
+            elif selecter == 1:
+                self.B2.append(d2 * magnification)
             else:
-                self.B2.append(d2*magnification)
+                self.B2.append(d3 * magnification)
         self.B2 = weight_init_std * cp.array(self.B2)
         self.B2 = self.B2.T
 
         self.B1 = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            if np.random.rand() > 0.5:
-                self.B1.append(d1*magnification)
+            selecter = np.random.choice(tmp)
+            if selecter == 0:
+                self.B1.append(d1 * magnification)
+            elif selecter == 1:
+                self.B1.append(d2 * magnification)
             else:
-                self.B1.append(d2*magnification)
+                self.B1.append(d3 * magnification)
         self.B1 = weight_init_std * cp.array(self.B1)
         self.B1 = self.B1.T
         # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
@@ -294,4 +304,4 @@ plt.legend()
 
 os.makedirs('./result/0706/', exist_ok=True)
 
-plt.savefig("./result/0706/base_number_4.png")
+plt.savefig("./result/0706/base_number_3.png")
