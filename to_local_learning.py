@@ -90,14 +90,14 @@ class MLP:
         self.B2 = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            self.B3.append(d * magnification)
+            self.B2.append(d * magnification)
         self.B2 = weight_init_std * cp.array(self.B2)
         self.B2 = self.B2.T
 
         self.B1 = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            self.B3.append(d * magnification)
+            self.B1.append(d * magnification)
         self.B1 = weight_init_std * cp.array(self.B1)
         self.B1 = self.B1.T
         # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
