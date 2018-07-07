@@ -68,15 +68,18 @@ hidden_unit = 1000
 class MLP:
     def __init__(self, weight_init_std=0.01):
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 10)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, 10)
         self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
-        # self.B2 = weight_init_std * cp.random.randn(hidden_unit, 784)
+        self.B2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
         h1 = relu(h1)
         h2 = cp.dot(h1, self.W_f2)
-        output = softmax(h2)
+        h2 = relu(h2)
+        h3 = cp.dot(h2, self.W_f3)
+        output = softmax(h3)
         return output
 
     def accuracy(self, x, t):
@@ -95,9 +98,15 @@ class MLP:
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        output = softmax(h2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        output = softmax(h3)
 
-        delta2 = (output - target) / batch_size
+        delta3 = (output - target) / batch_size
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
+
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
         delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
@@ -107,15 +116,22 @@ class MLP:
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
+        self.W_f3 -= alpha * delta_Wf3
 
     def only_last_layer(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        output = softmax(h2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        output = softmax(h3)
 
-        delta2 = (output - target) / batch_size
-        delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta3 = (output - target) / batch_size
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        # delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
+
+        # delta_Wf2 = cp.dot(h1_.T, delta2)
 
         # delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
 
@@ -123,24 +139,32 @@ class MLP:
 
         alpha = 0.1
         # self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
+        # self.W_f2 -= alpha * delta_Wf2
+        self.W_f3 -= alpha * delta_Wf3
 
     def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        output = softmax(h2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        output = softmax(h3)
 
-        delta2 = (output - target) / batch_size
+        delta3 = (output - target) / batch_size
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.B3)
+
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.B1)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.B2)
 
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
+        self.W_f3 -= alpha * delta_Wf3
 
 
 mlp = MLP()
@@ -153,7 +177,7 @@ print("BP")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(20000):
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -181,7 +205,7 @@ print("FA")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(20000):
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -209,7 +233,7 @@ print("only last layer")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(20000):
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
