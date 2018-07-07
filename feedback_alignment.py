@@ -11,6 +11,7 @@ import chainer.functions as F
 import chainer.links as L
 from chainer.training import extensions
 import PIL
+import os
 import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -148,6 +149,7 @@ test_loss_list = []
 train_acc_list = []
 test_acc_list = []
 
+print("BP")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -175,7 +177,7 @@ train_loss_list_FA = []
 test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
-
+print("FA")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -203,6 +205,7 @@ test_loss_list_l = []
 train_acc_list_l = []
 test_acc_list_l = []
 
+print("only last layer")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
