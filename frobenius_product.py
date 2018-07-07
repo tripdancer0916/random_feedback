@@ -125,30 +125,6 @@ class MLP:
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
 
-    def only_last_layer(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = relu(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = relu(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        output = softmax(h3)
-
-        delta3 = (output - target) / batch_size
-        delta_Wf3 = cp.dot(h2_.T, delta3)
-
-        # delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
-
-        # delta_Wf2 = cp.dot(h1_.T, delta2)
-
-        # delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
-
-        # delta_Wf1 = cp.dot(x.T, delta1)
-
-        alpha = 0.1
-        # self.W_f1 -= alpha * delta_Wf1
-        # self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
-
     def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
@@ -164,9 +140,9 @@ class MLP:
         delta1 = relu_grad(h1) * cp.dot(delta2, self.B2)
         self.delta_Wf1 = cp.dot(x.T, delta1)
 
-        self.delta2_bp = relu_grad(h2) * cp.dot(delta3, self.W_f3)
+        self.delta2_bp = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
         self.delta_Wf2bp = cp.dot(h1_.T, self.delta2_bp)
-        self.delta1_bp = relu_grad(h1) * cp.dot(self.delta2_bp, self.W_f2)
+        self.delta1_bp = relu_grad(h1) * cp.dot(self.delta2_bp, self.W_f2.T)
         self.delta_Wf1bp = cp.dot(x.T, self.delta1_bp)
 
         alpha = 0.1
