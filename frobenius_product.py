@@ -186,10 +186,11 @@ for i in range(50000):
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        angle_W2.append(mlp.angle(mlp.W_f2.T, mlp.B2))
-        angle_W3.append(mlp.angle(mlp.W_f3.T, mlp.B3))
-        angle_dW1.append(mlp.angle(mlp.delta_Wf1bp, mlp.delta_Wf1))
-        angle_dW2.append(mlp.angle(mlp.delta_Wf2bp, mlp.delta_Wf2))
+        angle_W2.append(cuda.to_cpu(mlp.angle(mlp.W_f2.T, mlp.B2)))
+        print(mlp.angle(mlp.W_f2.T, mlp.B2))
+        angle_W3.append(cuda.to_cpu(mlp.angle(mlp.W_f3.T, mlp.B3)))
+        angle_dW1.append(cuda.to_cpu(mlp.angle(mlp.delta_Wf1bp, mlp.delta_Wf1)))
+        angle_dW2.append(cuda.to_cpu(mlp.angle(mlp.delta_Wf2bp, mlp.delta_Wf2)))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
 
