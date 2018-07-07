@@ -12,6 +12,7 @@ import chainer.links as L
 from chainer.training import extensions
 import PIL
 import matplotlib as mpl
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -124,12 +125,12 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
-    def angle(self,A,B):
-        fp = A*B
+    def angle(self, A, B):
+        fp = A * B
         fp = cp.sum(fp)
-        norm_a = cp.sqrt(cp.sum(A*A))
-        norm_b = cp.sqrt(cp.sum(B*B))
-        cos_theta = fp/(norm_a*norm_b)
+        norm_a = cp.sqrt(cp.sum(A * A))
+        norm_b = cp.sqrt(cp.sum(B * B))
+        cos_theta = fp / (norm_a * norm_b)
         return cp.arccos(cos_theta)
 
 
@@ -149,7 +150,7 @@ for i in range(100000):
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
 
-    mlp.feedback_alignment(x_batch,t_batch)
+    mlp.feedback_alignment(x_batch, t_batch)
 
     if i % iter_per_epoch == 0:
         angle = mlp.angle(mlp.W_f2.T, mlp.B1)
