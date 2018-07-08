@@ -77,7 +77,7 @@ class MLP:
         h1 = relu(h1)
         h2 = cp.dot(h1, self.W_f2)
         h2 = relu(h2)
-        h3 = cp.dot(h2,self.W_f3)
+        h3 = cp.dot(h2, self.W_f3)
         output = softmax(h3)
         return output
 
