@@ -370,7 +370,7 @@ for i in range(100000):
         # print(mlp.d)
         # print(mlp.delta4)
         # print(cp.dot(cp.asarray(mlp.d), mlp.delta4))
-        print(train_loss, mlp.angle(cp.asarray(mlp.d), mlp.delta4))
+        print(int(i / iter_per_epoch), train_loss, mlp.angle(cp.asarray(mlp.d), mlp.delta4))
 
 mlp = MLP()
 test_acc_list_uge = []
@@ -389,7 +389,7 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_uge.append(cuda.to_cpu(test_acc))
-        print(train_loss, mlp.angle(cp.ones(10), mlp.delta4))
+        print(int(i / iter_per_epoch), train_loss, mlp.angle(cp.ones(10), mlp.delta4))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
@@ -411,7 +411,7 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll.append(cuda.to_cpu(test_acc))
-        print(train_loss, mlp.angle(cp.asarray(mlp.d), mlp.delta4))
+        print(int(i / iter_per_epoch), train_loss, mlp.angle(cp.asarray(mlp.d), mlp.delta4))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
@@ -432,7 +432,7 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll2.append(cuda.to_cpu(test_acc))
-        print(train_loss, mlp.angle(cp.ones(10), mlp.delta4))
+        print(int(i / iter_per_epoch), train_loss, mlp.angle(cp.ones(10), mlp.delta4))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
