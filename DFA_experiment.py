@@ -259,7 +259,7 @@ class MLP:
         # self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -288,7 +288,7 @@ for i in range(100000):
         train_acc_list.append(cuda.to_cpu(train_acc))
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
+"""
 
 mlp = MLP()
 train_loss_list_FA = []
@@ -299,7 +299,7 @@ print("local learning")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(100000):
+for i in range(200000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -324,19 +324,19 @@ plt.figure()
 # plt.title("BP for MNIST")
 # plt.legend()
 
-plt.plot(test_acc_list_FA, label="local learning", color="orange")
-
+plt.plot(test_acc_list_FA, label="test acc", color="crimson")
+plt.plot(train_acc_list_FA, label="train acc", color="blue")
 # plt.plot(train_acc_list_l, label="only last layer", linestyle="dashed", color="orange")
-plt.plot(test_acc_list, label="unified global error learning", color="green")
+# plt.plot(test_acc_list, label="unified global error learning", color="green")
 
 
-plt.title("test accuracy for MNIST")
+plt.title("local learning for MNIST")
 plt.xlabel("epoch")
 plt.ylabel("acc")
 plt.legend()
 
 os.makedirs('./result/0709/', exist_ok=True)
-plt.savefig("./result/0709/towards_local_learning.png")
+plt.savefig("./result/0709/towards_local_learning2.png")
 # plt.savefig("mnistBP.png")
 
 
