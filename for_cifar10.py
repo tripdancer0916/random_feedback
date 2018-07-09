@@ -32,8 +32,14 @@ print(x_test.shape[0], 'test samples')
 x_train = x_train.reshape(-1, 3072)
 x_test = x_test.reshape(-1, 3072)
 
-y_train = keras.utils.to_categorical(t_train, num_classes)
-y_test = keras.utils.to_categorical(t_test, num_classes)
+t_train = keras.utils.to_categorical(t_train, num_classes)
+t_test = keras.utils.to_categorical(t_test, num_classes)
+
+x_train = cp.array(x_train)
+x_test = cp.array(x_test)
+t_train = cp.array(t_train)
+t_test = cp.array(t_test)
+
 
 
 def cross_entropy_error(y, t):
