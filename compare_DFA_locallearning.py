@@ -227,16 +227,16 @@ class MLP:
         h4 = cp.dot(h3_, self.W_f4)
         output = softmax(h4)
 
-        delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
+        self.delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, self.delta4)
 
-        delta3 = cp.dot(delta4, self.allones)
+        delta3 = cp.dot(self.delta4, self.allones)
         delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        delta2 = cp.dot(delta4, self.allones)
+        delta2 = cp.dot(self.delta4, self.allones)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.allones)
+        delta1 = cp.dot(self.delta4, self.allones)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -255,16 +255,16 @@ class MLP:
         h4 = cp.dot(h3_, self.W_f4)
         output = softmax(h4)
 
-        delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
+        self.delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, self.delta4)
 
-        delta3 = cp.dot(delta4, self.B3_ll)
+        delta3 = cp.dot(self.delta4, self.B3_ll)
         delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        delta2 = cp.dot(delta4, self.B2_ll)
+        delta2 = cp.dot(self.delta4, self.B2_ll)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B1_ll)
+        delta1 = cp.dot(self.delta4, self.B1_ll)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -283,16 +283,16 @@ class MLP:
         h4 = cp.dot(h3_, self.W_f4)
         output = softmax(h4)
 
-        delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
+        self.delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, self.delta4)
 
-        delta3 = cp.dot(delta4, self.B3_ll2)
+        delta3 = cp.dot(self.delta4, self.B3_ll2)
         delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        delta2 = cp.dot(delta4, self.B2_ll2)
+        delta2 = cp.dot(self.delta4, self.B2_ll2)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B1_ll2)
+        delta1 = cp.dot(self.delta4, self.B1_ll2)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -311,16 +311,16 @@ class MLP:
         h4 = cp.dot(h3_, self.W_f4)
         output = softmax(h4)
 
-        delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
+        self.delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, self.delta4)
 
-        delta3 = cp.dot(delta4, self.B3_ll3)
+        delta3 = cp.dot(self.delta4, self.B3_ll3)
         delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        delta2 = cp.dot(delta4, self.B2_ll3)
+        delta2 = cp.dot(self.delta4, self.B2_ll3)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B1_ll3)
+        delta1 = cp.dot(self.delta4, self.B1_ll3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -331,7 +331,7 @@ class MLP:
 
     def angle(self, a, b):
         tmp = cp.dot(a, b)/(cp.linalg.norm(a)*cp.linalg.norm(a))
-        return cp.dot(a, b), cp.linalg.norm(a), cp.linalg.norm(a)
+        return cp.dot(a, b), cp.linalg.norm(a), cp.linalg.norm(a), cp.arccos(tmp)
 
 
 mlp = MLP()
@@ -352,8 +352,9 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll3.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
-              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+        # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+        #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+        print(train_loss, mlp.angle(mlp.d, mlp.delta4))
 
 mlp = MLP()
 test_acc_list_uge = []
@@ -372,8 +373,9 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_uge.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
-              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+        print(train_loss, mlp.angle(cp.ones(10)*0.01, mlp.delta4))
+        # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+        #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
 mlp = MLP()
 test_acc_list_ll = []
@@ -393,8 +395,9 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
-              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+        print(train_loss, mlp.angle(mlp.d, mlp.delta4))
+        # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+        #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
 mlp = MLP()
 test_acc_list_ll2 = []
@@ -413,8 +416,9 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll2.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
-              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+        print(train_loss, mlp.angle(cp.ones(10)*0.01, mlp.delta4))
+        # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+        #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
 plt.figure()
 plt.plot(test_acc_list_ll3, label="local learning rule3", color="crimson")
