@@ -379,7 +379,7 @@ for i in range(100000):
 mlp = MLP()
 test_acc_list_iln2 = []
 # print("direct feedback alignment")
-print(mlp.d2)
+print(mlp.d1)
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -399,7 +399,7 @@ for i in range(100000):
 mlp = MLP()
 test_acc_list_iln3 = []
 # print("direct feedback alignment")
-print(mlp.d3)
+print(mlp.d1)
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -498,8 +498,8 @@ for i in range(100000):
 
 plt.figure()
 plt.plot(test_acc_list_iln, label="B=(b,b,...,b)", color="crimson")
-plt.plot(test_acc_list_iln2, label="B=(b,b,...,b)", color="crimson")
-plt.plot(test_acc_list_iln3, label="B=(b,b,...,b)", color="crimson")
+plt.plot(test_acc_list_iln2, color="crimson")
+plt.plot(test_acc_list_iln3,  color="crimson")
 plt.plot(test_acc_list_uge, label="B=(1,1,...,1)", color="darkblue")
 # plt.plot(test_acc_list_ll, label="local learning rule1", color="forestgreen")
 # plt.plot(test_acc_list_ll2, label="local learning rule2", color="gold")
