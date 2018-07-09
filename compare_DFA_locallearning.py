@@ -71,52 +71,53 @@ class MLP:
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, 10)
-        """
-        self.B3 = cp.random.randn(10, hidden_unit)
-        self.B3[self.B3 > 0] = 1
-        self.B3[self.B3 < 0] = -1
-        self.B3 = weight_init_std * self.B3
-        """
+
         self.allones = weight_init_std * cp.ones([10, hidden_unit])
 
-        d = np.random.randn(10)
-        print(d)
-        # d *= weight_init_std
-        self.B3 = []
+        self.d = np.random.randn(10)
+        # print(d)
+        self.B3_ll = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            self.B3.append(d * magnification)
-        self.B3 = weight_init_std * cp.array(self.B3)
-        self.B3 = self.B3.T
-
-        self.B2 = []
+            self.B3_ll.append(self.d * magnification)
+        self.B3_ll = weight_init_std * cp.array(self.B3_ll)
+        self.B3_ll = self.B3_ll.T
+        self.B2_ll = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            self.B2.append(d * magnification)
-        self.B2 = weight_init_std * cp.array(self.B2)
-        self.B2 = self.B2.T
-
-        self.B1 = []
+            self.B2_ll.append(self.d * magnification)
+        self.B2_ll = weight_init_std * cp.array(self.B2_ll)
+        self.B2_ll = self.B2_ll.T
+        self.B1_ll = []
         for i in range(1000):
             magnification = np.random.rand() * 2 - 1
-            self.B1.append(d * magnification)
-        self.B1 = weight_init_std * cp.array(self.B1)
-        self.B1 = self.B1.T
-        # for i in range(10):
-        #     if cp.random.rand() > 0.5:
-        #         self.B3[i] *= -1
-        self.B3dfa = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B2dfa = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B1dfa = weight_init_std * cp.random.randn(10, hidden_unit)
-        # self.B3 = self.B3.T
-        # print(self.B3)
-        # self.B2 = cp.random.randn(10, hidden_unit)
-        # self.B2[self.B2 > 0] = 1
-        # self.B2[self.B2 < 0] = -1
-        # self.B2 = weight_init_std * self.B2
+            self.B1_ll.append(self.d * magnification)
+        self.B1_ll = weight_init_std * cp.array(self.B1_ll)
+        self.B1_ll = self.B1_ll.T
 
-        # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
-        # self.B2 = weight_init_std * cp.ones([10, hidden_unit])
+        ones = np.ones(10)
+        self.B3_ll2 = []
+        for i in range(1000):
+            magnification = np.random.rand() * 2 - 1
+            self.B3_ll2.append(ones * magnification)
+        self.B3_ll2 = weight_init_std * cp.array(self.B3_ll2)
+        self.B3_ll2 = self.B3_ll2.T
+        self.B2_ll2 = []
+        for i in range(1000):
+            magnification = np.random.rand() * 2 - 1
+            self.B2_ll2.append(ones * magnification)
+        self.B2_ll2 = weight_init_std * cp.array(self.B2_ll2)
+        self.B2_ll2 = self.B2_ll2.T
+        self.B1_ll2 = []
+        for i in range(1000):
+            magnification = np.random.rand() * 2 - 1
+            self.B1_ll2.append(ones * magnification)
+        self.B1_ll2 = weight_init_std * cp.array(self.B1_ll2)
+        self.B1_ll2 = self.B1_ll2.T
+
+        self.B3_dfa = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B2_dfa = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B1_dfa = weight_init_std * cp.random.randn(10, hidden_unit)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -169,7 +170,7 @@ class MLP:
         self.W_f3 -= alpha * delta_Wf3
         self.W_f4 -= alpha * delta_Wf4
 
-    def feedback_alignment(self, x, target):
+    def direct_feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -182,25 +183,22 @@ class MLP:
         delta4 = (output - target) / batch_size
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = cp.dot(delta4, self.B3)
-        delta_Wf3 = cp.dot(h2_.T, relu_grad(h2) * delta3)
+        delta3 = cp.dot(delta4, self.B3_dfa)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        delta2 = cp.dot(delta4, self.B2)
+        delta2 = cp.dot(delta4, self.B2_dfa)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B1)
+        delta1 = cp.dot(delta4, self.B1_dfa)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
-        # alpha2 = 0.1
-        # alpha3 = 0.05
-        # alpha4 = 0.03
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-    def unified_global(self, x, target):
+    def unified_global_error(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -214,7 +212,7 @@ class MLP:
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
         delta3 = cp.dot(delta4, self.allones)
-        delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
         delta2 = cp.dot(delta4, self.allones)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
@@ -223,15 +221,12 @@ class MLP:
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
-        # alpha2 = 0.1
-        # alpha3 = 0.05
-        # alpha4 = 0.03
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-    def only_last_layer(self, x, target):
+    def local_learning_rule(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -244,31 +239,53 @@ class MLP:
         delta4 = (output - target) / batch_size
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        # delta3 = cp.dot(delta4, self.B3)
-        # delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta3 = cp.dot(delta4, self.B3_ll)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        # delta2 = cp.dot(delta4, self.B3)
-        # delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+        delta2 = cp.dot(delta4, self.B2_ll)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        # delta1 = cp.dot(delta4, self.B3)
-        # delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+        delta1 = cp.dot(delta4, self.B1_ll)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
-        # alpha2 = 0.1
-        # alpha3 = 0.05
-        # alpha4 = 0.03
-        # self.W_f1 -= alpha1 * delta_Wf1
-        # self.W_f2 -= alpha1 * delta_Wf2
-        # self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-"""
+    def local_learning_rule2(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = relu(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = relu(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        output = softmax(h4)
+
+        delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, delta4)
+
+        delta3 = cp.dot(delta4, self.B3_ll2)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
+
+        delta2 = cp.dot(delta4, self.B2_ll2)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+
+        delta1 = cp.dot(delta4, self.B1_ll2)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+
+        alpha1 = 0.1
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+
+
 mlp = MLP()
-train_loss_list = []
-test_loss_list = []
-train_acc_list = []
-test_acc_list = []
-print("unified global")
+test_acc_list_dfa = []
+print("direct feedback alignment")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -276,29 +293,19 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    # mlp.gradient(x_batch, t_batch)
-    # mlp.feedback_alignment(x_batch,t_batch)
-    # mlp.only_last_layer(x_batch, t_batch)
-    mlp.unified_global(x_batch, t_batch)
-
+    mlp.direct_feedback_alignment(x_batch, t_batch)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        train_loss_list.append(cuda.to_cpu(train_loss))
-        test_loss_list.append(cuda.to_cpu(test_loss))
-        train_acc_list.append(cuda.to_cpu(train_acc))
-        test_acc_list.append(cuda.to_cpu(test_acc))
+        test_acc_list_dfa.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-"""
+
 
 mlp = MLP()
-train_loss_list_FA = []
-test_loss_list_FA = []
-train_acc_list_FA = []
-test_acc_list_FA = []
-print("local learning")
+test_acc_list_uge = []
+print("unified global error")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -306,40 +313,68 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch, t_batch)
-
+    mlp.unified_global_error(x_batch, t_batch)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        train_loss_list_FA.append(cuda.to_cpu(train_loss))
-        test_loss_list_FA.append(cuda.to_cpu(test_loss))
-        train_acc_list_FA.append(cuda.to_cpu(train_acc))
-        test_acc_list_FA.append(cuda.to_cpu(test_acc))
+        test_acc_list_uge.append(cuda.to_cpu(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+mlp = MLP()
+test_acc_list_ll = []
+print("local learning")
+print(mlp.d)
+train_size = x_train.shape[0]
+batch_size = 100
+iter_per_epoch = 100
+for i in range(100000):
+    batch_mask = cp.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+    mlp.local_learning_rule(x_batch, t_batch)
+    if i % iter_per_epoch == 0:
+        train_acc = mlp.accuracy(x_train, t_train)
+        test_acc = mlp.accuracy(x_test, t_test)
+        train_loss = mlp.loss(x_train, t_train)
+        test_loss = mlp.loss(x_test, t_test)
+        test_acc_list_ll.append(cuda.to_cpu(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+mlp = MLP()
+test_acc_list_ll2 = []
+print("local learning2")
+train_size = x_train.shape[0]
+batch_size = 100
+iter_per_epoch = 100
+for i in range(100000):
+    batch_mask = cp.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+    mlp.local_learning_rule2(x_batch, t_batch)
+    if i % iter_per_epoch == 0:
+        train_acc = mlp.accuracy(x_train, t_train)
+        test_acc = mlp.accuracy(x_test, t_test)
+        train_loss = mlp.loss(x_train, t_train)
+        test_loss = mlp.loss(x_test, t_test)
+        test_acc_list_ll2.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
 
 plt.figure()
-# plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dotted", color="blue")
-# plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
+plt.plot(test_acc_list_dfa, label="direct feedback alignment", color="crimson")
+plt.plot(test_acc_list_uge, label="unified global error", color="darkblue")
+plt.plot(test_acc_list_ll, label="local learning rule1", color="forestgreen")
+plt.plot(test_acc_list_ll2, label="local learning rule2", color="gold")
 
-plt.plot(test_acc_list_FA, label="test acc", color="crimson")
-plt.plot(train_acc_list_FA, label="train acc", color="blue")
-# plt.plot(train_acc_list_l, label="only last layer", linestyle="dashed", color="orange")
-# plt.plot(test_acc_list, label="unified global error learning", color="green")
-
-
-plt.title("local learning for MNIST")
+plt.title("test accuracy for MNIST")
 plt.xlabel("epoch")
 plt.ylabel("acc")
 plt.legend()
 
 os.makedirs('./result/0709/', exist_ok=True)
-plt.savefig("./result/0709/towards_local_learning2.png")
+plt.savefig("./result/0709/compare_DFA_local_learning.png")
 # plt.savefig("mnistBP.png")
 
 
