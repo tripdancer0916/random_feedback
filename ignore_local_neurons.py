@@ -74,45 +74,69 @@ class MLP:
 
         self.allones = weight_init_std * cp.ones([10, hidden_unit])
 
-        self.d = np.random.rand(10)
+        self.d1 = np.random.randn(10)
         # print(d)
-        self.B3_ll = []
-        for i in range(1000):
-            magnification = np.random.rand() * 2 - 1
-            self.B3_ll.append(self.d * magnification)
-        self.B3_ll = weight_init_std * cp.array(self.B3_ll)
-        self.B3_ll = self.B3_ll.T
-        self.B2_ll = []
-        for i in range(1000):
-            magnification = np.random.rand() * 2 - 1
-            self.B2_ll.append(self.d * magnification)
-        self.B2_ll = weight_init_std * cp.array(self.B2_ll)
-        self.B2_ll = self.B2_ll.T
-        self.B1_ll = []
-        for i in range(1000):
-            magnification = np.random.rand() * 2 - 1
-            self.B1_ll.append(self.d * magnification)
-        self.B1_ll = weight_init_std * cp.array(self.B1_ll)
-        self.B1_ll = self.B1_ll.T
 
-        self.B3_ll3 = []
+        self.B3_iln = []
         for i in range(1000):
             # magnification = np.random.rand() * 2 - 1
-            self.B3_ll3.append(self.d)
-        self.B3_ll3 = weight_init_std * cp.array(self.B3_ll3)
-        self.B3_ll3 = self.B3_ll3.T
-        self.B2_ll3 = []
+            self.B3_iln.append(self.d1)
+        self.B3_iln = weight_init_std * cp.array(self.B3_iln)
+        self.B3_iln = self.B3_iln.T
+        self.B2_iln = []
         for i in range(1000):
             # magnification = np.random.rand() * 2 - 1
-            self.B2_ll3.append(self.d)
-        self.B2_ll3 = weight_init_std * cp.array(self.B2_ll3)
-        self.B2_ll3 = self.B2_ll3.T
-        self.B1_ll3 = []
+            self.B2_iln.append(self.d1)
+        self.B2_iln = weight_init_std * cp.array(self.B2_iln)
+        self.B2_iln = self.B2_iln.T
+        self.B1_iln = []
         for i in range(1000):
             # magnification = np.random.rand() * 2 - 1
-            self.B1_ll3.append(self.d)
-        self.B1_ll3 = weight_init_std * cp.array(self.B1_ll3)
-        self.B1_ll3 = self.B1_ll3.T
+            self.B1_iln.append(self.d1)
+        self.B1_iln = weight_init_std * cp.array(self.B1_iln)
+        self.B1_iln = self.B1_iln.T
+
+        self.d2 = np.random.randn(10)
+        # print(d)
+
+        self.B3_iln2 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B3_iln2.append(self.d2)
+        self.B3_iln2 = weight_init_std * cp.array(self.B3_iln2)
+        self.B3_iln2 = self.B3_iln2.T
+        self.B2_iln2 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B2_iln2.append(self.d2)
+        self.B2_iln2 = weight_init_std * cp.array(self.B2_iln2)
+        self.B2_iln2 = self.B2_iln2.T
+        self.B1_iln2 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B1_iln2.append(self.d2)
+        self.B1_iln2 = weight_init_std * cp.array(self.B1_iln2)
+        self.B1_iln2 = self.B1_iln2.T
+
+        self.d3 = np.random.randn(10)
+        self.B3_iln3 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B3_iln3.append(self.d3)
+        self.B3_iln3 = weight_init_std * cp.array(self.B3_iln3)
+        self.B3_iln3 = self.B3_iln3.T
+        self.B2_iln3 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B2_iln2.append(self.d3)
+        self.B2_iln3 = weight_init_std * cp.array(self.B2_iln3)
+        self.B2_iln3 = self.B2_iln3.T
+        self.B1_iln3 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B1_iln3.append(self.d3)
+        self.B1_iln3 = weight_init_std * cp.array(self.B1_iln3)
+        self.B1_iln3 = self.B1_iln3.T
 
         ones = np.ones(10)
         self.B3_ll2 = []
@@ -245,7 +269,7 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-    def local_learning_rule(self, x, target):
+    def ignore_local_neuron1(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -258,13 +282,69 @@ class MLP:
         delta4 = (output - target) / batch_size
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = cp.dot(delta4, self.B3_ll)
+        delta3 = cp.dot(delta4, self.B3_iln)
         delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
-        delta2 = cp.dot(delta4, self.B2_ll)
+        delta2 = cp.dot(delta4, self.B2_iln)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B1_ll)
+        delta1 = cp.dot(delta4, self.B1_iln)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+
+        alpha1 = 0.1
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+
+    def ignore_local_neuron2(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = relu(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = relu(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        output = softmax(h4)
+
+        delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, delta4)
+
+        delta3 = cp.dot(delta4, self.B3_iln2)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
+
+        delta2 = cp.dot(delta4, self.B2_iln2)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+
+        delta1 = cp.dot(delta4, self.B1_iln2)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+
+        alpha1 = 0.1
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+
+    def ignore_local_neuron3(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = relu(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = relu(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        output = softmax(h4)
+
+        delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, delta4)
+
+        delta3 = cp.dot(delta4, self.B3_iln3)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
+
+        delta2 = cp.dot(delta4, self.B2_iln3)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+
+        delta1 = cp.dot(delta4, self.B1_iln3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -331,9 +411,9 @@ class MLP:
 
 
 mlp = MLP()
-test_acc_list_ll3 = []
+test_acc_list_iln = []
 # print("direct feedback alignment")
-print("B = (b,b,...,b)")
+print(mlp.d1)
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -341,13 +421,53 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.local_learning_rule3(x_batch, t_batch)
+    mlp.ignore_local_neuron1(x_batch, t_batch)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        test_acc_list_ll3.append(cuda.to_cpu(test_acc))
+        test_acc_list_iln.append(cuda.to_cpu(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+mlp = MLP()
+test_acc_list_iln2 = []
+# print("direct feedback alignment")
+print(mlp.d2)
+train_size = x_train.shape[0]
+batch_size = 100
+iter_per_epoch = 100
+for i in range(100000):
+    batch_mask = cp.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+    mlp.ignore_local_neuron2(x_batch, t_batch)
+    if i % iter_per_epoch == 0:
+        train_acc = mlp.accuracy(x_train, t_train)
+        test_acc = mlp.accuracy(x_test, t_test)
+        train_loss = mlp.loss(x_train, t_train)
+        test_loss = mlp.loss(x_test, t_test)
+        test_acc_list_iln2.append(cuda.to_cpu(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+
+mlp = MLP()
+test_acc_list_iln3 = []
+# print("direct feedback alignment")
+print(mlp.d3)
+train_size = x_train.shape[0]
+batch_size = 100
+iter_per_epoch = 100
+for i in range(100000):
+    batch_mask = cp.random.choice(train_size, batch_size)
+    x_batch = x_train[batch_mask]
+    t_batch = t_train[batch_mask]
+    mlp.ignore_local_neuron3(x_batch, t_batch)
+    if i % iter_per_epoch == 0:
+        train_acc = mlp.accuracy(x_train, t_train)
+        test_acc = mlp.accuracy(x_test, t_test)
+        train_loss = mlp.loss(x_train, t_train)
+        test_loss = mlp.loss(x_test, t_test)
+        test_acc_list_iln3.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
 
@@ -431,7 +551,9 @@ for i in range(100000):
 """
 
 plt.figure()
-plt.plot(test_acc_list_ll3, label="B=(b,b,...,b)", color="crimson")
+plt.plot(test_acc_list_iln, label="B=(b,b,...,b)", color="crimson")
+plt.plot(test_acc_list_iln2, label="B=(b,b,...,b)", color="crimson")
+plt.plot(test_acc_list_iln3, label="B=(b,b,...,b)", color="crimson")
 plt.plot(test_acc_list_uge, label="B=(1,1,...,1)", color="darkblue")
 # plt.plot(test_acc_list_ll, label="local learning rule1", color="forestgreen")
 # plt.plot(test_acc_list_ll2, label="local learning rule2", color="gold")
