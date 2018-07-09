@@ -74,7 +74,7 @@ class MLP:
 
         self.allones = weight_init_std * cp.ones([10, hidden_unit])
 
-        self.d1 = np.random.randn(10)
+        self.d1 = np.random.rand(10) * 2 - 1
         # print(d)
 
         self.B3_iln = []
