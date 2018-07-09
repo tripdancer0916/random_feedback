@@ -76,42 +76,44 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 1000
+hidden_unit1 = 5000
+hidden_unit2 = 3000
+hidden_unit3 = 1000
 
 
 class MLP:
     def __init__(self, weight_init_std=0.01):
-        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, 10)
+        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
 
-        self.allones = weight_init_std * cp.ones([10, hidden_unit])
+        # self.allones = weight_init_std * cp.ones([10, hidden_unit])
 
         self.d1 = np.random.rand(10) * 2 - 1
         self.d2 = np.random.rand(10) * 2 - 1
         self.d3 = np.random.rand(10) * 2 - 1
 
-        self.B3 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B2 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B3 = weight_init_std * cp.random.randn(10, hidden_unit3)
+        self.B2 = weight_init_std * cp.random.randn(10, hidden_unit2)
+        self.B1 = weight_init_std * cp.random.randn(10, hidden_unit1)
 
         self.B3_ge1 = []
-        for i in range(1000):
+        for i in range(hidden_unit3):
             magnification = np.random.rand() * 2 - 1
             self.B3_ge1.append(magnification * self.d1)
         self.B3_ge1 = weight_init_std * cp.array(self.B3_ge1)
         self.B3_ge1 = self.B3_ge1.T
 
         self.B2_ge1 = []
-        for i in range(1000):
+        for i in range(hidden_unit2):
             magnification = np.random.rand() * 2 - 1
             self.B2_ge1.append(magnification * self.d1)
         self.B2_ge1 = weight_init_std * cp.array(self.B2_ge1)
         self.B2_ge1 = self.B2_ge1.T
 
         self.B1_ge1 = []
-        for i in range(1000):
+        for i in range(hidden_unit1):
             magnification = np.random.rand() * 2 - 1
             self.B1_ge1.append(magnification * self.d1)
         self.B1_ge1 = weight_init_std * cp.array(self.B1_ge1)
@@ -119,7 +121,7 @@ class MLP:
 
         tmp2 = [0, 1]
         self.B3_ge2 = []
-        for i in range(hidden_unit):
+        for i in range(hidden_unit3):
             magnification = np.random.rand() * 2 - 1
             selecter = np.random.choice(tmp2)
             if selecter == 0:
@@ -129,7 +131,7 @@ class MLP:
         self.B3_ge2 = weight_init_std * cp.array(self.B3_ge2)
         self.B3_ge2 = self.B3_ge2.T
         self.B2_ge2 = []
-        for i in range(hidden_unit):
+        for i in range(hidden_unit2):
             magnification = np.random.rand() * 2 - 1
             selecter = np.random.choice(tmp2)
             if selecter == 0:
@@ -139,7 +141,7 @@ class MLP:
         self.B2_ge2 = weight_init_std * cp.array(self.B2_ge2)
         self.B2_ge2 = self.B2_ge2.T
         self.B1_ge2 = []
-        for i in range(hidden_unit):
+        for i in range(hidden_unit1):
             magnification = np.random.rand() * 2 - 1
             selecter = np.random.choice(tmp2)
             if selecter == 0:
@@ -151,7 +153,7 @@ class MLP:
 
         tmp3 = [0, 1, 2]
         self.B3_ge3 = []
-        for i in range(hidden_unit):
+        for i in range(hidden_unit3):
             magnification = np.random.rand() * 2 - 1
             selecter = np.random.choice(tmp3)
             if selecter == 0:
@@ -163,7 +165,7 @@ class MLP:
         self.B3_ge3 = weight_init_std * cp.array(self.B3_ge3)
         self.B3_ge3 = self.B3_ge3.T
         self.B2_ge3 = []
-        for i in range(hidden_unit):
+        for i in range(hidden_unit2):
             magnification = np.random.rand() * 2 - 1
             selecter = np.random.choice(tmp3)
             if selecter == 0:
@@ -175,7 +177,7 @@ class MLP:
         self.B2_ge3 = weight_init_std * cp.array(self.B2_ge3)
         self.B2_ge3 = self.B2_ge3.T
         self.B1_ge3 = []
-        for i in range(hidden_unit):
+        for i in range(hidden_unit1):
             magnification = np.random.rand() * 2 - 1
             selecter = np.random.choice(tmp3)
             if selecter == 0:
@@ -350,10 +352,10 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-"""
+
 mlp = MLP()
 test_acc_list_bp = []
-print("backpropagation")
+print("back propagation")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -370,7 +372,7 @@ for i in range(100000):
         test_acc_list_bp.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
               + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
-"""
+
 mlp = MLP()
 test_acc_list_DFA = []
 print("direct feedback alignment")
