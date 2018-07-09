@@ -352,7 +352,7 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-
+"""
 mlp = MLP()
 test_acc_list_bp = []
 print("back propagation")
@@ -372,6 +372,7 @@ for i in range(100000):
         test_acc_list_bp.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
               + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+"""
 
 mlp = MLP()
 test_acc_list_DFA = []
@@ -458,7 +459,7 @@ plt.figure()
 plt.plot(test_acc_list_ge1, label="K=1", color="crimson")
 plt.plot(test_acc_list_ge2, label="K=2", color="darkblue")
 plt.plot(test_acc_list_ge3, label="K=3", color="green")
-plt.plot(test_acc_list_bp, label="backprop", color="plum")
+# plt.plot(test_acc_list_bp, label="backprop", color="plum")
 plt.plot(test_acc_list_DFA, label="K=1000", color="grey")
 
 
