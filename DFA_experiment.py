@@ -77,7 +77,30 @@ class MLP:
         self.B3[self.B3 < 0] = -1
         self.B3 = weight_init_std * self.B3
         """
-        self.B3 = weight_init_std * cp.ones([10, hidden_unit])
+        self.allones = weight_init_std * cp.ones([10, hidden_unit])
+
+        d = np.random.randn(10)
+        # d *= weight_init_std
+        self.B3 = []
+        for i in range(1000):
+            magnification = np.random.rand() * 2 - 1
+            self.B3.append(d * magnification)
+        self.B3 = weight_init_std * cp.array(self.B3)
+        self.B3 = self.B3.T
+
+        self.B2 = []
+        for i in range(1000):
+            magnification = np.random.rand() * 2 - 1
+            self.B2.append(d * magnification)
+        self.B2 = weight_init_std * cp.array(self.B2)
+        self.B2 = self.B2.T
+
+        self.B1 = []
+        for i in range(1000):
+            magnification = np.random.rand() * 2 - 1
+            self.B1.append(d * magnification)
+        self.B1 = weight_init_std * cp.array(self.B1)
+        self.B1 = self.B1.T
         # for i in range(10):
         #     if cp.random.rand() > 0.5:
         #         self.B3[i] *= -1
@@ -159,10 +182,41 @@ class MLP:
         delta3 = cp.dot(delta4, self.B3)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta4, self.B3)
+        delta2 = cp.dot(delta4, self.B2)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
-        delta1 = cp.dot(delta4, self.B3)
+        delta1 = cp.dot(delta4, self.B1)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+
+        alpha1 = 0.1
+        # alpha2 = 0.1
+        # alpha3 = 0.05
+        # alpha4 = 0.03
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+
+    def unified_global(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = relu(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = relu(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        output = softmax(h4)
+
+        delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, delta4)
+
+        delta3 = cp.dot(delta4, self.allones)
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        delta2 = cp.dot(delta4, self.allones)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+
+        delta1 = cp.dot(delta4, self.allones)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
@@ -211,7 +265,7 @@ train_loss_list = []
 test_loss_list = []
 train_acc_list = []
 test_acc_list = []
-print("only last layer")
+print("unified global")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -221,7 +275,8 @@ for i in range(100000):
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
     # mlp.feedback_alignment(x_batch,t_batch)
-    mlp.only_last_layer(x_batch, t_batch)
+    # mlp.only_last_layer(x_batch, t_batch)
+    mlp.unified_global(x_batch, t_batch)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
@@ -240,7 +295,7 @@ train_loss_list_FA = []
 test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
-print("dfa")
+print("local learning")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -269,10 +324,10 @@ plt.figure()
 # plt.title("BP for MNIST")
 # plt.legend()
 
-plt.plot(test_acc_list_FA, label="RFA", color="orange")
+plt.plot(test_acc_list_FA, label="local learning", color="orange")
 
 # plt.plot(train_acc_list_l, label="only last layer", linestyle="dashed", color="orange")
-plt.plot(test_acc_list, label="only last layer", color="green")
+plt.plot(test_acc_list, label="unified global error learning", color="green")
 
 
 plt.title("test accuracy for MNIST")
@@ -280,8 +335,8 @@ plt.xlabel("epoch")
 plt.ylabel("acc")
 plt.legend()
 
-os.makedirs('./result/0708/', exist_ok=True)
-plt.savefig("./result/0708/DFA_fall_ones.png")
+os.makedirs('./result/0709/', exist_ok=True)
+plt.savefig("./result/0709/towards_local_learning.png")
 # plt.savefig("mnistBP.png")
 
 
