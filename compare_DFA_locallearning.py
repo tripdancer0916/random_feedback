@@ -330,8 +330,8 @@ class MLP:
         self.W_f4 -= alpha1 * delta_Wf4
 
     def angle(self, a, b):
-        tmp = cp.dot(a, b)/(cp.linalg.norm(a)*cp.linalg.norm(a))
-        return cp.dot(a, b), cp.linalg.norm(a), cp.linalg.norm(a), cp.arccos(tmp)
+        tmp = cp.dot(a, b)/(cp.linalg.norm(a)*cp.linalg.norm(b))
+        return cp.dot(a, b), cp.linalg.norm(a), cp.linalg.norm(b), cp.arccos(tmp)
 
 
 mlp = MLP()
@@ -354,6 +354,9 @@ for i in range(100000):
         test_acc_list_ll3.append(cuda.to_cpu(test_acc))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
+        print(mlp.d)
+        print(mlp.delta4)
+        print(cp.dot(cp.asarray(mlp.d), mlp.delta4))
         print(train_loss, mlp.angle(cp.asarray(mlp.d), mlp.delta4))
 
 mlp = MLP()
