@@ -97,10 +97,10 @@ class MLP:
             self.B1_iln.append(self.d1)
         self.B1_iln = weight_init_std * cp.array(self.B1_iln)
         self.B1_iln = self.B1_iln.T
-
+        """
         self.d2 = np.random.randn(10)
         # print(d)
-
+        
         self.B3_iln2 = []
         for i in range(1000):
             # magnification = np.random.rand() * 2 - 1
@@ -139,7 +139,7 @@ class MLP:
             self.B1_iln3.append(self.d3)
         self.B1_iln3 = weight_init_std * cp.array(self.B1_iln3)
         self.B1_iln3 = self.B1_iln3.T
-
+        """
         ones = np.ones(10)
         self.B3_ll2 = []
         for i in range(1000):
@@ -291,62 +291,6 @@ class MLP:
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
 
         delta1 = cp.dot(delta4, self.B1_iln)
-        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
-
-        alpha1 = 0.1
-        self.W_f1 -= alpha1 * delta_Wf1
-        self.W_f2 -= alpha1 * delta_Wf2
-        self.W_f3 -= alpha1 * delta_Wf3
-        self.W_f4 -= alpha1 * delta_Wf4
-
-    def ignore_local_neuron2(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = relu(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = relu(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = relu(h3)
-        h4 = cp.dot(h3_, self.W_f4)
-        output = softmax(h4)
-
-        delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
-
-        delta3 = cp.dot(delta4, self.B3_iln2)
-        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
-
-        delta2 = cp.dot(delta4, self.B2_iln2)
-        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
-
-        delta1 = cp.dot(delta4, self.B1_iln2)
-        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
-
-        alpha1 = 0.1
-        self.W_f1 -= alpha1 * delta_Wf1
-        self.W_f2 -= alpha1 * delta_Wf2
-        self.W_f3 -= alpha1 * delta_Wf3
-        self.W_f4 -= alpha1 * delta_Wf4
-
-    def ignore_local_neuron3(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = relu(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = relu(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = relu(h3)
-        h4 = cp.dot(h3_, self.W_f4)
-        output = softmax(h4)
-
-        delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
-
-        delta3 = cp.dot(delta4, self.B3_iln3)
-        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
-
-        delta2 = cp.dot(delta4, self.B2_iln3)
-        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
-
-        delta1 = cp.dot(delta4, self.B1_iln3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = 0.1
