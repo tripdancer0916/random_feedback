@@ -329,6 +329,10 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
+    def angle(self, a, b):
+        tmp = cp.dot(a, b)/(cp.linalg.norm(a)*cp.linalg.norm(a))
+        return cp.dot(a, b), cp.linalg.norm(a), cp.linalg.norm(a)
+
 
 mlp = MLP()
 test_acc_list_ll3 = []
@@ -348,9 +352,9 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll3.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
-"""
 mlp = MLP()
 test_acc_list_uge = []
 print("unified global error")
@@ -368,7 +372,8 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_uge.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
 mlp = MLP()
 test_acc_list_ll = []
@@ -388,7 +393,8 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
 mlp = MLP()
 test_acc_list_ll2 = []
@@ -407,8 +413,8 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll2.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-"""
+        print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
+              + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
 plt.figure()
 plt.plot(test_acc_list_ll3, label="local learning rule3", color="crimson")
