@@ -344,7 +344,7 @@ class MLP:
         norm_b = np.array(norm_b)
         theta = np.array(theta)
         inner_pro = np.array(inner_pro)
-        return np.mean(inner_pro), np.linalg.norm(a), np.mean(norm_b), np.mean(theta)
+        return np.mean(inner_pro), np.linalg.norm(a)*0.01, np.mean(norm_b), np.mean(theta)
 
 
 mlp = MLP()
@@ -389,7 +389,7 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_uge.append(cuda.to_cpu(test_acc))
-        print(train_loss, mlp.angle(cp.ones(10)*0.01, mlp.delta4))
+        print(train_loss, mlp.angle(cp.ones(10), mlp.delta4))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
@@ -432,7 +432,7 @@ for i in range(100000):
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll2.append(cuda.to_cpu(test_acc))
-        print(train_loss, mlp.angle(cp.ones(10)*0.01, mlp.delta4))
+        print(train_loss, mlp.angle(cp.ones(10), mlp.delta4))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
 
