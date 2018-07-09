@@ -330,8 +330,21 @@ class MLP:
         self.W_f4 -= alpha1 * delta_Wf4
 
     def angle(self, a, b):
-        tmp = cp.dot(a, b)/(cp.linalg.norm(a)*cp.linalg.norm(b))
-        return cp.dot(a, b), cp.linalg.norm(a), cp.linalg.norm(b), cp.arccos(tmp)
+        a = cuda.to_cpu(a)
+        b = cuda.to_cpu(b)
+        # norm_a = []
+        norm_b = []
+        theta = []
+        inner_pro = []
+        for i in range(b.shape[0]):
+            tmp = np.dot(a, b[i])/(np.linalg.norm(a)*np.linalg.norm(b[i]))
+            norm_b.append(np.linalg.norm(b[i]))
+            inner_pro.append(np.dot(a, b[i]))
+            theta.append(np.arccos(tmp))
+        norm_b = np.array(norm_b)
+        theta = np.array(theta)
+        inner_pro = np.array(inner_pro)
+        return np.mean(inner_pro), np.linalg.norm(a), np.mean(norm_b), np.mean(theta)
 
 
 mlp = MLP()
@@ -354,9 +367,9 @@ for i in range(100000):
         test_acc_list_ll3.append(cuda.to_cpu(test_acc))
         # print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
         #       + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
-        print(mlp.d)
-        print(mlp.delta4)
-        print(cp.dot(cp.asarray(mlp.d), mlp.delta4))
+        # print(mlp.d)
+        # print(mlp.delta4)
+        # print(cp.dot(cp.asarray(mlp.d), mlp.delta4))
         print(train_loss, mlp.angle(cp.asarray(mlp.d), mlp.delta4))
 
 mlp = MLP()
