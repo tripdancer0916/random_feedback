@@ -95,6 +95,25 @@ class MLP:
         self.B1_ll = weight_init_std * cp.array(self.B1_ll)
         self.B1_ll = self.B1_ll.T
 
+        self.B3_ll3 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B3_ll3.append(self.d)
+        self.B3_ll3 = weight_init_std * cp.array(self.B3_ll3)
+        self.B3_ll3 = self.B3_ll3.T
+        self.B2_ll3 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B2_ll3.append(self.d)
+        self.B2_ll3 = weight_init_std * cp.array(self.B2_ll3)
+        self.B2_ll3 = self.B2_ll3.T
+        self.B1_ll3 = []
+        for i in range(1000):
+            # magnification = np.random.rand() * 2 - 1
+            self.B1_ll3.append(self.d)
+        self.B1_ll3 = weight_init_std * cp.array(self.B1_ll3)
+        self.B1_ll3 = self.B1_ll3.T
+
         ones = np.ones(10)
         self.B3_ll2 = []
         for i in range(1000):
@@ -282,10 +301,39 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
+    def local_learning_rule3(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = relu(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = relu(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        output = softmax(h4)
+
+        delta4 = (output - target) / batch_size
+        delta_Wf4 = cp.dot(h3_.T, delta4)
+
+        delta3 = cp.dot(delta4, self.B3_ll3)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
+
+        delta2 = cp.dot(delta4, self.B2_ll3)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+
+        delta1 = cp.dot(delta4, self.B1_ll3)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+
+        alpha1 = 0.1
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+
 
 mlp = MLP()
-test_acc_list_dfa = []
-print("direct feedback alignment")
+test_acc_list_ll3 = []
+# print("direct feedback alignment")
+print("local learning rule3")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -293,16 +341,16 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.direct_feedback_alignment(x_batch, t_batch)
+    mlp.local_learning_rule3(x_batch, t_batch)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        test_acc_list_dfa.append(cuda.to_cpu(test_acc))
+        test_acc_list_ll3.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-
+"""
 mlp = MLP()
 test_acc_list_uge = []
 print("unified global error")
@@ -360,13 +408,13 @@ for i in range(100000):
         test_loss = mlp.loss(x_test, t_test)
         test_acc_list_ll2.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
+"""
 
 plt.figure()
-plt.plot(test_acc_list_dfa, label="direct feedback alignment", color="crimson")
-plt.plot(test_acc_list_uge, label="unified global error", color="darkblue")
-plt.plot(test_acc_list_ll, label="local learning rule1", color="forestgreen")
-plt.plot(test_acc_list_ll2, label="local learning rule2", color="gold")
+plt.plot(test_acc_list_ll3, label="local learning rule3", color="crimson")
+# plt.plot(test_acc_list_uge, label="unified global error", color="darkblue")
+# plt.plot(test_acc_list_ll, label="local learning rule1", color="forestgreen")
+# plt.plot(test_acc_list_ll2, label="local learning rule2", color="gold")
 
 plt.title("test accuracy for MNIST")
 plt.xlabel("epoch")
@@ -374,7 +422,7 @@ plt.ylabel("acc")
 plt.legend()
 
 os.makedirs('./result/0709/', exist_ok=True)
-plt.savefig("./result/0709/compare_DFA_local_learning.png")
+plt.savefig("./result/0709/local_learning_rule3.png")
 # plt.savefig("mnistBP.png")
 
 
