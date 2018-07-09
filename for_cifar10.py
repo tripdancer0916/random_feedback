@@ -350,10 +350,10 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
 
-
+"""
 mlp = MLP()
 test_acc_list_bp = []
-print("global error 1")
+print("backpropagation")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -370,10 +370,10 @@ for i in range(100000):
         test_acc_list_bp.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
               + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
-
+"""
 mlp = MLP()
 test_acc_list_DFA = []
-print("global error 1")
+print("direct feedback alignment")
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
