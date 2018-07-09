@@ -24,7 +24,7 @@ num_classes = 10
 
 (x_train, t_train), (x_test, t_test) = cifar10.load_data()
 
-x_train = x_train.reshape(())
+# x_train = x_train.reshape(())
 print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
 print(x_test.shape[0], 'test samples')
