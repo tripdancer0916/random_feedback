@@ -83,12 +83,14 @@ class MLP:
             self.B3_iln.append(self.d1)
         self.B3_iln = weight_init_std * cp.array(self.B3_iln)
         self.B3_iln = self.B3_iln.T
+
         self.B2_iln = []
         for i in range(1000):
             # magnification = np.random.rand() * 2 - 1
             self.B2_iln.append(self.d1)
         self.B2_iln = weight_init_std * cp.array(self.B2_iln)
         self.B2_iln = self.B2_iln.T
+
         self.B1_iln = []
         for i in range(1000):
             # magnification = np.random.rand() * 2 - 1
@@ -441,7 +443,7 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.ignore_local_neuron2(x_batch, t_batch)
+    mlp.ignore_local_neuron1(x_batch, t_batch)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
@@ -461,7 +463,7 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.ignore_local_neuron3(x_batch, t_batch)
+    mlp.ignore_local_neuron1(x_batch, t_batch)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
