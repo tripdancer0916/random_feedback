@@ -79,23 +79,24 @@ class MLP:
         self.d2 = np.random.rand(10) * 2 - 1
         self.d3 = np.random.rand(10) * 2 - 1
 
+        zzz = [-1, 1]
         self.B3_ge1 = []
         for i in range(1000):
-            magnification = np.random.rand() * 2 - 1
+            magnification = np.random.choice(zzz)
             self.B3_ge1.append(magnification * self.d1)
         self.B3_ge1 = weight_init_std * cp.array(self.B3_ge1)
         self.B3_ge1 = self.B3_ge1.T
 
         self.B2_ge1 = []
         for i in range(1000):
-            magnification = np.random.rand() * 2 - 1
+            magnification = np.random.choice(zzz)
             self.B2_ge1.append(magnification * self.d1)
         self.B2_ge1 = weight_init_std * cp.array(self.B2_ge1)
         self.B2_ge1 = self.B2_ge1.T
 
         self.B1_ge1 = []
         for i in range(1000):
-            magnification = np.random.rand() * 2 - 1
+            magnification = np.random.choice(zzz)
             self.B1_ge1.append(magnification * self.d1)
         self.B1_ge1 = weight_init_std * cp.array(self.B1_ge1)
         self.B1_ge1 = self.B1_ge1.T
@@ -325,7 +326,7 @@ for i in range(100000):
         test_acc_list_ge1.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
               + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
-
+"""
 mlp = MLP()
 test_acc_list_ge2 = []
 print("global error 2")
@@ -365,12 +366,12 @@ for i in range(100000):
         test_acc_list_ge3.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train loss, test loss, train acc, test acc | " + str(train_loss)
               + ", " + str(test_loss) + ", " + str(train_acc) + ", " + str(test_acc))
-
+"""
 
 plt.figure()
 plt.plot(test_acc_list_ge1, label="K=1", color="crimson")
-plt.plot(test_acc_list_ge2, label="K=2", color="darkblue")
-plt.plot(test_acc_list_ge3, label="K=3", color="green")
+# plt.plot(test_acc_list_ge2, label="K=2", color="darkblue")
+# plt.plot(test_acc_list_ge3, label="K=3", color="green")
 
 
 plt.title("test accuracy for MNIST")
@@ -378,5 +379,5 @@ plt.xlabel("epoch")
 plt.ylabel("acc")
 plt.legend()
 
-os.makedirs('./result/0709/', exist_ok=True)
-plt.savefig("./result/0709/multiple_global_error.png")
+os.makedirs('./result/0710/', exist_ok=True)
+plt.savefig("./result/0710/posi_nega.png")
