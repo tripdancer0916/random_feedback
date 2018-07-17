@@ -158,8 +158,8 @@ for i in range(100000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-        global_error_variable = np.dot(cuda.to_cpu(mlp.d), cuda.to_cpu(mlp.predict(x_batch[:12])).T)
-        compared_error_variable = np.dot(np.ones(10), cuda.to_cpu(mlp.predict(x_batch[:12])).T)
+        global_error_variable = np.dot(cuda.to_cpu(mlp.d), (cuda.to_cpu(mlp.predict(x_batch[:10]))-t_batch[:10]).T)
+        compared_error_variable = np.dot(np.ones(10), (cuda.to_cpu(mlp.predict(x_batch[:10]))-t_batch[:10]).T)
         print(np.mean(global_error_variable), np.mean(compared_error_variable))
         print(np.var(global_error_variable), np.var(compared_error_variable))
 
