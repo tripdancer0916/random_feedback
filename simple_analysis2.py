@@ -13,6 +13,7 @@ from chainer.training import extensions
 import PIL
 import matplotlib as mpl
 mpl.use('Agg')
+import os
 import matplotlib.pyplot as plt
 
 # Load the MNIST dataset
@@ -137,6 +138,7 @@ train_loss_list_FA = []
 test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
+output = []
 
 train_size = x_train.shape[0]
 batch_size = 100
@@ -156,13 +158,21 @@ for i in range(100):
     train_acc_list_FA.append(cuda.to_cpu(train_acc))
     test_acc_list_FA.append(cuda.to_cpu(test_acc))
     print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-    print(mlp.predict(x_batch[0]))
+    output.append(mlp.predict(x_train[0]))
     global_error_variable = np.dot(cuda.to_cpu(mlp.d), (cuda.to_cpu(mlp.predict(x_batch[:10]))-cuda.to_cpu(t_batch[:10])).T)
     compared_error_variable = np.dot(np.ones(10), (cuda.to_cpu(mlp.predict(x_batch[:10]))-cuda.to_cpu(t_batch[:10])).T)
     print(np.mean(global_error_variable), np.mean(compared_error_variable))
     print(np.var(global_error_variable), np.var(compared_error_variable))
 
 
+plt.plot(output[0], label="iter:0")
+plt.plot(output[10], label="iter:10")
+plt.plot(output[30], label="iter:30")
+plt.plot(output[99], label="iter:99")
+plt.title("transition of output probability distribution")
+plt.legend()
+os.makedirs("./result/0717", exist_ok=True)
+plt.savefig("./result/0717/output_probability_distribution")
 
 
 """
