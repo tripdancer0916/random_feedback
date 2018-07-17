@@ -71,11 +71,13 @@ class MLP:
         # self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
         # self.B2 = weight_init_std * cp.random.randn(hidden_unit, 784)
         variable = [-1, 1]
-        d = cp.random.choice(variable, 10)
+        self.d = np.random.choice(variable, 10)
         self.B = []
         for i in range(hidden_unit):
-            coordinate = cp.random.choice(variable)
-            self.B.append(coordinate * d)
+            coordinate = np.random.choice(variable)
+            self.B.append(coordinate * self.d)
+        self.B = weight_init_std * cp.array(self.B)
+        self.B = self.B.T
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -122,41 +124,12 @@ class MLP:
         delta2 = (output - target) / batch_size
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.B1)
-
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.B)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
-
-
-mlp = MLP()
-train_loss_list = []
-test_loss_list = []
-train_acc_list = []
-test_acc_list = []
-
-train_size = x_train.shape[0]
-batch_size = 100
-iter_per_epoch = 100
-for i in range(100000):
-    batch_mask = cp.random.choice(train_size, batch_size)
-    x_batch = x_train[batch_mask]
-    t_batch = t_train[batch_mask]
-    mlp.gradient(x_batch, t_batch)
-    # mlp.feedback_alignment(x_batch,t_batch)
-
-    if i % iter_per_epoch == 0:
-        train_acc = mlp.accuracy(x_train, t_train)
-        test_acc = mlp.accuracy(x_test, t_test)
-        train_loss = mlp.loss(x_train, t_train)
-        test_loss = mlp.loss(x_test, t_test)
-        train_loss_list.append(cuda.to_cpu(train_loss))
-        test_loss_list.append(cuda.to_cpu(test_loss))
-        train_acc_list.append(cuda.to_cpu(train_acc))
-        test_acc_list.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
 
 mlp = MLP()
@@ -185,14 +158,15 @@ for i in range(100000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        global_error_variable = np.dot(mlp.d, mlp.predict(x_train))
+        compared_error_variable = np.dot(np.ones(10), mlp.predict(x_train))
+        print(np.mean(global_error_variable, compared_error_variable))
+        print(np.var(global_error_variable, compared_error_variable))
 
-plt.plot(train_acc_list, label="BP train acc", linestyle="dashed", color="blue")
-plt.plot(test_acc_list, label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
 
-# plt.savefig("mnistBP.png")
 
+
+"""
 plt.plot(train_acc_list_FA, label="RFA train acc", linestyle="dotted", color="orange")
 plt.plot(test_acc_list_FA, label="RFA test acc", color="orange")
 plt.title("BP/RFA for MNIST")
@@ -214,3 +188,4 @@ plt.title("BP/RFA for MNIST relu")
 plt.legend()
 
 plt.savefig("./result/BP-RFA_for_mnist_20start.png")
+"""
