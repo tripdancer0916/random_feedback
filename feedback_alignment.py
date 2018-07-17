@@ -61,7 +61,7 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 1000
+hidden_unit = 2000
 
 
 class MLP:
@@ -99,9 +99,9 @@ class MLP:
         delta2 = (output - target) / batch_size
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = cp.dot(delta2, self.W_f2.T)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
 
-        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
@@ -116,9 +116,9 @@ class MLP:
         delta2 = (output - target) / batch_size
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = cp.dot(delta2, self.B1)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.B1)
 
-        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
