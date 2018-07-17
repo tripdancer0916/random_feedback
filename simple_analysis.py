@@ -160,8 +160,8 @@ for i in range(100000):
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
         global_error_variable = np.dot(mlp.d, mlp.predict(x_train))
         compared_error_variable = np.dot(np.ones(10), mlp.predict(x_train))
-        print(np.mean(global_error_variable, compared_error_variable))
-        print(np.var(global_error_variable, compared_error_variable))
+        print(np.mean(global_error_variable), np.mean(compared_error_variable))
+        print(np.var(global_error_variable), np.var(compared_error_variable))
 
 
 
