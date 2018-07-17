@@ -157,12 +157,12 @@ for i in range(100):
     test_loss_list_FA.append(cuda.to_cpu(test_loss))
     train_acc_list_FA.append(cuda.to_cpu(train_acc))
     test_acc_list_FA.append(cuda.to_cpu(test_acc))
-    print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-    output.append(mlp.predict(x_train[0]))
-    global_error_variable = np.dot(cuda.to_cpu(mlp.d), (cuda.to_cpu(mlp.predict(x_batch[:10]))-cuda.to_cpu(t_batch[:10])).T)
-    compared_error_variable = np.dot(np.ones(10), (cuda.to_cpu(mlp.predict(x_batch[:10]))-cuda.to_cpu(t_batch[:10])).T)
-    print(np.mean(global_error_variable), np.mean(compared_error_variable))
-    print(np.var(global_error_variable), np.var(compared_error_variable))
+    # print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+    output.append(cuda.to_cpu(mlp.predict(x_train[0])))
+    # global_error_variable = np.dot(cuda.to_cpu(mlp.d), (cuda.to_cpu(mlp.predict(x_batch[:10]))-cuda.to_cpu(t_batch[:10])).T)
+    # compared_error_variable = np.dot(np.ones(10), (cuda.to_cpu(mlp.predict(x_batch[:10]))-cuda.to_cpu(t_batch[:10])).T)
+    # print(np.mean(global_error_variable), np.mean(compared_error_variable))
+    # print(np.var(global_error_variable), np.var(compared_error_variable))
 
 
 plt.plot(output[0], label="iter:0")
