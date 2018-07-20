@@ -73,8 +73,8 @@ class MLP:
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
-        for i in range(h1[0]):
-            delta_h1[i] = cp.dot(x, self.W_f1)
+        # for i in range(h1[0]):
+        #     delta_h1[i] = cp.dot(x, self.W_f1)
         h1 = relu(h1)
         h2 = cp.dot(h1, self.W_f2)
         output = softmax(h2)
