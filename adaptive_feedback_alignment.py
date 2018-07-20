@@ -29,8 +29,8 @@ print('x_train shape:', x_train.shape)
 print(x_train.shape[0], 'train samples')
 print(x_test.shape[0], 'test samples')
 
-x_train = x_train.reshape(-1, 3072)
-x_test = x_test.reshape(-1, 3072)
+x_train = x_train.reshape(-1, 3072)/255.0
+x_test = x_test.reshape(-1, 3072)/255.0
 
 t_train = keras.utils.to_categorical(t_train, num_classes)
 t_test = keras.utils.to_categorical(t_test, num_classes)
