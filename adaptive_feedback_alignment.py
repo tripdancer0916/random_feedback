@@ -164,7 +164,7 @@ train_loss_list = []
 test_loss_list = []
 train_acc_list = []
 test_acc_list = []
-gamma = 1.0
+gamma = 0
 print("gamma=", str(gamma))
 
 train_size = x_train.shape[0]
@@ -174,8 +174,8 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.gradient(x_batch, t_batch)
-    # mlp.feedback_alignment(x_batch, t_batch, gamma)
+    # mlp.gradient(x_batch, t_batch)
+    mlp.feedback_alignment(x_batch, t_batch, gamma)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
