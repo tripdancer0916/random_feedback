@@ -149,7 +149,7 @@ class MLP:
         delta_Wf1 = cp.dot(x.T, delta1)
 
         delta_B2 = gamma*delta_Wf2.T
-        delta_B1 = gamma*delta_Wf1.T
+        delta_B1 = gamma*delta_Wf3.T
 
         alpha = 0.05
         self.W_f1 -= alpha * delta_Wf1
