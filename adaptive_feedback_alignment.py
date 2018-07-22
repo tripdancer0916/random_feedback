@@ -123,7 +123,7 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
-    def feedback_alignment(self, x, target):
+    def feedback_alignment(self, x, target, gamma):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -135,7 +135,7 @@ class MLP:
         delta1 = relu_grad(h1) * cp.dot(delta2, self.B1)
 
         delta_Wf1 = cp.dot(x.T, delta1)
-        delta_B1 = 0.1*delta_Wf2.T
+        delta_B1 = gamma*delta_Wf2.T
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
@@ -157,7 +157,7 @@ for i in range(100000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch,t_batch)
+    mlp.feedback_alignment(x_batch, t_batch, 1.0)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
