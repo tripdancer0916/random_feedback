@@ -81,9 +81,10 @@ hidden_unit = 5000
 class MLP:
     def __init__(self, weight_init_std=0.01):
         self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 10)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, 10)
         self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
-        # self.B2 = weight_init_std * cp.random.randn(hidden_unit, 784)
+        self.B2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -91,7 +92,9 @@ class MLP:
         #     delta_h1[i] = cp.dot(x, self.W_f1)
         h1 = relu(h1)
         h2 = cp.dot(h1, self.W_f2)
-        output = softmax(h2)
+        h2 = relu(h2)
+        h3 = cp.dot(h2, self.W_f3)
+        output = softmax(h3)
         return output
 
     def accuracy(self, x, t):
@@ -110,37 +113,50 @@ class MLP:
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        output = softmax(h2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        output = softmax(h3)
 
-        delta2 = (output - target) / batch_size
+        delta3 = (output - target) / batch_size
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
+
         delta_Wf2 = cp.dot(h1_.T, delta2)
-
         delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
-
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.05
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
+        self.W_f3 -= alpha * delta_Wf3
 
     def feedback_alignment(self, x, target, gamma):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        output = softmax(h2)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        output = softmax(h3)
 
-        delta2 = (output - target) / batch_size
+        delta3 = (output - target) / batch_size
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.B1)
+
         delta_Wf2 = cp.dot(h1_.T, delta2)
-
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.B1)
-
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.B2)
         delta_Wf1 = cp.dot(x.T, delta1)
-        delta_B1 = gamma*delta_Wf2.T
 
-        alpha = 0.1
+        delta_B2 = gamma*delta_Wf2.T
+        delta_B1 = gamma*delta_Wf1.T
+
+        alpha = 0.05
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
+        self.W_f3 -= alpha * delta_Wf3
         self.B1 -= alpha * delta_B1
+        self.B2 -= alpha * delta_B2
 
 
 mlp = MLP()
@@ -158,8 +174,8 @@ for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch, t_batch, gamma)
+    mlp.gradient(x_batch, t_batch)
+    # mlp.feedback_alignment(x_batch, t_batch, gamma)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
