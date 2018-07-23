@@ -112,7 +112,7 @@ class MLP:
 
         delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.05
+        alpha = 0.01
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
@@ -129,7 +129,7 @@ class MLP:
 
         delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.05
+        alpha = 0.01
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
@@ -143,7 +143,7 @@ test_acc_list = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(30000):
+for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
