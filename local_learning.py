@@ -71,10 +71,10 @@ class MLP:
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 10)
         d = np.random.rand(10) * 2 - 1
         self.B1 = []
-        tmp = [1, -1]
+        # tmp = [1, -1]
         for i in range(hidden_unit):
-            magnification = np.random.choice(tmp)
-            self.B1.append(d * magnification)
+            # magnification = 1
+            self.B1.append(d)
         self.B1 = weight_init_std * cp.array(self.B1)
         self.B1 = self.B1.T
 
@@ -143,7 +143,7 @@ test_acc_list = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(100000):
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -163,4 +163,4 @@ for i in range(100000):
 
 
 synapse = cuda.to_cpu(mlp.W_f1)
-np.savetxt('mlp_BP_W1.txt', synapse)
+np.savetxt('mlp_failed_W1.txt', synapse)
