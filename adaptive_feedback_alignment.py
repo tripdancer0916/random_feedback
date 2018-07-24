@@ -164,7 +164,7 @@ train_loss_list = []
 test_loss_list = []
 train_acc_list = []
 test_acc_list = []
-gamma = 0
+gamma = 0.1
 print("gamma=", str(gamma))
 
 train_size = x_train.shape[0]
@@ -188,60 +188,3 @@ for i in range(100000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-"""
-mlp = MLP()
-train_loss_list_FA = []
-test_loss_list_FA = []
-train_acc_list_FA = []
-test_acc_list_FA = []
-
-train_size = x_train.shape[0]
-batch_size = 100
-iter_per_epoch = 100
-for i in range(100000):
-    batch_mask = cp.random.choice(train_size, batch_size)
-    x_batch = x_train[batch_mask]
-    t_batch = t_train[batch_mask]
-    # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch,t_batch)
-
-    if i % iter_per_epoch == 0:
-        train_acc = mlp.accuracy(x_train, t_train)
-        test_acc = mlp.accuracy(x_test, t_test)
-        train_loss = mlp.loss(x_train, t_train)
-        test_loss = mlp.loss(x_test, t_test)
-        train_loss_list_FA.append(cuda.to_cpu(train_loss))
-        test_loss_list_FA.append(cuda.to_cpu(test_loss))
-        train_acc_list_FA.append(cuda.to_cpu(train_acc))
-        test_acc_list_FA.append(cuda.to_cpu(test_acc))
-        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
-plt.plot(train_acc_list, label="BP train acc", linestyle="dashed", color="blue")
-plt.plot(test_acc_list, label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
-
-# plt.savefig("mnistBP.png")
-
-plt.plot(train_acc_list_FA, label="RFA train acc", linestyle="dotted", color="orange")
-plt.plot(test_acc_list_FA, label="RFA test acc", color="orange")
-plt.title("BP/RFA for MNIST")
-plt.legend()
-
-plt.savefig("./result/BP-RFA_for_mnist.png")
-plt.figure()
-plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dotted", color="blue")
-plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
-
-# plt.savefig("mnistBP.png")
-
-
-plt.plot(train_acc_list_FA[20:], label="RFA train acc", linestyle="dashed", color="orange")
-plt.plot(test_acc_list_FA[20:], label="RFA test acc", color="orange")
-plt.title("BP/RFA for MNIST relu")
-plt.legend()
-
-plt.savefig("./result/BP-RFA_for_mnist_20start.png")
-"""
