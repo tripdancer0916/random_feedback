@@ -164,7 +164,7 @@ train_loss_list = []
 test_loss_list = []
 train_acc_list = []
 test_acc_list = []
-gamma = 0.1
+gamma = 0
 print("gamma=", str(gamma))
 
 train_size = x_train.shape[0]
