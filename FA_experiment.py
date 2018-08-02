@@ -160,7 +160,7 @@ class MLP:
         self.W_f3 -= alpha3 * delta_Wf3
         self.W_f4 -= alpha4 * delta_Wf4
 
-
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -193,7 +193,7 @@ np.savetxt("./result/0802/BP_W1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0802/BP_W2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0802/BP_W3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0802/BP_W4.txt", cuda.to_cpu(mlp.W_f4))
-
+"""
 
 mlp = MLP()
 train_loss_list_FA = []
