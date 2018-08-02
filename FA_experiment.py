@@ -115,14 +115,14 @@ class MLP:
         delta4 = (output - target) / batch_size
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = cp.dot(delta4, self.W_f4.T)
+        delta3 = relu_grad(h3) *cp.dot(delta4, self.W_f4.T)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta3, self.W_f3.T)
-        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
+        delta_Wf2 = cp.dot(h1_.T,  delta2)
 
-        delta1 = cp.dot(delta2, self.W_f2.T)
-        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.02
         self.W_f1 -= alpha * delta_Wf1
@@ -151,13 +151,13 @@ class MLP:
         delta4 = (output - target) / batch_size
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = cp.dot(delta4, self.B1)
+        delta3 = relu_grad(h3) * cp.dot(delta4, self.B1)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta3, self.B2)
-        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.B2)
+        delta_Wf2 = cp.dot(h1_.T,  delta2)
 
-        delta1 = cp.dot(delta2, self.B3)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
         alpha1 = self.learning_rate(epoch)
