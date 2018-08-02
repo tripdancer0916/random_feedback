@@ -131,7 +131,12 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
 
     def learning_rate(self, epoch):
-        return 0.12 * (0.9 ** int(epoch / 1000))
+        if epoch <= 20000:
+            return 0.12
+        elif epoch <= 30000:
+            return 0.1
+        else:
+            return 0.08
 
     def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1)
