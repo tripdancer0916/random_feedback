@@ -16,6 +16,8 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
+os.makedirs('./result/0802/', exist_ok=True)
+
 # Load the MNIST dataset
 train, test = chainer.datasets.get_mnist()
 x_train, t_train = train._datasets
@@ -75,24 +77,6 @@ class MLP:
         self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
         self.B2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.B3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.B3[self.B3 > 0] = 1
-        # self.B3[self.B3 < 0] = -1
-        # self.B3 = weight_init_std * self.B3
-
-        # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
-        # for i in range(10):
-        #     if cp.random.rand() > 0.5:
-        #         self.B3[i] *= -1
-
-        # self.B3 = self.B3.T
-        # print(self.B3)
-        # self.B2 = cp.random.randn(10, hidden_unit)
-        # self.B2[self.B2 > 0] = 1
-        # self.B2[self.B2 < 0] = -1
-        # self.B2 = weight_init_std * self.B2
-
-        # self.B3 = weight_init_std * cp.ones([10, hidden_unit])
-        # self.B2 = weight_init_std * cp.ones([10, hidden_unit])
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -139,11 +123,11 @@ class MLP:
         delta1 = cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
-        alpha = 0.1
+        alpha = 0.02
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
-        # self.W_f4 -= alpha * delta_Wf4
+        self.W_f4 -= alpha * delta_Wf4
 
     def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
@@ -167,16 +151,16 @@ class MLP:
         delta1 = cp.dot(delta2, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
-        alpha1 = 0.1
+        alpha1 = 0.02
         # alpha2 = 0.1
         # alpha3 = 0.05
         # alpha4 = 0.03
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
         self.W_f3 -= alpha1 * delta_Wf3
-        # self.W_f4 -= alpha1 * delta_Wf4
+        self.W_f4 -= alpha1 * delta_Wf4
 
-"""
+
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -186,6 +170,7 @@ test_acc_list = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
+print("Back propagation")
 for i in range(20000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
@@ -203,7 +188,12 @@ for i in range(20000):
         train_acc_list.append(cuda.to_cpu(train_acc))
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-"""
+
+np.savetxt("./result/0802/BP_W1.txt", mlp.W_f1)
+np.savetxt("./result/0802/BP_W2.txt", mlp.W_f2)
+np.savetxt("./result/0802/BP_W3.txt", mlp.W_f3)
+np.savetxt("./result/0802/BP_W4.txt", mlp.W_f4)
+
 
 mlp = MLP()
 train_loss_list_FA = []
@@ -214,7 +204,8 @@ test_acc_list_FA = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-for i in range(100000):
+print("Feedback alignment")
+for i in range(20000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -231,35 +222,10 @@ for i in range(100000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-"""
-plt.plot(train_acc_list, label="BP train acc", linestyle="dashed", color="blue")
-plt.plot(test_acc_list, label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
 
-# plt.savefig("mnistBP.png")
-
-plt.plot(train_acc_list_FA, label="DFA train acc", linestyle="dotted", color="orange")
-plt.plot(test_acc_list_FA, label="DFA test acc", color="orange")
-plt.title("BP/DFA for MNIST relu")
-plt.legend()
-
-plt.savefig("./result/BP-DFA_for_mnist.png")
-"""
-plt.figure()
-# plt.plot(train_acc_list[20:], label="BP train acc", linestyle="dotted", color="blue")
-# plt.plot(test_acc_list[20:], label="BP test acc", color="blue")
-# plt.title("BP for MNIST")
-# plt.legend()
-
-# plt.savefig("mnistBP.png")
+np.savetxt("./result/0802/FA_W1.txt", mlp.W_f1)
+np.savetxt("./result/0802/FA_W2.txt", mlp.W_f2)
+np.savetxt("./result/0802/FA_W3.txt", mlp.W_f3)
+np.savetxt("./result/0802/FA_W4.txt", mlp.W_f4)
 
 
-plt.plot(train_acc_list_FA[20:], label="DFA train acc", linestyle="dotted", color="orange")
-plt.plot(test_acc_list_FA[20:], label="DFA test acc", color="orange")
-plt.title("DFA for MNIST relu start from 20")
-plt.legend()
-
-os.makedirs('./result/0705/', exist_ok=True)
-
-plt.savefig("./result/0705/FAfreezing_last_layer.png")
