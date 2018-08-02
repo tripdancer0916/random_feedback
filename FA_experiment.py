@@ -171,7 +171,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(20000):
+for i in range(40000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -189,10 +189,10 @@ for i in range(20000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0802/BP_W1.txt", mlp.W_f1)
-np.savetxt("./result/0802/BP_W2.txt", mlp.W_f2)
-np.savetxt("./result/0802/BP_W3.txt", mlp.W_f3)
-np.savetxt("./result/0802/BP_W4.txt", mlp.W_f4)
+np.savetxt("./result/0802/BP_W1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0802/BP_W2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0802/BP_W3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0802/BP_W4.txt", cuda.to_cpu(mlp.W_f4))
 
 
 mlp = MLP()
@@ -205,7 +205,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Feedback alignment")
-for i in range(20000):
+for i in range(40000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -223,9 +223,9 @@ for i in range(20000):
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0802/FA_W1.txt", mlp.W_f1)
-np.savetxt("./result/0802/FA_W2.txt", mlp.W_f2)
-np.savetxt("./result/0802/FA_W3.txt", mlp.W_f3)
-np.savetxt("./result/0802/FA_W4.txt", mlp.W_f4)
+np.savetxt("./result/0802/FA_W1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0802/FA_W2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0802/FA_W3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0802/FA_W4.txt", cuda.to_cpu(mlp.W_f4))
 
 
