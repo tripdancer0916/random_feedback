@@ -77,19 +77,21 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 1000
+hidden_unit1 = 5000
+hidden_unit2 = 3000
+hidden_unit3 = 1000
 
 
 class MLP:
     def __init__(self, weight_init_std=0.01):
-        self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, 10)
+        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
 
-        self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B2 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B3 = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B1 = weight_init_std * cp.random.randn(10, hidden_unit1)
+        self.B2 = weight_init_std * cp.random.randn(10, hidden_unit2)
+        self.B3 = weight_init_std * cp.random.randn(10, hidden_unit3)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -163,13 +165,13 @@ class MLP:
         delta4 = (output - target) / batch_size
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = relu_grad(h3) * cp.dot(delta4, self.B1)
+        delta3 = relu_grad(h3) * cp.dot(delta4, self.B3)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
         delta2 = relu_grad(h2) * cp.dot(delta4, self.B2)
         delta_Wf2 = cp.dot(h1_.T,  delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta4, self.B3)
+        delta1 = relu_grad(h1) * cp.dot(delta4, self.B1)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha1 = self.learning_rate(epoch)
