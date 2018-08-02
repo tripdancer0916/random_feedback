@@ -12,6 +12,8 @@ import chainer.functions as F
 import chainer.links as L
 from chainer.training import extensions
 import PIL
+import keras
+from keras.datasets import cifar10
 import matplotlib as mpl
 
 mpl.use('Agg')
@@ -20,15 +22,25 @@ import matplotlib.pyplot as plt
 os.makedirs('./result/0802/', exist_ok=True)
 
 # Load the MNIST dataset
-train, test = chainer.datasets.get_mnist()
-x_train, t_train = train._datasets
-x_test, t_test = test._datasets
+num_classes = 10
 
-x_train = cp.asarray(x_train)
-x_test = cp.asarray(x_test)
+(x_train, t_train), (x_test, t_test) = cifar10.load_data()
 
-t_train = cp.identity(10)[t_train.astype(int)]
-t_test = cp.identity(10)[t_test.astype(int)]
+# x_train = x_train.reshape(())
+print('x_train shape:', x_train.shape)
+print(x_train.shape[0], 'train samples')
+print(x_test.shape[0], 'test samples')
+
+x_train = x_train.reshape(-1, 3072) / 255.
+x_test = x_test.reshape(-1, 3072) / 255.
+
+t_train = keras.utils.to_categorical(t_train, num_classes)
+t_test = keras.utils.to_categorical(t_test, num_classes)
+
+x_train = cp.array(x_train)
+x_test = cp.array(x_test)
+t_train = cp.array(t_train)
+t_test = cp.array(t_test)
 
 
 def cross_entropy_error(y, t):
@@ -76,8 +88,8 @@ class MLP:
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, 10)
 
         self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.B2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.B3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
+        self.B2 = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B3 = weight_init_std * cp.random.randn(10, hidden_unit)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -113,10 +125,10 @@ class MLP:
         output = softmax(h4)
 
         delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
+        delta_Wf4 = cp.dot(h3_.T, relu_grad(h4) * delta4)
 
         delta3 = cp.dot(delta4, self.W_f4.T)
-        delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta3)
 
         delta2 = cp.dot(delta3, self.W_f3.T)
         delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
@@ -149,16 +161,16 @@ class MLP:
         output = softmax(h4)
 
         delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, delta4)
+        delta_Wf4 = cp.dot(h3_.T, relu_grad(h4) * delta4)
 
-        delta3 = cp.dot(delta4, self.B1)
-        delta_Wf3 = cp.dot(h2_.T, delta3)
+        # delta3 = cp.dot(delta4, self.B1)
+        delta_Wf3 = cp.dot(h2_.T, relu_grad(h3) * delta4)
 
-        delta2 = cp.dot(delta3, self.B2)
-        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta2)
+        # delta2 = cp.dot(delta3, self.B2)
+        delta_Wf2 = cp.dot(h1_.T, relu_grad(h2) * delta4)
 
-        delta1 = cp.dot(delta2, self.B3)
-        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
+        # delta1 = cp.dot(delta2, self.B3)
+        delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta4)
 
         alpha1 = self.learning_rate(epoch)
         self.W_f1 -= alpha1 * delta_Wf1
@@ -167,7 +179,6 @@ class MLP:
         self.W_f4 -= alpha1 * delta_Wf4
 
 
-"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -178,7 +189,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(40000):
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -196,11 +207,11 @@ for i in range(40000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0802/BP_W1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0802/BP_W2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0802/BP_W3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0802/BP_W4.txt", cuda.to_cpu(mlp.W_f4))
-"""
+np.savetxt("./result/0802/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0802/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0802/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0802/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+
 
 mlp = MLP()
 train_loss_list_FA = []
@@ -211,8 +222,8 @@ test_acc_list_FA = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-print("Feedback alignment")
-for i in range(40000):
+print("Direct Feedback alignment")
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -230,7 +241,7 @@ for i in range(40000):
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0802/FA_W1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0802/FA_W2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0802/FA_W3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0802/FA_W4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0802/DFA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0802/DFA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0802/DFA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0802/DFA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
