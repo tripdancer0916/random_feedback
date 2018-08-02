@@ -13,6 +13,7 @@ import chainer.links as L
 from chainer.training import extensions
 import PIL
 import matplotlib as mpl
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -129,7 +130,10 @@ class MLP:
         self.W_f3 -= alpha * delta_Wf3
         self.W_f4 -= alpha * delta_Wf4
 
-    def feedback_alignment(self, x, target):
+    def learning_rate(self, epoch):
+        return 0.1 * (0.9 ** (epoch % 50))
+
+    def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1)
         h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -151,14 +155,12 @@ class MLP:
         delta1 = cp.dot(delta2, self.B3)
         delta_Wf1 = cp.dot(x.T, relu_grad(h1) * delta1)
 
-        alpha1 = 0.1
-        alpha2 = 0.1
-        alpha3 = 0.1
-        alpha4 = 0.1
+        alpha1 = self.learning_rate(epoch)
         self.W_f1 -= alpha1 * delta_Wf1
-        self.W_f2 -= alpha2 * delta_Wf2
-        self.W_f3 -= alpha3 * delta_Wf3
-        self.W_f4 -= alpha4 * delta_Wf4
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+
 
 """
 mlp = MLP()
@@ -210,7 +212,7 @@ for i in range(40000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch, t_batch)
+    mlp.feedback_alignment(x_batch, t_batch, i)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
@@ -227,5 +229,3 @@ np.savetxt("./result/0802/FA_W1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0802/FA_W2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0802/FA_W3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0802/FA_W4.txt", cuda.to_cpu(mlp.W_f4))
-
-
