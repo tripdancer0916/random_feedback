@@ -153,6 +153,7 @@ class MLP:
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
         self.W_f4 -= alpha * delta_Wf4
+        self.W_f5 -= alpha * delta_Wf5
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
@@ -194,6 +195,7 @@ class MLP:
         self.W_f2 -= alpha1 * delta_Wf2
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
+        self.W_f5 -= alpha1 * delta_Wf5
 
 
 mlp = MLP()
