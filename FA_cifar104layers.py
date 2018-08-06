@@ -194,7 +194,7 @@ class MLP:
 
         delta1 = relu_grad(h1) * cp.dot(delta2, self.B2)
         delta_Wf1 = cp.dot(x.T, delta1)
-        print(delta_Wf1)
+        # print(delta_Wf1)
 
         alpha1 = self.learning_rate(epoch)
         self.W_f1 -= alpha1 * delta_Wf1
