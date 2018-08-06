@@ -94,6 +94,11 @@ class MLP:
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit4)
         self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
+        self.b1 = weight_init_std * cp.random.randn(hidden_unit1)
+        self.b2 = weight_init_std * cp.random.randn(hidden_unit2)
+        self.b3 = weight_init_std * cp.random.randn(hidden_unit3)
+        self.b4 = weight_init_std * cp.random.randn(hidden_unit4)
+        self.b5 = weight_init_std * cp.random.randn(10)
 
         self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
         self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
@@ -106,15 +111,15 @@ class MLP:
         # self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
 
     def predict(self, x):
-        h1 = cp.dot(x, self.W_f1)
+        h1 = cp.dot(x, self.W_f1) + self.b1
         h1 = cp.tanh(h1)
-        h2 = cp.dot(h1, self.W_f2)
+        h2 = cp.dot(h1, self.W_f2) + self.b2
         h2 = cp.tanh(h2)
-        h3 = cp.dot(h2, self.W_f3)
+        h3 = cp.dot(h2, self.W_f3) + self.b3
         h3 = cp.tanh(h3)
-        h4 = cp.dot(h3, self.W_f4)
+        h4 = cp.dot(h3, self.W_f4) + self.b4
         h4 = cp.tanh(h4)
-        h5 = cp.dot(h4, self.W_f5)
+        h5 = cp.dot(h4, self.W_f5) + self.b5
         output = softmax(h5)
         return output
 
@@ -173,31 +178,36 @@ class MLP:
             return 0.08
 
     def feedback_alignment(self, x, target, epoch):
-        h1 = cp.dot(x, self.W_f1)
+        h1 = cp.dot(x, self.W_f1) + self.b1
         h1_ = cp.tanh(h1)
-        h2 = cp.dot(h1_, self.W_f2)
+        h2 = cp.dot(h1_, self.W_f2) + self.b2
         h2_ = cp.tanh(h2)
-        h3 = cp.dot(h2_, self.W_f3)
+        h3 = cp.dot(h2_, self.W_f3) + self.b3
         h3_ = cp.tanh(h3)
-        h4 = cp.dot(h3_, self.W_f4)
+        h4 = cp.dot(h3_, self.W_f4) + self.b4
         h4_ = cp.tanh(h4)
-        h5 = cp.dot(h4_, self.W_f5)
+        h5 = cp.dot(h4_, self.W_f5) + self.b5
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
         delta_Wf5 = cp.dot(h4_.T, delta5)
+        delta_b5 = delta5
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         delta_Wf4 = cp.dot(h3_.T, delta4)
+        delta_b4 = delta4
 
         delta3 = tanh_grad(h3) * cp.dot(delta4, self.B4)
         delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta_b3 = delta3
 
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.B3)
         delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta_b2 = delta2
 
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.B2)
         delta_Wf1 = cp.dot(x.T, delta1)
+        delta_b1 = delta1
         # print(delta_Wf1)
 
         alpha1 = self.learning_rate(epoch)
@@ -206,6 +216,11 @@ class MLP:
         self.W_f3 -= alpha1 * delta_Wf3
         self.W_f4 -= alpha1 * delta_Wf4
         self.W_f5 -= alpha1 * delta_Wf5
+        self.b1 -= alpha1 * delta_b1
+        self.b2 -= alpha1 * delta_b2
+        self.b3 -= alpha1 * delta_b3
+        self.b4 -= alpha1 * delta_b4
+        self.b5 -= alpha1 * delta_b5
 
 
 """
