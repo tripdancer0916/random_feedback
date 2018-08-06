@@ -191,23 +191,23 @@ class MLP:
 
         delta5 = (output - target) / batch_size
         delta_Wf5 = cp.dot(h4_.T, delta5)
-        delta_b5 = delta5
+        delta_b5 = cp.dot(cp.ones(batch_size), delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         delta_Wf4 = cp.dot(h3_.T, delta4)
-        delta_b4 = delta4
+        delta_b4 = cp.dot(cp.ones(batch_size), delta4)
 
         delta3 = tanh_grad(h3) * cp.dot(delta4, self.B4)
         delta_Wf3 = cp.dot(h2_.T, delta3)
-        delta_b3 = delta3
+        delta_b3 = cp.dot(cp.ones(batch_size), delta3)
 
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.B3)
         delta_Wf2 = cp.dot(h1_.T, delta2)
-        delta_b2 = delta2
+        delta_b2 = cp.dot(cp.ones(batch_size), delta2)
 
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.B2)
         delta_Wf1 = cp.dot(x.T, delta1)
-        delta_b1 = delta1
+        delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         # print(delta_Wf1)
 
         alpha1 = self.learning_rate(epoch)
