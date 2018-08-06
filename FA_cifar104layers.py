@@ -65,6 +65,10 @@ def relu_grad(x):
     return x
 
 
+def tanh_grad(x):
+    return 1 - (cp.tanh(x) ** 2)
+
+
 def softmax(x):
     if x.ndim == 2:
         x = x.T
@@ -91,25 +95,25 @@ class MLP:
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit4)
         self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
 
-        # self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
-        # self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
-        # self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
-        # self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
+        self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
+        self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
+        self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
+        self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
 
-        self.B2 = cp.random.normal(0, 0.01, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
-        self.B3 = cp.random.normal(0, 0.01, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
-        self.B4 = cp.random.normal(0, 0.01, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
-        self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
+        # self.B2 = cp.random.normal(0, 0.01, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
+        # self.B3 = cp.random.normal(0, 0.01, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
+        # self.B4 = cp.random.normal(0, 0.01, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
+        # self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
-        h1 = relu(h1)
+        h1 = cp.tanh(h1)
         h2 = cp.dot(h1, self.W_f2)
-        h2 = relu(h2)
+        h2 = cp.tanh(h2)
         h3 = cp.dot(h2, self.W_f3)
-        h3 = relu(h3)
+        h3 = cp.tanh(h3)
         h4 = cp.dot(h3, self.W_f4)
-        h4 = relu(h4)
+        h4 = cp.tanh(h4)
         h5 = cp.dot(h4, self.W_f5)
         output = softmax(h5)
         return output
@@ -139,7 +143,7 @@ class MLP:
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
-        delta_Wf5 = cp.dot(h4_.T, relu_grad(h5) * delta5)
+        delta_Wf5 = cp.dot(h4_.T, delta5)
 
         delta4 = relu_grad(h4) * cp.dot(delta5, self.W_f5.T)
         delta_Wf4 = cp.dot(h3_.T, delta4)
@@ -170,29 +174,29 @@ class MLP:
 
     def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1)
-        h1_ = relu(h1)
+        h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = relu(h2)
+        h2_ = cp.tanh(h2)
         h3 = cp.dot(h2_, self.W_f3)
-        h3_ = relu(h3)
+        h3_ = cp.tanh(h3)
         h4 = cp.dot(h3_, self.W_f4)
-        h4_ = relu(h4)
+        h4_ = cp.tanh(h4)
         h5 = cp.dot(h4_, self.W_f5)
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
-        delta_Wf5 = cp.dot(h4_.T, relu_grad(h5) * delta5)
+        delta_Wf5 = cp.dot(h4_.T, tanh_grad(h5) * delta5)
 
-        delta4 = relu_grad(h4) * cp.dot(delta5, self.B5)
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = relu_grad(h3) * cp.dot(delta4, self.B4)
+        delta3 = tanh_grad(h3) * cp.dot(delta4, self.B4)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = relu_grad(h2) * cp.dot(delta3, self.B3)
+        delta2 = tanh_grad(h2) * cp.dot(delta3, self.B3)
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.B2)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.B2)
         delta_Wf1 = cp.dot(x.T, delta1)
         # print(delta_Wf1)
 
