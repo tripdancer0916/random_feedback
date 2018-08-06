@@ -91,10 +91,15 @@ class MLP:
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit4)
         self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
 
-        self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
-        self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
-        self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
-        self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
+        # self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
+        # self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
+        # self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
+        # self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
+
+        self.B2 = cp.random.normal(0, 0.05, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
+        self.B3 = cp.random.normal(0, 0.05, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
+        self.B4 = cp.random.normal(0, 0.05, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
+        self.B5 = cp.random.normal(0, 0.05, hidden_unit4 * 10).reshape(10, hidden_unit4)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
@@ -140,13 +145,13 @@ class MLP:
         delta_Wf4 = cp.dot(h3_.T, delta4)
 
         delta3 = relu_grad(h3) * cp.dot(delta4, self.W_f4.T)
-        delta_Wf3 = cp.dot(h2_.T,  delta3)
+        delta_Wf3 = cp.dot(h2_.T, delta3)
 
         delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
         delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
-        delta_Wf1 = cp.dot(x.T,  delta1)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.02
         self.W_f1 -= alpha * delta_Wf1
@@ -198,6 +203,7 @@ class MLP:
         self.W_f5 -= alpha1 * delta_Wf5
 
 
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -231,7 +237,7 @@ np.savetxt("./result/0806/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0806/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0806/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
 np.savetxt("./result/0806/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
-
+"""
 
 mlp = MLP()
 train_loss_list_FA = []
@@ -242,7 +248,7 @@ test_acc_list_FA = []
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-print("Direct Feedback alignment")
+print("Feedback alignment")
 for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
