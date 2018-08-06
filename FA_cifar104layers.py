@@ -185,7 +185,7 @@ class MLP:
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
-        delta_Wf5 = cp.dot(h4_.T, tanh_grad(h5) * delta5)
+        delta_Wf5 = cp.dot(h4_.T, delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         delta_Wf4 = cp.dot(h3_.T, delta4)
