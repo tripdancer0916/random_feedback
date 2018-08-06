@@ -96,10 +96,10 @@ class MLP:
         # self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
         # self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
 
-        self.B2 = cp.random.normal(0, 0.05, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
-        self.B3 = cp.random.normal(0, 0.05, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
-        self.B4 = cp.random.normal(0, 0.05, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
-        self.B5 = cp.random.normal(0, 0.05, hidden_unit4 * 10).reshape(10, hidden_unit4)
+        self.B2 = cp.random.normal(0, 0.01, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
+        self.B3 = cp.random.normal(0, 0.01, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
+        self.B4 = cp.random.normal(0, 0.01, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
+        self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
