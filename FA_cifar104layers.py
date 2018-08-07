@@ -171,11 +171,11 @@ class MLP:
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
-            return 0.12
+            return 0.2
         elif epoch <= 30000:
-            return 0.1
+            return 0.15
         else:
-            return 0.08
+            return 0.1
 
     def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1) + self.b1
