@@ -81,9 +81,9 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit1 = 3000
-hidden_unit2 = 3000
-hidden_unit3 = 3000
+hidden_unit1 = 2000
+hidden_unit2 = 2000
+hidden_unit3 = 1000
 hidden_unit4 = 1000
 
 
@@ -171,11 +171,11 @@ class MLP:
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
-            return 0.2
+            return 0.12
         elif epoch <= 30000:
-            return 0.15
-        else:
             return 0.1
+        else:
+            return 0.08
 
     def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1) + self.b1
