@@ -81,9 +81,9 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit1 = 5000
+hidden_unit1 = 3000
 hidden_unit2 = 3000
-hidden_unit3 = 2000
+hidden_unit3 = 3000
 hidden_unit4 = 1000
 
 
