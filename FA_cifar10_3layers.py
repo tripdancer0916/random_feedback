@@ -88,12 +88,19 @@ hidden_unit3 = 1000
 
 
 class MLP:
-    def __init__(self, weight_init_std=0.01):
-        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
-        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
-        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
+    def __init__(self, weight_init_std=0.015):
+        # self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
         # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
+
+        self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
+        self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
+        self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
+        self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
+        # self.W_f5 = weight_init_std * cp.zeros([hidden_unit4, 10])
+
         self.b1 = weight_init_std * cp.random.randn(hidden_unit1)
         self.b2 = weight_init_std * cp.random.randn(hidden_unit2)
         self.b3 = weight_init_std * cp.random.randn(hidden_unit3)
