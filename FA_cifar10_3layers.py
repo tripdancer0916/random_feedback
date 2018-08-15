@@ -251,7 +251,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(50000):
+for i in range(70000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -273,7 +273,7 @@ np.savetxt("./result/0815/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0815/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0815/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0815/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0815/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+# np.savetxt("./result/0815/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
 """
 
 mlp = MLP()
