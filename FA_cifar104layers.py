@@ -117,6 +117,8 @@ class MLP:
         # self.B4 = cp.random.normal(0, 0.01, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
         # self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
 
+        self.h = 0
+
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1) + self.b1
         h1 = cp.tanh(h1)
@@ -155,37 +157,50 @@ class MLP:
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
-        delta_Wf5 = cp.dot(h4_.T, delta5)
-        delta_b5 = cp.dot(cp.ones(batch_size), delta5)
+        self.delta_Wf5 = cp.dot(h4_.T, delta5)
+        self.delta_b5 = cp.dot(cp.ones(batch_size), delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
-        delta_Wf4 = cp.dot(h3_.T, delta4)
-        delta_b4 = cp.dot(cp.ones(batch_size), delta4)
+        self.delta_Wf4 = cp.dot(h3_.T, delta4)
+        self.delta_b4 = cp.dot(cp.ones(batch_size), delta4)
 
         delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
-        delta_Wf3 = cp.dot(h2_.T, delta3)
-        delta_b3 = cp.dot(cp.ones(batch_size), delta3)
+        self.delta_Wf3 = cp.dot(h2_.T, delta3)
+        self.delta_b3 = cp.dot(cp.ones(batch_size), delta3)
 
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
-        delta_Wf2 = cp.dot(h1_.T, delta2)
-        delta_b2 = cp.dot(cp.ones(batch_size), delta2)
+        self.delta_Wf2 = cp.dot(h1_.T, delta2)
+        self.delta_b2 = cp.dot(cp.ones(batch_size), delta2)
 
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
-        delta_Wf1 = cp.dot(x.T, delta1)
-        delta_b1 = cp.dot(cp.ones(batch_size), delta1)
+        self.delta_Wf1 = cp.dot(x.T, delta1)
+        self.delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         # print(delta_Wf1)
 
-        alpha1 = 0.02
-        self.W_f1 -= alpha1 * delta_Wf1
-        self.W_f2 -= alpha1 * delta_Wf2
-        self.W_f3 -= alpha1 * delta_Wf3
-        self.W_f4 -= alpha1 * delta_Wf4
-        self.W_f5 -= alpha1 * delta_Wf5
-        self.b1 -= alpha1 * delta_b1
-        self.b2 -= alpha1 * delta_b2
-        self.b3 -= alpha1 * delta_b3
-        self.b4 -= alpha1 * delta_b4
-        self.b5 -= alpha1 * delta_b5
+        alpha1 = self.rms_prop()
+        self.W_f1 -= alpha1 * self.delta_Wf1
+        self.W_f2 -= alpha1 * self.delta_Wf2
+        self.W_f3 -= alpha1 * self.delta_Wf3
+        self.W_f4 -= alpha1 * self.delta_Wf4
+        self.W_f5 -= alpha1 * self.delta_Wf5
+        self.b1 -= alpha1 * self.delta_b1
+        self.b2 -= alpha1 * self.delta_b2
+        self.b3 -= alpha1 * self.delta_b3
+        self.b4 -= alpha1 * self.delta_b4
+        self.b5 -= alpha1 * self.delta_b5
+
+    def rms_prop(self):
+        alpha = 0.99
+        eta_0 = 0.01
+        epsilon = 1e-8
+        quad_grad = cp.linalg.norm(self.delta_Wf1)**2 + cp.linalg.norm(self.delta_Wf2)**2 + \
+                    cp.linalg.norm(self.delta_Wf3)**2 + cp.linalg.norm(self.delta_Wf4)**2 + \
+                    cp.linalg.norm(self.delta_Wf5)**2 + cp.linalg.norm(self.delta_b1)**2 + \
+                    cp.linalg.norm(self.delta_b2)**2 + cp.linalg.norm(self.delta_b3)**2 + \
+                    cp.linalg.norm(self.delta_b4)**2 + cp.linalg.norm(self.delta_b5)**2
+        self.h = alpha * self.h + (1-alpha)*quad_grad
+        eta = eta_0 / (cp.sqrt(self.h) + epsilon)
+        return eta
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
@@ -251,7 +266,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(30000):
+for i in range(50000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
