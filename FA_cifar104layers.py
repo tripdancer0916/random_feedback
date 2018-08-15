@@ -117,7 +117,16 @@ class MLP:
         # self.B4 = cp.random.normal(0, 0.01, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
         # self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
 
-        self.h = 0
+        self.h_W1 = 0
+        self.h_W2 = 0
+        self.h_W3 = 0
+        self.h_W4 = 0
+        self.h_W5 = 0
+        self.h_b1 = 0
+        self.h_b2 = 0
+        self.h_b3 = 0
+        self.h_b4 = 0
+        self.h_b5 = 0
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1) + self.b1
@@ -176,31 +185,35 @@ class MLP:
         self.delta_Wf1 = cp.dot(x.T, delta1)
         self.delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         # print(delta_Wf1)
+        eta, self.h_W1 = self.rms_prop(self.delta_Wf1, self.h_W1)
+        self.W_f1 -= eta * self.delta_Wf1
+        eta, self.h_W2 = self.rms_prop(self.delta_Wf2, self.h_W2)
+        self.W_f2 -= eta * self.delta_Wf2
+        eta, self.h_W3 = self.rms_prop(self.delta_Wf3, self.h_W3)
+        self.W_f3 -= eta * self.delta_Wf3
+        eta, self.h_W4 = self.rms_prop(self.delta_Wf4, self.h_W4)
+        self.W_f4 -= eta * self.delta_Wf4
+        eta, self.h_W5 = self.rms_prop(self.delta_Wf5, self.h_W5)
+        self.W_f5 -= eta * self.delta_Wf5
+        eta, self.h_b1 = self.rms_prop(self.delta_b1, self.h_b1)
+        self.b1 -= eta * self.delta_b1
+        eta, self.h_b2 = self.rms_prop(self.delta_b2, self.h_b2)
+        self.b2 -= eta * self.delta_b2
+        eta, self.h_b3 = self.rms_prop(self.delta_b3, self.h_b3)
+        self.b3 -= eta * self.delta_b3
+        eta, self.h_b4 = self.rms_prop(self.delta_b4, self.h_b4)
+        self.b4 -= eta * self.delta_b4
+        eta, self.h_b5 = self.rms_prop(self.delta_b5, self.h_b5)
+        self.b5 -= eta * self.delta_b5
 
-        alpha1 = self.rms_prop()
-        self.W_f1 -= alpha1 * self.delta_Wf1
-        self.W_f2 -= alpha1 * self.delta_Wf2
-        self.W_f3 -= alpha1 * self.delta_Wf3
-        self.W_f4 -= alpha1 * self.delta_Wf4
-        self.W_f5 -= alpha1 * self.delta_Wf5
-        self.b1 -= alpha1 * self.delta_b1
-        self.b2 -= alpha1 * self.delta_b2
-        self.b3 -= alpha1 * self.delta_b3
-        self.b4 -= alpha1 * self.delta_b4
-        self.b5 -= alpha1 * self.delta_b5
-
-    def rms_prop(self):
+    def rms_prop(self, grad, h):
         alpha = 0.99
         eta_0 = 0.01
         epsilon = 1e-8
-        quad_grad = cp.linalg.norm(self.delta_Wf1)**2 + cp.linalg.norm(self.delta_Wf2)**2 + \
-                    cp.linalg.norm(self.delta_Wf3)**2 + cp.linalg.norm(self.delta_Wf4)**2 + \
-                    cp.linalg.norm(self.delta_Wf5)**2 + cp.linalg.norm(self.delta_b1)**2 + \
-                    cp.linalg.norm(self.delta_b2)**2 + cp.linalg.norm(self.delta_b3)**2 + \
-                    cp.linalg.norm(self.delta_b4)**2 + cp.linalg.norm(self.delta_b5)**2
-        self.h = alpha * self.h + (1-alpha)*quad_grad
-        eta = eta_0 / (cp.sqrt(self.h) + epsilon)
-        return eta
+        quad_grad = cp.linalg.norm(grad)**2
+        h = alpha * h + (1-alpha)*quad_grad
+        eta = eta_0 / (cp.sqrt(h) + epsilon)
+        return eta, h
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
