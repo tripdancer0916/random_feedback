@@ -19,7 +19,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-os.makedirs('./result/0806/', exist_ok=True)
+os.makedirs('./result/0815/', exist_ok=True)
 
 # Load the MNIST dataset
 num_classes = 10
@@ -143,38 +143,49 @@ class MLP:
         return cross_entropy_error(y, t)
 
     def gradient(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = relu(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = relu(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = relu(h3)
-        h4 = cp.dot(h3_, self.W_f4)
-        h4_ = relu(h4)
-        h5 = cp.dot(h4_, self.W_f5)
+        h1 = cp.dot(x, self.W_f1) + self.b1
+        h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1_, self.W_f2) + self.b2
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3) + self.b3
+        h3_ = cp.tanh(h3)
+        h4 = cp.dot(h3_, self.W_f4) + self.b4
+        h4_ = cp.tanh(h4)
+        h5 = cp.dot(h4_, self.W_f5) + self.b5
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
         delta_Wf5 = cp.dot(h4_.T, delta5)
+        delta_b5 = cp.dot(cp.ones(batch_size), delta5)
 
-        delta4 = relu_grad(h4) * cp.dot(delta5, self.W_f5.T)
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
         delta_Wf4 = cp.dot(h3_.T, delta4)
+        delta_b4 = cp.dot(cp.ones(batch_size), delta4)
 
-        delta3 = relu_grad(h3) * cp.dot(delta4, self.W_f4.T)
+        delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
         delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta_b3 = cp.dot(cp.ones(batch_size), delta3)
 
-        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
+        delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
         delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta_b2 = cp.dot(cp.ones(batch_size), delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
+        delta_b1 = cp.dot(cp.ones(batch_size), delta1)
+        # print(delta_Wf1)
 
-        alpha = 0.02
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
-        self.W_f4 -= alpha * delta_Wf4
-        self.W_f5 -= alpha * delta_Wf5
+        alpha1 = 0.02
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+        self.W_f5 -= alpha1 * delta_Wf5
+        self.b1 -= alpha1 * delta_b1
+        self.b2 -= alpha1 * delta_b2
+        self.b3 -= alpha1 * delta_b3
+        self.b4 -= alpha1 * delta_b4
+        self.b5 -= alpha1 * delta_b5
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
@@ -230,7 +241,6 @@ class MLP:
         self.b5 -= alpha1 * delta_b5
 
 
-"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -241,7 +251,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(50000):
+for i in range(30000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -259,11 +269,11 @@ for i in range(50000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0806/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0806/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0806/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0806/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0806/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0815/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0815/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0815/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0815/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0815/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
 """
 
 mlp = MLP()
@@ -294,8 +304,9 @@ for i in range(200000):
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0806/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0806/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0806/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0806/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0806/FA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0815/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0815/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0815/FA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+"""

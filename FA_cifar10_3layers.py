@@ -19,7 +19,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-os.makedirs('./result/0807/', exist_ok=True)
+os.makedirs('./result/0815/', exist_ok=True)
 
 # Load the MNIST dataset
 num_classes = 10
@@ -230,7 +230,6 @@ class MLP:
         # self.b5 -= alpha1 * delta_b5
 
 
-"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -259,11 +258,11 @@ for i in range(50000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0806/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0806/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0806/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0806/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0806/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0815/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0815/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0815/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0815/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0815/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
 """
 
 mlp = MLP()
@@ -294,7 +293,8 @@ for i in range(50000):
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0807/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0807/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0807/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0807/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0815/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0815/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+"""

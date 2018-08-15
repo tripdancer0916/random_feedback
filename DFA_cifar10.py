@@ -127,22 +127,22 @@ class MLP:
         output = softmax(h4)
 
         delta4 = (output - target) / batch_size
-        delta_Wf4 = cp.dot(h3_.T, relu_grad(h4) * delta4)
+        delta_Wf4 = cp.dot(h3_.T, delta4)
 
-        delta3 = relu_grad(h3) * cp.dot(delta4, self.W_f4.T)
+        delta3 = relu_grad(h3) * cp.dot(delta4, self.W_f3.T)
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
-        delta_Wf2 = cp.dot(h1_.T,  delta2)
+        delta2 = relu_grad(h2) * cp.dot(delta4, self.B2)
+        delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
-        delta_Wf1 = cp.dot(x.T,  delta1)
+        delta1 = relu_grad(h1) * cp.dot(delta4, self.B1)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.02
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
-        self.W_f4 -= alpha * delta_Wf4
+        alpha1 = 0.02
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
