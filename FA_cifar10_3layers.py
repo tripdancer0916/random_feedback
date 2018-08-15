@@ -84,6 +84,8 @@ def softmax(x):
 hidden_unit1 = 1000
 hidden_unit2 = 1000
 hidden_unit3 = 1000
+
+
 # hidden_unit4 = 1000
 
 
@@ -247,6 +249,7 @@ class MLP:
         # self.b5 -= alpha1 * delta_b5
 
 
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -318,4 +321,7 @@ np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0815/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0815/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-"""
+np.savetxt("./result/0815/FA_cifarb1.txt", cuda.to_cpu(mlp.b1))
+np.savetxt("./result/0815/FA_cifarb2.txt", cuda.to_cpu(mlp.b2))
+np.savetxt("./result/0815/FA_cifarb3.txt", cuda.to_cpu(mlp.b3))
+np.savetxt("./result/0815/FA_cifarb4.txt", cuda.to_cpu(mlp.b4))
