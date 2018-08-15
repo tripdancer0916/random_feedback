@@ -88,17 +88,17 @@ hidden_unit3 = 1000
 
 
 class MLP:
-    def __init__(self, weight_init_std=0.025):
-        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
-        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
-        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
+    def __init__(self, weight_init_std=0.03):
+        # self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
         # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
 
-        # self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
-        # self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
-        # self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
-        # self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
+        self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
+        self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
+        self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
+        self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
         # self.W_f5 = weight_init_std * cp.zeros([hidden_unit4, 10])
 
         self.b1 = weight_init_std * cp.zeros(hidden_unit1)
@@ -240,7 +240,7 @@ class MLP:
         self.b4 -= alpha1 * delta_b4
         # self.b5 -= alpha1 * delta_b5
 
-
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -286,7 +286,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Feedback alignment")
-for i in range(50000):
+for i in range(70000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -308,4 +308,3 @@ np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0815/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0815/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-"""
