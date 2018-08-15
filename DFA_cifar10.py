@@ -19,7 +19,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-os.makedirs('./result/0802/', exist_ok=True)
+os.makedirs('./result/0815/', exist_ok=True)
 
 # Load the MNIST dataset
 num_classes = 10
@@ -191,7 +191,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(50000):
+for i in range(30000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -209,12 +209,12 @@ for i in range(50000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0802/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0802/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0802/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0802/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0815/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0815/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0815/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0815/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
 
-
+"""
 mlp = MLP()
 train_loss_list_FA = []
 test_loss_list_FA = []
@@ -247,3 +247,4 @@ np.savetxt("./result/0802/DFA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0802/DFA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0802/DFA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0802/DFA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+"""
