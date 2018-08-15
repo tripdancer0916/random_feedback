@@ -196,8 +196,10 @@ class MLP:
             return 0.08
         elif epoch <= 100000:
             return 0.04
-        else:
+        elif epoch <= 200000:
             return 0.02
+        else:
+            return 0.015
 
     def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1) + self.b1
@@ -290,7 +292,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Feedback alignment")
-for i in range(200000):
+for i in range(300000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
