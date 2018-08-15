@@ -89,16 +89,16 @@ hidden_unit3 = 1000
 
 class MLP:
     def __init__(self, weight_init_std=0.03):
-        # self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
-        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
-        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
-        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
+        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
         # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
 
-        self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
-        self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
-        self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
-        self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
+        # self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
+        # self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
+        # self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
+        # self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
         # self.W_f5 = weight_init_std * cp.zeros([hidden_unit4, 10])
 
         self.b1 = weight_init_std * cp.zeros(hidden_unit1)
@@ -246,7 +246,7 @@ class MLP:
         self.b4 -= alpha1 * delta_b4
         # self.b5 -= alpha1 * delta_b5
 
-"""
+
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -279,6 +279,10 @@ np.savetxt("./result/0815/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0815/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0815/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0815/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0815/BP_cifarb1.txt", cuda.to_cpu(mlp.b1))
+np.savetxt("./result/0815/BP_cifarb2.txt", cuda.to_cpu(mlp.b2))
+np.savetxt("./result/0815/BP_cifarb3.txt", cuda.to_cpu(mlp.b3))
+np.savetxt("./result/0815/BP_cifarb4.txt", cuda.to_cpu(mlp.b4))
 # np.savetxt("./result/0815/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
 """
 
@@ -314,3 +318,4 @@ np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0815/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
 np.savetxt("./result/0815/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+"""
