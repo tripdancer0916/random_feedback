@@ -89,16 +89,16 @@ hidden_unit3 = 1000
 
 class MLP:
     def __init__(self, weight_init_std=0.025):
-        # self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
-        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
-        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
-        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
+        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
         # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
 
-        self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
-        self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
-        self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
-        self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
+        # self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
+        # self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
+        # self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
+        # self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
         # self.W_f5 = weight_init_std * cp.zeros([hidden_unit4, 10])
 
         self.b1 = weight_init_std * cp.zeros(hidden_unit1)
@@ -143,37 +143,48 @@ class MLP:
         return cross_entropy_error(y, t)
 
     def gradient(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = relu(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = relu(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = relu(h3)
-        h4 = cp.dot(h3_, self.W_f4)
-        # h4_ = relu(h4)
-        # h5 = cp.dot(h4_, self.W_f5)
+        h1 = cp.dot(x, self.W_f1) + self.b1
+        h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1_, self.W_f2) + self.b2
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3) + self.b3
+        h3_ = cp.tanh(h3)
+        h4 = cp.dot(h3_, self.W_f4) + self.b4
+        # h4_ = cp.tanh(h4)
+        # h5 = cp.dot(h4_, self.W_f5) + self.b5
         output = softmax(h4)
 
         delta4 = (output - target) / batch_size
         # delta_Wf5 = cp.dot(h4_.T, delta5)
+        # delta_b5 = cp.dot(cp.ones(batch_size), delta5)
 
-        # delta4 = relu_grad(h4) * cp.dot(delta5, self.W_f5.T)
+        # delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         delta_Wf4 = cp.dot(h3_.T, delta4)
+        delta_b4 = cp.dot(cp.ones(batch_size), delta4)
 
-        delta3 = relu_grad(h3) * cp.dot(delta4, self.W_f4.T)
+        delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
         delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta_b3 = cp.dot(cp.ones(batch_size), delta3)
 
-        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
+        delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
         delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta_b2 = cp.dot(cp.ones(batch_size), delta2)
 
-        delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
+        delta_b1 = cp.dot(cp.ones(batch_size), delta1)
+        # print(delta_Wf1)
 
-        alpha = 0.02
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
-        self.W_f4 -= alpha * delta_Wf4
+        alpha1 = 0.02
+        self.W_f1 -= alpha1 * delta_Wf1
+        self.W_f2 -= alpha1 * delta_Wf2
+        self.W_f3 -= alpha1 * delta_Wf3
+        self.W_f4 -= alpha1 * delta_Wf4
+        # self.W_f5 -= alpha1 * delta_Wf5
+        self.b1 -= alpha1 * delta_b1
+        self.b2 -= alpha1 * delta_b2
+        self.b3 -= alpha1 * delta_b3
+        self.b4 -= alpha1 * delta_b4
         # self.W_f5 -= alpha * delta_Wf5
 
     def learning_rate(self, epoch):
