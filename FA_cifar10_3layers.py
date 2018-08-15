@@ -89,16 +89,16 @@ hidden_unit3 = 1000
 
 class MLP:
     def __init__(self, weight_init_std=0.03):
-        # self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
-        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
-        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
-        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
+        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
+        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, 10)
         # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit4, 10)
 
-        self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
-        self.W_f2 = weight_init_std * cp.zeros([hidden_unit1, hidden_unit2])
-        self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
-        self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
+        # self.W_f1 = weight_init_std * cp.zeros([3072, hidden_unit1])
+        # self.W_f2 = 0.032 * cp.zeros([hidden_unit1, hidden_unit2])
+        # self.W_f3 = weight_init_std * cp.zeros([hidden_unit2, hidden_unit3])
+        # self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, 10])
         # self.W_f5 = weight_init_std * cp.zeros([hidden_unit4, 10])
 
         self.b1 = weight_init_std * cp.zeros(hidden_unit1)
@@ -110,7 +110,7 @@ class MLP:
         self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
         self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
         # self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
-        self.B4 = weight_init_std * cp.random.randn(10, hidden_unit3)
+        self.B4 = 0.149 * cp.random.randn(10, hidden_unit3)
 
         # self.B2 = cp.random.normal(0, 0.01, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
         # self.B3 = cp.random.normal(0, 0.01, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
