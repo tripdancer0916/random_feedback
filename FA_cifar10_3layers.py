@@ -110,7 +110,7 @@ class MLP:
         self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
         self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
         # self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
-        self.B4 = 0.05 * cp.random.randn(10, hidden_unit3)
+        self.B4 = weight_init_std * cp.random.randn(10, hidden_unit3)
 
         # self.B2 = cp.random.normal(0, 0.01, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
         # self.B3 = cp.random.normal(0, 0.01, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
