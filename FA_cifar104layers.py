@@ -208,7 +208,7 @@ class MLP:
 
     def rms_prop(self, grad, h):
         alpha = 0.99
-        eta_0 = 0.01
+        eta_0 = 0.02
         epsilon = 1e-8
         quad_grad = cp.linalg.norm(grad)**2
         h = alpha * h + (1-alpha)*quad_grad
