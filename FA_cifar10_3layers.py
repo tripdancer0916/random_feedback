@@ -357,7 +357,7 @@ for i in range(300000):
               mlp.angle_W2, mlp.angle_W1)
         print(mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
 
-    f.close()
+f.close()
 """
 np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
