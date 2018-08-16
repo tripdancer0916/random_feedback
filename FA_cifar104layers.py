@@ -215,7 +215,7 @@ class MLP:
         else:
             return 0.015
 
-    def feedback_alignment(self, x, target, epoch):
+    def feedback_alignment(self, x, target, epoch, flag):
         h1 = cp.dot(x, self.W_f1) + self.b1
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2) + self.b2
@@ -249,30 +249,31 @@ class MLP:
         # print(delta_Wf1)
 
         # calculated by back propagation
-        deltabp5 = (output - target) / batch_size
-        # delta_bpWf5 = cp.dot(h4_.T, deltabp5)
-        # delta_bpb5 = cp.dot(cp.ones(batch_size), deltabp5)
-        # self.angle_W5 = self.angle(delta_Wf5, delta_bpWf5)
+        if flag:
+            deltabp5 = (output - target) / batch_size
+            # delta_bpWf5 = cp.dot(h4_.T, deltabp5)
+            # delta_bpb5 = cp.dot(cp.ones(batch_size), deltabp5)
+            # self.angle_W5 = self.angle(delta_Wf5, delta_bpWf5)
 
-        deltabp4 = tanh_grad(h4) * cp.dot(deltabp5, self.W_f5.T)
-        delta_bpWf4 = cp.dot(h3_.T, deltabp4)
-        # delta_bpb4 = cp.dot(cp.ones(batch_size), deltabp4)
-        self.angle_W4 = self.angle(delta_Wf4, delta_bpWf4)
+            deltabp4 = tanh_grad(h4) * cp.dot(deltabp5, self.W_f5.T)
+            delta_bpWf4 = cp.dot(h3_.T, deltabp4)
+            # delta_bpb4 = cp.dot(cp.ones(batch_size), deltabp4)
+            self.angle_W4 = self.angle(delta_Wf4, delta_bpWf4)
 
-        deltabp3 = tanh_grad(h3) * cp.dot(deltabp4, self.W_f4.T)
-        delta_bpWf3 = cp.dot(h2_.T, deltabp3)
-        # delta_bpb3 = cp.dot(cp.ones(batch_size), deltabp3)
-        self.angle_W3 = self.angle(delta_Wf3, delta_bpWf3)
+            deltabp3 = tanh_grad(h3) * cp.dot(deltabp4, self.W_f4.T)
+            delta_bpWf3 = cp.dot(h2_.T, deltabp3)
+            # delta_bpb3 = cp.dot(cp.ones(batch_size), deltabp3)
+            self.angle_W3 = self.angle(delta_Wf3, delta_bpWf3)
 
-        deltabp2 = tanh_grad(h2) * cp.dot(deltabp3, self.W_f3.T)
-        delta_bpWf2 = cp.dot(h1_.T, deltabp2)
-        # delta_bpb2 = cp.dot(cp.ones(batch_size), deltabp2)
-        self.angle_W2 = self.angle(delta_Wf2, delta_bpWf2)
+            deltabp2 = tanh_grad(h2) * cp.dot(deltabp3, self.W_f3.T)
+            delta_bpWf2 = cp.dot(h1_.T, deltabp2)
+            # delta_bpb2 = cp.dot(cp.ones(batch_size), deltabp2)
+            self.angle_W2 = self.angle(delta_Wf2, delta_bpWf2)
 
-        deltabp1 = tanh_grad(h1) * cp.dot(deltabp2, self.W_f2.T)
-        delta_bpWf1 = cp.dot(x.T, deltabp1)
-        # delta_bpb1 = cp.dot(cp.ones(batch_size), deltabp1)
-        self.angle_W1 = self.angle(delta_Wf1, delta_bpWf1)
+            deltabp1 = tanh_grad(h1) * cp.dot(deltabp2, self.W_f2.T)
+            delta_bpWf1 = cp.dot(x.T, deltabp1)
+            # delta_bpb1 = cp.dot(cp.ones(batch_size), deltabp1)
+            self.angle_W1 = self.angle(delta_Wf1, delta_bpWf1)
 
 
         alpha1 = self.learning_rate(epoch)
@@ -353,9 +354,11 @@ for i in range(300000):
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch, t_batch, i)
+    if i % iter_per_epoch != 0:
+        mlp.feedback_alignment(x_batch, t_batch, i, False)
 
     if i % iter_per_epoch == 0:
+        mlp.feedback_alignment(x_batch, t_batch, i, True)
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
