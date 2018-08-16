@@ -222,8 +222,14 @@ class MLP:
             return 0.12
         elif epoch <= 30000:
             return 0.1
-        else:
+        elif epoch <= 50000:
             return 0.08
+        elif epoch <= 100000:
+            return 0.04
+        elif epoch <= 200000:
+            return 0.02
+        else:
+            return 0.015
 
     def feedback_alignment(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1) + self.b1
@@ -270,7 +276,7 @@ class MLP:
         self.b4 -= alpha1 * delta_b4
         self.b5 -= alpha1 * delta_b5
 
-
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -322,7 +328,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Feedback alignment")
-for i in range(200000):
+for i in range(300000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -340,9 +346,13 @@ for i in range(200000):
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0815/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0815/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0815/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0815/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0815/FA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
-"""
+np.savetxt("./result/0816/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0816/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0816/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0816/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0816/FA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0816/BP_cifarb1.txt", cuda.to_cpu(mlp.b1))
+np.savetxt("./result/0816/BP_cifarb2.txt", cuda.to_cpu(mlp.b2))
+np.savetxt("./result/0816/BP_cifarb3.txt", cuda.to_cpu(mlp.b3))
+np.savetxt("./result/0816/BP_cifarb4.txt", cuda.to_cpu(mlp.b4))
+np.savetxt("./result/0816/BP_cifarb5.txt", cuda.to_cpu(mlp.b5))
