@@ -19,7 +19,7 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-os.makedirs('./result/0815/', exist_ok=True)
+os.makedirs('./result/0816/', exist_ok=True)
 
 # Load the MNIST dataset
 num_classes = 10
@@ -81,14 +81,14 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit1 = 4000
-hidden_unit2 = 3000
-hidden_unit3 = 2000
+hidden_unit1 = 1000
+hidden_unit2 = 1000
+hidden_unit3 = 1000
 hidden_unit4 = 1000
 
 
 class MLP:
-    def __init__(self, weight_init_std=0.01):
+    def __init__(self, weight_init_std=0.03):
         self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
@@ -101,11 +101,11 @@ class MLP:
         # self.W_f4 = weight_init_std * cp.zeros([hidden_unit3, hidden_unit4])
         # self.W_f5 = weight_init_std * cp.zeros([hidden_unit4, 10])
 
-        self.b1 = weight_init_std * cp.random.randn(hidden_unit1)
-        self.b2 = weight_init_std * cp.random.randn(hidden_unit2)
-        self.b3 = weight_init_std * cp.random.randn(hidden_unit3)
-        self.b4 = weight_init_std * cp.random.randn(hidden_unit4)
-        self.b5 = weight_init_std * cp.random.randn(10)
+        self.b1 = weight_init_std * cp.zeros(hidden_unit1)
+        self.b2 = weight_init_std * cp.zeros(hidden_unit2)
+        self.b3 = weight_init_std * cp.zeros(hidden_unit3)
+        self.b4 = weight_init_std * cp.zeros(hidden_unit4)
+        self.b5 = weight_init_std * cp.zeros(10)
 
         self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
         self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
@@ -153,7 +153,7 @@ class MLP:
         y = self.predict(x)
         return cross_entropy_error(y, t)
 
-    def gradient(self, x, target):
+    def gradient(self, x, target, epoch):
         h1 = cp.dot(x, self.W_f1) + self.b1
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2) + self.b2
@@ -185,25 +185,27 @@ class MLP:
         self.delta_Wf1 = cp.dot(x.T, delta1)
         self.delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         # print(delta_Wf1)
-        eta, self.h_W1 = self.rms_prop(self.delta_Wf1, self.h_W1)
+        # eta = self.learning_rate(epoch)
+        eta = 0.02
+        # eta, self.h_W1 = self.rms_prop(self.delta_Wf1, self.h_W1)
         self.W_f1 -= eta * self.delta_Wf1
-        eta, self.h_W2 = self.rms_prop(self.delta_Wf2, self.h_W2)
+        # eta, self.h_W2 = self.rms_prop(self.delta_Wf2, self.h_W2)
         self.W_f2 -= eta * self.delta_Wf2
-        eta, self.h_W3 = self.rms_prop(self.delta_Wf3, self.h_W3)
+        # eta, self.h_W3 = self.rms_prop(self.delta_Wf3, self.h_W3)
         self.W_f3 -= eta * self.delta_Wf3
-        eta, self.h_W4 = self.rms_prop(self.delta_Wf4, self.h_W4)
+        # eta, self.h_W4 = self.rms_prop(self.delta_Wf4, self.h_W4)
         self.W_f4 -= eta * self.delta_Wf4
-        eta, self.h_W5 = self.rms_prop(self.delta_Wf5, self.h_W5)
+        # eta, self.h_W5 = self.rms_prop(self.delta_Wf5, self.h_W5)
         self.W_f5 -= eta * self.delta_Wf5
-        eta, self.h_b1 = self.rms_prop(self.delta_b1, self.h_b1)
+        # eta, self.h_b1 = self.rms_prop(self.delta_b1, self.h_b1)
         self.b1 -= eta * self.delta_b1
-        eta, self.h_b2 = self.rms_prop(self.delta_b2, self.h_b2)
+        # eta, self.h_b2 = self.rms_prop(self.delta_b2, self.h_b2)
         self.b2 -= eta * self.delta_b2
-        eta, self.h_b3 = self.rms_prop(self.delta_b3, self.h_b3)
+        # eta, self.h_b3 = self.rms_prop(self.delta_b3, self.h_b3)
         self.b3 -= eta * self.delta_b3
-        eta, self.h_b4 = self.rms_prop(self.delta_b4, self.h_b4)
+        # eta, self.h_b4 = self.rms_prop(self.delta_b4, self.h_b4)
         self.b4 -= eta * self.delta_b4
-        eta, self.h_b5 = self.rms_prop(self.delta_b5, self.h_b5)
+        # eta, self.h_b5 = self.rms_prop(self.delta_b5, self.h_b5)
         self.b5 -= eta * self.delta_b5
 
     def rms_prop(self, grad, h):
@@ -279,11 +281,11 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(50000):
+for i in range(70000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    mlp.gradient(x_batch, t_batch)
+    mlp.gradient(x_batch, t_batch, i)
     # mlp.feedback_alignment(x_batch,t_batch)
 
     if i % iter_per_epoch == 0:
@@ -297,11 +299,17 @@ for i in range(50000):
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-np.savetxt("./result/0815/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0815/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0815/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0815/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0815/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0816/BP_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0816/BP_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0816/BP_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0816/BP_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0816/BP_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0816/BP_cifarb1.txt", cuda.to_cpu(mlp.b1))
+np.savetxt("./result/0816/BP_cifarb2.txt", cuda.to_cpu(mlp.b2))
+np.savetxt("./result/0816/BP_cifarb3.txt", cuda.to_cpu(mlp.b3))
+np.savetxt("./result/0816/BP_cifarb4.txt", cuda.to_cpu(mlp.b4))
+np.savetxt("./result/0816/BP_cifarb5.txt", cuda.to_cpu(mlp.b5))
+
 """
 
 mlp = MLP()
