@@ -112,22 +112,6 @@ class MLP:
         self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
         self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
 
-        # self.B2 = cp.random.normal(0, 0.01, hidden_unit1 * hidden_unit2).reshape(hidden_unit2, hidden_unit1)
-        # self.B3 = cp.random.normal(0, 0.01, hidden_unit2 * hidden_unit3).reshape(hidden_unit3, hidden_unit2)
-        # self.B4 = cp.random.normal(0, 0.01, hidden_unit3 * hidden_unit4).reshape(hidden_unit4, hidden_unit3)
-        # self.B5 = cp.random.normal(0, 0.01, hidden_unit4 * 10).reshape(10, hidden_unit4)
-
-        self.h_W1 = 0
-        self.h_W2 = 0
-        self.h_W3 = 0
-        self.h_W4 = 0
-        self.h_W5 = 0
-        self.h_b1 = 0
-        self.h_b2 = 0
-        self.h_b3 = 0
-        self.h_b4 = 0
-        self.h_b5 = 0
-
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1) + self.b1
         h1 = cp.tanh(h1)
@@ -264,6 +248,33 @@ class MLP:
         delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         # print(delta_Wf1)
 
+        # calculated by back propagation
+        deltabp5 = (output - target) / batch_size
+        delta_bpWf5 = cp.dot(h4_.T, deltabp5)
+        # delta_bpb5 = cp.dot(cp.ones(batch_size), deltabp5)
+        self.angle_W5 = self.angle(delta_Wf5, delta_bpWf5)
+
+        deltabp4 = tanh_grad(h4) * cp.dot(deltabp5, self.W_f5.T)
+        delta_bpWf4 = cp.dot(h3_.T, deltabp4)
+        # delta_bpb4 = cp.dot(cp.ones(batch_size), deltabp4)
+        self.angle_W4 = self.angle(delta_Wf4, delta_bpWf4)
+
+        deltabp3 = tanh_grad(h3) * cp.dot(deltabp4, self.W_f4.T)
+        delta_bpWf3 = cp.dot(h2_.T, deltabp3)
+        # delta_bpb3 = cp.dot(cp.ones(batch_size), deltabp3)
+        self.angle_W3 = self.angle(delta_Wf3, delta_bpWf3)
+
+        deltabp2 = tanh_grad(h2) * cp.dot(deltabp3, self.W_f3.T)
+        delta_bpWf2 = cp.dot(h1_.T, deltabp2)
+        # delta_bpb2 = cp.dot(cp.ones(batch_size), deltabp2)
+        self.angle_W2 = self.angle(delta_Wf2, delta_bpWf2)
+
+        deltabp1 = tanh_grad(h1) * cp.dot(deltabp2, self.W_f2.T)
+        delta_bpWf1 = cp.dot(x.T, deltabp1)
+        # delta_bpb1 = cp.dot(cp.ones(batch_size), deltabp1)
+        self.angle_W1 = self.angle(delta_Wf1, delta_bpWf1)
+
+
         alpha1 = self.learning_rate(epoch)
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
@@ -275,6 +286,14 @@ class MLP:
         self.b3 -= alpha1 * delta_b3
         self.b4 -= alpha1 * delta_b4
         self.b5 -= alpha1 * delta_b5
+
+    def angle(self, A, B):
+        fp = A * B
+        fp = cp.sum(fp)
+        norm_a = cp.sqrt(cp.sum(A * A))
+        norm_b = cp.sqrt(cp.sum(B * B))
+        cos_theta = fp / (norm_a * norm_b)
+        return cp.arccos(cos_theta)
 
 """
 mlp = MLP()
@@ -323,7 +342,8 @@ train_loss_list_FA = []
 test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
-
+f = open('./result/0816/angle_log.txt', 'a')
+print("angle_Wf5, angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", file=f)
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -345,7 +365,11 @@ for i in range(300000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+        print("angle_Wf5, angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", mlp.angle_W5, mlp.angle_W4, mlp.angle_W3,
+              mlp.angle_W3, mlp.angle_W2, mlp.angle_W1)
+        print(mlp.angle_W5, mlp.angle_W4, mlp.angle_W3, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
 
+"""
 np.savetxt("./result/0816/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
 np.savetxt("./result/0816/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
 np.savetxt("./result/0816/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
@@ -356,3 +380,4 @@ np.savetxt("./result/0816/FA_cifarb2.txt", cuda.to_cpu(mlp.b2))
 np.savetxt("./result/0816/FA_cifarb3.txt", cuda.to_cpu(mlp.b3))
 np.savetxt("./result/0816/FA_cifarb4.txt", cuda.to_cpu(mlp.b4))
 np.savetxt("./result/0816/FA_cifarb5.txt", cuda.to_cpu(mlp.b5))
+"""
