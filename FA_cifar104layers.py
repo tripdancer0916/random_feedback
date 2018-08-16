@@ -368,6 +368,7 @@ for i in range(300000):
         print("angle_Wf5, angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", mlp.angle_W5, mlp.angle_W4, mlp.angle_W3,
               mlp.angle_W3, mlp.angle_W2, mlp.angle_W1)
         print(mlp.angle_W5, mlp.angle_W4, mlp.angle_W3, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
+f.close()
 
 """
 np.savetxt("./result/0816/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
