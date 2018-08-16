@@ -276,7 +276,7 @@ class MLP:
         self.b4 -= alpha1 * delta_b4
         self.b5 -= alpha1 * delta_b5
 
-"""
+
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -287,7 +287,7 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Back propagation")
-for i in range(70000):
+for i in range(40000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -356,3 +356,4 @@ np.savetxt("./result/0816/BP_cifarb2.txt", cuda.to_cpu(mlp.b2))
 np.savetxt("./result/0816/BP_cifarb3.txt", cuda.to_cpu(mlp.b3))
 np.savetxt("./result/0816/BP_cifarb4.txt", cuda.to_cpu(mlp.b4))
 np.savetxt("./result/0816/BP_cifarb5.txt", cuda.to_cpu(mlp.b5))
+"""
