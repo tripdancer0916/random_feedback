@@ -369,8 +369,8 @@ for i in range(300000):
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
         print("angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", mlp.angle_W4, mlp.angle_W3,
-              mlp.angle_W3, mlp.angle_W2, mlp.angle_W1)
-        print(mlp.angle_W4, mlp.angle_W3, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
+              mlp.angle_W2, mlp.angle_W1)
+        print(mlp.angle_W4, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
 f.close()
 
 """
