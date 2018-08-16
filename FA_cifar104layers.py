@@ -250,9 +250,9 @@ class MLP:
 
         # calculated by back propagation
         deltabp5 = (output - target) / batch_size
-        delta_bpWf5 = cp.dot(h4_.T, deltabp5)
+        # delta_bpWf5 = cp.dot(h4_.T, deltabp5)
         # delta_bpb5 = cp.dot(cp.ones(batch_size), deltabp5)
-        self.angle_W5 = self.angle(delta_Wf5, delta_bpWf5)
+        # self.angle_W5 = self.angle(delta_Wf5, delta_bpWf5)
 
         deltabp4 = tanh_grad(h4) * cp.dot(deltabp5, self.W_f5.T)
         delta_bpWf4 = cp.dot(h3_.T, deltabp4)
@@ -343,7 +343,7 @@ test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
 f = open('./result/0816/angle_log.txt', 'a')
-print("angle_Wf5, angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", file=f)
+print("angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", file=f)
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -365,9 +365,9 @@ for i in range(300000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-        print("angle_Wf5, angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", mlp.angle_W5, mlp.angle_W4, mlp.angle_W3,
+        print("angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", mlp.angle_W4, mlp.angle_W3,
               mlp.angle_W3, mlp.angle_W2, mlp.angle_W1)
-        print(mlp.angle_W5, mlp.angle_W4, mlp.angle_W3, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
+        print(mlp.angle_W4, mlp.angle_W3, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
 f.close()
 
 """
