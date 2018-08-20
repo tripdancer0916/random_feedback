@@ -19,28 +19,21 @@ import matplotlib as mpl
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-os.makedirs('./result/0816/', exist_ok=True)
+os.makedirs('./result/0820/', exist_ok=True)
 
 # Load the MNIST dataset
 num_classes = 10
 
-(x_train, t_train), (x_test, t_test) = cifar10.load_data()
+# Load the MNIST dataset
+train, test = chainer.datasets.get_mnist()
+x_train, t_train = train._datasets
+x_test, t_test = test._datasets
 
-# x_train = x_train.reshape(())
-print('x_train shape:', x_train.shape)
-print(x_train.shape[0], 'train samples')
-print(x_test.shape[0], 'test samples')
+x_train = cp.asarray(x_train)
+x_test = cp.asarray(x_test)
 
-x_train = x_train.reshape(-1, 3072) / 255.
-x_test = x_test.reshape(-1, 3072) / 255.
-
-t_train = keras.utils.to_categorical(t_train, num_classes)
-t_test = keras.utils.to_categorical(t_test, num_classes)
-
-x_train = cp.array(x_train)
-x_test = cp.array(x_test)
-t_train = cp.array(t_train)
-t_test = cp.array(t_test)
+t_train = cp.identity(10)[t_train.astype(int)]
+t_test = cp.identity(10)[t_test.astype(int)]
 
 
 def cross_entropy_error(y, t):
@@ -89,7 +82,7 @@ hidden_unit4 = 1000
 
 class MLP:
     def __init__(self, weight_init_std=0.032):
-        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit1)
+        self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit1)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit1, hidden_unit2)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit3)
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit4)
@@ -274,8 +267,6 @@ class MLP:
             delta_bpWf1 = cp.dot(x.T, deltabp1)
             # delta_bpb1 = cp.dot(cp.ones(batch_size), deltabp1)
             self.angle_W1 = self.angle(delta_Wf1, delta_bpWf1)
-
-
         alpha1 = self.learning_rate(epoch)
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
@@ -343,13 +334,13 @@ train_loss_list_FA = []
 test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
-f = open('./result/0816/angle_log.txt', 'a')
+f = open('./result/0820/angle_log.txt', 'a')
 print("angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", file=f)
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("Feedback alignment")
-for i in range(300000):
+for i in range(10000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
@@ -373,15 +364,15 @@ for i in range(300000):
         print(mlp.angle_W4, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
 f.close()
 
-"""
-np.savetxt("./result/0816/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0816/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0816/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0816/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0816/FA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
-np.savetxt("./result/0816/FA_cifarb1.txt", cuda.to_cpu(mlp.b1))
-np.savetxt("./result/0816/FA_cifarb2.txt", cuda.to_cpu(mlp.b2))
-np.savetxt("./result/0816/FA_cifarb3.txt", cuda.to_cpu(mlp.b3))
-np.savetxt("./result/0816/FA_cifarb4.txt", cuda.to_cpu(mlp.b4))
-np.savetxt("./result/0816/FA_cifarb5.txt", cuda.to_cpu(mlp.b5))
-"""
+
+np.savetxt("./result/0820/FA_mnistW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0820/FA_mnistW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0820/FA_mnistW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0820/FA_mnistW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0820/FA_mnistW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0820/FA_mnistb1.txt", cuda.to_cpu(mlp.b1))
+np.savetxt("./result/0820/FA_mnistb2.txt", cuda.to_cpu(mlp.b2))
+np.savetxt("./result/0820/FA_mnistb3.txt", cuda.to_cpu(mlp.b3))
+np.savetxt("./result/0820/FA_mnistb4.txt", cuda.to_cpu(mlp.b4))
+np.savetxt("./result/0820/FA_mnistb5.txt", cuda.to_cpu(mlp.b5))
+
