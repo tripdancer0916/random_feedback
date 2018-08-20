@@ -239,8 +239,8 @@ class MLP:
             return 0.015
 
     def feedback_alignment(self, x, target, epoch, flag):
-        learning_rate = 0.001
-        decay_rate = 0.999
+        learning_rate = 0.01
+        decay_rate = 0.99
         eps = 0.0000000001
         reg = 0.01
         h1 = cp.dot(x, self.W_f1) + self.b1
