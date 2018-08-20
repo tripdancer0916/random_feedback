@@ -265,48 +265,55 @@ class MLP:
         delta_b5 = cp.dot(cp.ones(batch_size), delta5)
         self.cache_b5 = decay_rate * self.cache_b5 + (1 - decay_rate) * delta_b5 * delta_b5
         self.b5 -= learning_rate * delta_b5 / (cp.sqrt(self.cache_b5) + eps)
-        """
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         # delta_Wf4 = cp.dot(h3_.T, delta4) + reg * self.W_f4
         delta_Wf4 = cp.dot(h3_.T, delta4)
         self.cache_W4 = decay_rate * self.cache_W4 + (1 - decay_rate) * delta_Wf4 * delta_Wf4
-        self.W_f4 -= learning_rate * delta_Wf4 / (cp.sqrt(self.cache_W4) + eps)
+        # self.W_f4 -= learning_rate * delta_Wf4 / (cp.sqrt(self.cache_W4) + eps)
+        self.W_f4 -= learning_rate * delta_Wf4
         # delta_b4 = cp.dot(cp.ones(batch_size), delta4) + reg * self.b4
         delta_b4 = cp.dot(cp.ones(batch_size), delta4)
         self.cache_b4 = decay_rate * self.cache_b4 + (1 - decay_rate) * delta_b4 * delta_b4
-        self.b4 -= learning_rate * delta_b4 / (cp.sqrt(self.cache_b4) + eps)
+        # self.b4 -= learning_rate * delta_b4 / (cp.sqrt(self.cache_b4) + eps)
+        self.b4 -= learning_rate * delta_b4
 
         delta3 = tanh_grad(h3) * cp.dot(delta4, self.B4)
         # delta_Wf3 = cp.dot(h2_.T, delta3) + reg * self.W_f3
         delta_Wf3 = cp.dot(h2_.T, delta3)
         self.cache_W3 = decay_rate * self.cache_W3 + (1 - decay_rate) * delta_Wf3 * delta_Wf3
-        self.W_f3 -= learning_rate * delta_Wf3 / (cp.sqrt(self.cache_W3) + eps)
+        # self.W_f3 -= learning_rate * delta_Wf3 / (cp.sqrt(self.cache_W3) + eps)
+        self.W_f3 -= learning_rate * delta_Wf3
         # delta_b3 = cp.dot(cp.ones(batch_size), delta3) + reg * self.b3
         delta_b3 = cp.dot(cp.ones(batch_size), delta3)
         self.cache_b3 = decay_rate * self.cache_b3 + (1 - decay_rate) * delta_b3 * delta_b3
-        self.b3 -= learning_rate * delta_b3 / (cp.sqrt(self.cache_b3) + eps)
+        # self.b3 -= learning_rate * delta_b3 / (cp.sqrt(self.cache_b3) + eps)
+        self.b3 -= learning_rate * delta_b3
 
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.B3)
         # delta_Wf2 = cp.dot(h1_.T, delta2) + reg * self.W_f2
         delta_Wf2 = cp.dot(h1_.T, delta2)
         self.cache_W2 = decay_rate * self.cache_W2 + (1 - decay_rate) * delta_Wf2 * delta_Wf2
-        self.W_f2 -= learning_rate * delta_Wf2 / (cp.sqrt(self.cache_W2) + eps)
+        # self.W_f2 -= learning_rate * delta_Wf2 / (cp.sqrt(self.cache_W2) + eps)
+        self.W_f2 -= learning_rate * delta_Wf2
         # delta_b2 = cp.dot(cp.ones(batch_size), delta2) + reg * self.b2
         delta_b2 = cp.dot(cp.ones(batch_size), delta2)
         self.cache_b2 = decay_rate * self.cache_b2 + (1 - decay_rate) * delta_b2 * delta_b2
-        self.b2 -= learning_rate * delta_b2 / (cp.sqrt(self.cache_b2) + eps)
+        # self.b2 -= learning_rate * delta_b2 / (cp.sqrt(self.cache_b2) + eps)
+        self.b2 -= learning_rate * delta_b2
 
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.B2)
         # delta_Wf1 = cp.dot(x.T, delta1) + reg * self.W_f1
         delta_Wf1 = cp.dot(x.T, delta1)
         self.cache_W1 = decay_rate * self.cache_W1 + (1 - decay_rate) * delta_Wf1 * delta_Wf1
-        self.W_f1 -= learning_rate * delta_Wf1 / (cp.sqrt(self.cache_W1) + eps)
+        # self.W_f1 -= learning_rate * delta_Wf1 / (cp.sqrt(self.cache_W1) + eps)
+        self.W_f1 -= learning_rate * delta_Wf1
         # delta_b1 = cp.dot(cp.ones(batch_size), delta1) + reg * self.b1
         delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         self.cache_b1 = decay_rate * self.cache_b1 + (1 - decay_rate) * delta_b1 * delta_b1
-        self.b1 -= learning_rate * delta_b1 / (cp.sqrt(self.cache_b1) + eps)
-        """
+        # self.b1 -= learning_rate * delta_b1 / (cp.sqrt(self.cache_b1) + eps)
+        self.b1 -= learning_rate * delta_b1
+
 
         """
         alpha1 = self.learning_rate(epoch)
