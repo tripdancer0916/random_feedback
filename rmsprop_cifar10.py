@@ -265,6 +265,7 @@ class MLP:
         delta_b5 = cp.dot(cp.ones(batch_size), delta5)
         self.cache_b5 = decay_rate * self.cache_b5 + (1 - decay_rate) * delta_b5 * delta_b5
         self.b5 -= learning_rate * delta_b5 / (cp.sqrt(self.cache_b5) + eps)
+        """
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.B5)
         # delta_Wf4 = cp.dot(h3_.T, delta4) + reg * self.W_f4
@@ -305,6 +306,7 @@ class MLP:
         delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         self.cache_b1 = decay_rate * self.cache_b1 + (1 - decay_rate) * delta_b1 * delta_b1
         self.b1 -= learning_rate * delta_b1 / (cp.sqrt(self.cache_b1) + eps)
+        """
 
         """
         alpha1 = self.learning_rate(epoch)
