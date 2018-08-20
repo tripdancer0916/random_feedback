@@ -102,7 +102,7 @@ class MLP:
         self.b4 = weight_init_std * cp.zeros(hidden_unit4)
         self.b5 = weight_init_std * cp.zeros(hidden_unit1)
         self.b6 = weight_init_std * cp.zeros(hidden_unit1)
-        self.b7 = weight_init_std * cp.zeros(hidden_unit1)
+        self.b7 = weight_init_std * cp.zeros(10)
 
         self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
         self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
