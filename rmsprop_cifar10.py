@@ -259,7 +259,8 @@ class MLP:
         delta_Wf5 = cp.dot(h4_.T, delta5)
         self.cache_W5 = decay_rate * self.cache_W5 + (1 - decay_rate) * delta_Wf5 * delta_Wf5
         self.W_f5 -= learning_rate * delta_Wf5 / (cp.sqrt(self.cache_W5) + eps)
-        print(learning_rate * delta_Wf5 / (cp.sqrt(self.cache_W5) + eps))
+        # print(learning_rate * delta_Wf5 / (cp.sqrt(self.cache_W5) + eps))
+        print(0.12 * delta_Wf5)
         # delta_b5 = cp.dot(cp.ones(batch_size), delta5) + reg * self.b5
         delta_b5 = cp.dot(cp.ones(batch_size), delta5)
         self.cache_b5 = decay_rate * self.cache_b5 + (1 - decay_rate) * delta_b5 * delta_b5
