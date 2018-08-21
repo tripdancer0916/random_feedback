@@ -105,16 +105,16 @@ def softmax(x):
     return cp.exp(x) / cp.sum(cp.exp(x))
 hidden_unit = 1000
 
-BP_W1 = np.loadtxt("./0816/BP_cifarW1.txt")
-BP_W2 = np.loadtxt("./0816/BP_cifarW2.txt")
-BP_W3 = np.loadtxt("./0816/BP_cifarW3.txt")
-BP_W4 = np.loadtxt("./0816/BP_cifarW4.txt")
-BP_W5 = np.loadtxt("./0816/BP_cifarW5.txt")
-BP_b1 = np.loadtxt("./0816/BP_cifarb1.txt")
-BP_b2 = np.loadtxt("./0816/BP_cifarb2.txt")
-BP_b3 = np.loadtxt("./0816/BP_cifarb3.txt")
-BP_b4 = np.loadtxt("./0816/BP_cifarb4.txt")
-BP_b5 = np.loadtxt("./0816/BP_cifarb5.txt")
+BP_W1 = cp.loadtxt("./0816/BP_cifarW1.txt")
+BP_W2 = cp.loadtxt("./0816/BP_cifarW2.txt")
+BP_W3 = cp.loadtxt("./0816/BP_cifarW3.txt")
+BP_W4 = cp.loadtxt("./0816/BP_cifarW4.txt")
+BP_W5 = cp.loadtxt("./0816/BP_cifarW5.txt")
+BP_b1 = cp.loadtxt("./0816/BP_cifarb1.txt")
+BP_b2 = cp.loadtxt("./0816/BP_cifarb2.txt")
+BP_b3 = cp.loadtxt("./0816/BP_cifarb3.txt")
+BP_b4 = cp.loadtxt("./0816/BP_cifarb4.txt")
+BP_b5 = cp.loadtxt("./0816/BP_cifarb5.txt")
 
 train_size = x_train.shape[0]
 batch_size = 100
