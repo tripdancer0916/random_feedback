@@ -107,9 +107,9 @@ class MLP:
         self.b4 = weight_init_std * cp.zeros(hidden_unit4)
         self.b5 = weight_init_std * cp.zeros(10)
 
-        self.B2 = weight_init_std * cp.random.randn(hidden_unit2, hidden_unit1)
-        self.B3 = weight_init_std * cp.random.randn(hidden_unit3, hidden_unit2)
-        self.B4 = weight_init_std * cp.random.randn(hidden_unit4, hidden_unit3)
+        self.B2 = weight_init_std * cp.random.randn(10, hidden_unit1)
+        self.B3 = weight_init_std * cp.random.randn(10, hidden_unit2)
+        self.B4 = weight_init_std * cp.random.randn(10, hidden_unit3)
         self.B5 = weight_init_std * cp.random.randn(10, hidden_unit4)
 
     def predict(self, x):
@@ -196,8 +196,8 @@ class MLP:
         alpha = 0.99
         eta_0 = 0.02
         epsilon = 1e-8
-        quad_grad = cp.linalg.norm(grad)**2
-        h = alpha * h + (1-alpha)*quad_grad
+        quad_grad = cp.linalg.norm(grad) ** 2
+        h = alpha * h + (1 - alpha) * quad_grad
         eta = eta_0 / (cp.sqrt(h) + epsilon)
         return eta, h
 
@@ -235,15 +235,15 @@ class MLP:
         delta_Wf4 = cp.dot(h3_.T, delta4)
         delta_b4 = cp.dot(cp.ones(batch_size), delta4)
 
-        delta3 = tanh_grad(h3) * cp.dot(delta4, self.B4)
+        delta3 = tanh_grad(h3) * cp.dot(delta5, self.B4)
         delta_Wf3 = cp.dot(h2_.T, delta3)
         delta_b3 = cp.dot(cp.ones(batch_size), delta3)
 
-        delta2 = tanh_grad(h2) * cp.dot(delta3, self.B3)
+        delta2 = tanh_grad(h2) * cp.dot(delta5, self.B3)
         delta_Wf2 = cp.dot(h1_.T, delta2)
         delta_b2 = cp.dot(cp.ones(batch_size), delta2)
 
-        delta1 = tanh_grad(h1) * cp.dot(delta2, self.B2)
+        delta1 = tanh_grad(h1) * cp.dot(delta5, self.B2)
         delta_Wf1 = cp.dot(x.T, delta1)
         delta_b1 = cp.dot(cp.ones(batch_size), delta1)
         # print(delta_Wf1)
@@ -275,7 +275,6 @@ class MLP:
             # delta_bpb1 = cp.dot(cp.ones(batch_size), deltabp1)
             self.angle_W1 = self.angle(delta_Wf1, delta_bpWf1)
 
-
         alpha1 = self.learning_rate(epoch)
         self.W_f1 -= alpha1 * delta_Wf1
         self.W_f2 -= alpha1 * delta_Wf2
@@ -295,6 +294,7 @@ class MLP:
         norm_b = cp.sqrt(cp.sum(B * B))
         cos_theta = fp / (norm_a * norm_b)
         return cp.arccos(cos_theta)
+
 
 """
 mlp = MLP()
@@ -374,14 +374,13 @@ for i in range(500000):
 # f.close()
 
 
-np.savetxt("./result/0820/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
-np.savetxt("./result/0820/FA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
-np.savetxt("./result/0820/FA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
-np.savetxt("./result/0820/FA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
-np.savetxt("./result/0820/FA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
-np.savetxt("./result/0820/FA_cifarb1.txt", cuda.to_cpu(mlp.b1))
-np.savetxt("./result/0820/FA_cifarb2.txt", cuda.to_cpu(mlp.b2))
-np.savetxt("./result/0820/FA_cifarb3.txt", cuda.to_cpu(mlp.b3))
-np.savetxt("./result/0820/FA_cifarb4.txt", cuda.to_cpu(mlp.b4))
-np.savetxt("./result/0820/FA_cifarb5.txt", cuda.to_cpu(mlp.b5))
-
+np.savetxt("./result/0821/DFA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
+np.savetxt("./result/0821/DFA_cifarW2.txt", cuda.to_cpu(mlp.W_f2))
+np.savetxt("./result/0821/DFA_cifarW3.txt", cuda.to_cpu(mlp.W_f3))
+np.savetxt("./result/0821/DFA_cifarW4.txt", cuda.to_cpu(mlp.W_f4))
+np.savetxt("./result/0821/DFA_cifarW5.txt", cuda.to_cpu(mlp.W_f5))
+np.savetxt("./result/0821/DFA_cifarb1.txt", cuda.to_cpu(mlp.b1))
+np.savetxt("./result/0821/DFA_cifarb2.txt", cuda.to_cpu(mlp.b2))
+np.savetxt("./result/0821/DFA_cifarb3.txt", cuda.to_cpu(mlp.b3))
+np.savetxt("./result/0821/DFA_cifarb4.txt", cuda.to_cpu(mlp.b4))
+np.savetxt("./result/0821/DFA_cifarb5.txt", cuda.to_cpu(mlp.b5))
