@@ -286,10 +286,10 @@ class MLP:
         self.b3 -= alpha1 * delta_b3
         self.b4 -= alpha1 * delta_b4
         self.b5 -= alpha1 * delta_b5
-        self.B2 -= alpha1 * delta_Wf2
-        self.B3 -= alpha1 * delta_Wf3
-        self.B4 -= alpha1 * delta_Wf4
-        self.B5 -= alpha1 * delta_Wf5
+        self.B2 -= alpha1 * delta_Wf2.T
+        self.B3 -= alpha1 * delta_Wf3.T
+        self.B4 -= alpha1 * delta_Wf4.T
+        self.B5 -= alpha1 * delta_Wf5.T
 
     def angle(self, A, B):
         fp = A * B
