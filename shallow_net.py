@@ -65,7 +65,7 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 100
+hidden_unit = 50
 
 
 class MLP:
