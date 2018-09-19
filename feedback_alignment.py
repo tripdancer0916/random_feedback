@@ -179,7 +179,7 @@ for i in range(100000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-
+"""
 plt.plot(train_acc_list, label="BP train acc", linestyle="dashed", color="blue")
 plt.plot(test_acc_list, label="BP test acc", color="blue")
 # plt.title("BP for MNIST")
@@ -208,3 +208,4 @@ plt.title("BP/RFA for MNIST relu")
 plt.legend()
 
 plt.savefig("./result/BP-RFA_for_mnist_20start.png")
+"""

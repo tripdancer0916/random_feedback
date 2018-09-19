@@ -168,38 +168,18 @@ class MLP:
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         self.delta_Wf1 = cp.dot(x.T, delta1)
         self.delta_b1 = cp.dot(cp.ones(batch_size), delta1)
-        # print(delta_Wf1)
-        # eta = self.learning_rate(epoch)
-        eta = 0.02
-        # eta, self.h_W1 = self.rms_prop(self.delta_Wf1, self.h_W1)
-        self.W_f1 -= eta * self.delta_Wf1
-        # eta, self.h_W2 = self.rms_prop(self.delta_Wf2, self.h_W2)
-        self.W_f2 -= eta * self.delta_Wf2
-        # eta, self.h_W3 = self.rms_prop(self.delta_Wf3, self.h_W3)
-        self.W_f3 -= eta * self.delta_Wf3
-        # eta, self.h_W4 = self.rms_prop(self.delta_Wf4, self.h_W4)
-        self.W_f4 -= eta * self.delta_Wf4
-        # eta, self.h_W5 = self.rms_prop(self.delta_Wf5, self.h_W5)
-        self.W_f5 -= eta * self.delta_Wf5
-        # eta, self.h_b1 = self.rms_prop(self.delta_b1, self.h_b1)
-        self.b1 -= eta * self.delta_b1
-        # eta, self.h_b2 = self.rms_prop(self.delta_b2, self.h_b2)
-        self.b2 -= eta * self.delta_b2
-        # eta, self.h_b3 = self.rms_prop(self.delta_b3, self.h_b3)
-        self.b3 -= eta * self.delta_b3
-        # eta, self.h_b4 = self.rms_prop(self.delta_b4, self.h_b4)
-        self.b4 -= eta * self.delta_b4
-        # eta, self.h_b5 = self.rms_prop(self.delta_b5, self.h_b5)
-        self.b5 -= eta * self.delta_b5
 
-    def rms_prop(self, grad, h):
-        alpha = 0.99
-        eta_0 = 0.02
-        epsilon = 1e-8
-        quad_grad = cp.linalg.norm(grad)**2
-        h = alpha * h + (1-alpha)*quad_grad
-        eta = eta_0 / (cp.sqrt(h) + epsilon)
-        return eta, h
+        eta = 0.02
+        self.W_f1 -= eta * self.delta_Wf1
+        self.W_f2 -= eta * self.delta_Wf2
+        self.W_f3 -= eta * self.delta_Wf3
+        self.W_f4 -= eta * self.delta_Wf4
+        self.W_f5 -= eta * self.delta_Wf5
+        self.b1 -= eta * self.delta_b1
+        self.b2 -= eta * self.delta_b2
+        self.b3 -= eta * self.delta_b3
+        self.b4 -= eta * self.delta_b4
+        self.b5 -= eta * self.delta_b5
 
     def learning_rate(self, epoch):
         if epoch <= 20000:
@@ -343,8 +323,7 @@ train_loss_list_FA = []
 test_loss_list_FA = []
 train_acc_list_FA = []
 test_acc_list_FA = []
-# f = open('./result/0816/angle_log.txt', 'a')
-# print("angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", file=f)
+
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
@@ -353,7 +332,6 @@ for i in range(500000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    # mlp.gradient(x_batch, t_batch)
     if i % iter_per_epoch != 0:
         mlp.feedback_alignment(x_batch, t_batch, i, False)
 
@@ -368,10 +346,7 @@ for i in range(500000):
         train_acc_list_FA.append(cuda.to_cpu(train_acc))
         test_acc_list_FA.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
-        # print("angle_Wf4, angle_Wf3, angle_Wf2, angle_Wf1", mlp.angle_W4, mlp.angle_W3,
-        #      mlp.angle_W2, mlp.angle_W1)
-        # print(mlp.angle_W4, mlp.angle_W3, mlp.angle_W2, mlp.angle_W1, file=f)
-# f.close()
+
 
 
 np.savetxt("./result/0820/FA_cifarW1.txt", cuda.to_cpu(mlp.W_f1))
