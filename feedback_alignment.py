@@ -124,7 +124,7 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
-
+"""
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -151,6 +151,7 @@ for i in range(100000):
         train_acc_list.append(cuda.to_cpu(train_acc))
         test_acc_list.append(cuda.to_cpu(test_acc))
         print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
+"""
 
 
 mlp = MLP()
