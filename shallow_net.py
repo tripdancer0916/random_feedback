@@ -65,27 +65,19 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 1000
+hidden_unit = 100
 
 
 class MLP:
     def __init__(self, weight_init_std=0.01):
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, 10)
-
-        self.fB3 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.fB2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-
-        self.dB = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 10)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
         h1 = cp.tanh(h1)
         h2 = cp.dot(h1, self.W_f2)
-        h2 = cp.tanh(h2)
-        h3 = cp.dot(h2, self.W_f3)
-        output = softmax(h3)
+        output = softmax(h2)
         return output
 
     def accuracy(self, x, t):
@@ -106,7 +98,8 @@ class MLP:
         h2 = cp.dot(h1_, self.W_f2)
         h2_ = cp.tanh(h2)
         h3 = cp.dot(h2_, self.W_f3)
-        output = softmax(h3)
+        h3_ = cp.tanh(h3)
+        output = softmax(h3_)
 
         delta3 = (output - target) / 100
         delta_Wf3 = cp.dot(h2_.T, delta3)
@@ -128,7 +121,8 @@ class MLP:
         h2 = cp.dot(h1_, self.W_f2)
         h2_ = cp.tanh(h2)
         h3 = cp.dot(h2_, self.W_f3)
-        output = softmax(h3)
+        h3_ = cp.tanh(h3)
+        output = softmax(h3_)
 
         delta3 = (output - target) / 100
         delta_Wf3 = cp.dot(h2_.T, delta3)
