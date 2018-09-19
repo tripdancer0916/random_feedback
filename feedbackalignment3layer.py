@@ -1,8 +1,10 @@
 # coding:utf-8
-import matplotlib as mpl
 
-mpl.use('Agg')
-import numpy as cp
+import numpy as np
+import os
+import keras
+from keras import backend as K
+from keras.datasets import cifar10
 import cupy as cp
 import chainer
 from chainer.backends import cuda
@@ -13,18 +15,30 @@ import chainer.functions as F
 import chainer.links as L
 from chainer.training import extensions
 import PIL
+import matplotlib as mpl
+
+mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-# Load the MNIST dataset
-train, test = chainer.datasets.get_mnist()
-x_train, t_train = train._datasets
-x_test, t_test = test._datasets
+num_classes = 10
 
-x_train = cp.asarray(x_train)
-x_test = cp.asarray(x_test)
+(x_train, t_train), (x_test, t_test) = cifar10.load_data()
 
-t_train = cp.identity(10)[t_train.astype(int)]
-t_test = cp.identity(10)[t_test.astype(int)]
+# x_train = x_train.reshape(())
+print('x_train shape:', x_train.shape)
+print(x_train.shape[0], 'train samples')
+print(x_test.shape[0], 'test samples')
+
+x_train = x_train.reshape(-1, 3072)/255.0
+x_test = x_test.reshape(-1, 3072)/255.0
+
+t_train = keras.utils.to_categorical(t_train, num_classes)
+t_test = keras.utils.to_categorical(t_test, num_classes)
+
+x_train = cp.array(x_train)
+x_test = cp.array(x_test)
+t_train = cp.array(t_train)
+t_test = cp.array(t_test)
 
 
 def cross_entropy_error(y, t):
@@ -49,10 +63,6 @@ def relu_grad(x):
     return x
 
 
-def tanh_grad(x):
-    return 1 - (cp.tanh(x) ** 2)
-
-
 def softmax(x):
     if x.ndim == 2:
         x = x.T
@@ -65,25 +75,24 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 1000
+hidden_unit = 5000
 
 
 class MLP:
     def __init__(self, weight_init_std=0.01):
-        self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
+        self.W_f1 = weight_init_std * cp.random.randn(3072, hidden_unit)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, 10)
-
-        self.fB3 = weight_init_std * cp.random.randn(10, hidden_unit)
-        self.fB2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-
-        self.dB = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B1 = weight_init_std * cp.random.randn(10, hidden_unit)
+        self.B2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
-        h1 = cp.tanh(h1)
+        # for i in range(h1[0]):
+        #     delta_h1[i] = cp.dot(x, self.W_f1)
+        h1 = relu(h1)
         h2 = cp.dot(h1, self.W_f2)
-        h2 = cp.tanh(h2)
+        h2 = relu(h2)
         h3 = cp.dot(h2, self.W_f3)
         output = softmax(h3)
         return output
@@ -102,47 +111,52 @@ class MLP:
 
     def gradient(self, x, target):
         h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
+        h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.dot(h2, self.W_f3)
-        h3 = cp.tanh(h2_)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
         output = softmax(h3)
 
-        delta3 = (output - target) / 100
+        delta3 = (output - target) / batch_size
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta3, self.W_f3.T)
-        delta_Wf2 = cp.dot(h1_.T, tanh_grad(h2) * delta2)
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.W_f3.T)
 
-        delta1 = cp.dot(delta2, self.W_f2.T)
-        delta_Wf1 = cp.dot(x.T, tanh_grad(h1) * delta1)
+        delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.1
+        alpha = 0.05
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
 
-    def feedback_alignment(self, x, target):
+    def feedback_alignment(self, x, target, gamma):
         h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
+        h1_ = relu(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.dot(h2, self.W_f3)
-        h3 = cp.tanh(h2_)
+        h2_ = relu(h2)
+        h3 = cp.dot(h2_, self.W_f3)
         output = softmax(h3)
 
-        delta3 = (output - target) / 100
+        delta3 = (output - target) / batch_size
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
-        delta2 = cp.dot(delta3, self.fB3.T)
-        delta_Wf2 = cp.dot(h1_.T, tanh_grad(h2) * delta2)
+        delta2 = relu_grad(h2) * cp.dot(delta3, self.B1)
 
-        delta1 = cp.dot(delta2, self.fB2.T)
-        delta_Wf1 = cp.dot(x.T, tanh_grad(h1) * delta1)
+        delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta1 = relu_grad(h1) * cp.dot(delta2, self.B2)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.1
+        delta_B2 = gamma*delta_Wf2.T
+        delta_B1 = gamma*delta_Wf3.T
+
+        alpha = 0.05
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
+        self.B1 -= alpha * delta_B1
+        self.B2 -= alpha * delta_B2
 
 
 mlp = MLP()
@@ -150,26 +164,27 @@ train_loss_list = []
 test_loss_list = []
 train_acc_list = []
 test_acc_list = []
+gamma = 0
+print("gamma=", str(gamma))
 
 train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
-print("epoch", "\t", "train_acc", "\t", "test_acc", "train_loss", "test_loss")
-for i in range(10000):
+for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch, t_batch)
+    mlp.feedback_alignment(x_batch, t_batch, gamma)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
         test_acc = mlp.accuracy(x_test, t_test)
         train_loss = mlp.loss(x_train, t_train)
         test_loss = mlp.loss(x_test, t_test)
-        train_loss_list.append(train_loss)
-        test_loss_list.append(test_loss)
-        train_acc_list.append(train_acc)
-        test_acc_list.append(test_acc)
+        train_loss_list.append(cuda.to_cpu(train_loss))
+        test_loss_list.append(cuda.to_cpu(test_loss))
+        train_acc_list.append(cuda.to_cpu(train_acc))
+        test_acc_list.append(cuda.to_cpu(test_acc))
+        print("epoch:", int(i / iter_per_epoch), " train acc, test acc | " + str(train_acc) + ", " + str(test_acc))
 
-        print(int(i / iter_per_epoch), "\t", train_acc, "\t", test_acc, "\t", train_loss, "\t", test_loss)
