@@ -65,18 +65,18 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 50
+hidden_unit = 300
 
 
 class MLP:
     def __init__(self, weight_init_std=0.01):
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 1000)
-        self.W_f3 = weight_init_std * cp.random.randn(1000, 10)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, 300)
+        self.W_f3 = weight_init_std * cp.random.randn(300, 10)
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
-        h1 = cp.tanh(h1)
+        # h1 = cp.tanh(h1)
         h2 = cp.dot(h1, self.W_f2)
         h2 = cp.tanh(h2)
         h3 = cp.dot(h2, self.W_f3)
@@ -97,8 +97,8 @@ class MLP:
 
     def gradient(self, x, target):
         h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
-        h2 = cp.dot(h1_, self.W_f2)
+        # h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1, self.W_f2)
         h2_ = cp.tanh(h2)
         h3 = cp.dot(h2_, self.W_f3)
         output = softmax(h3)
@@ -107,7 +107,7 @@ class MLP:
         delta_Wf3 = cp.dot(h2_.T, delta3)
 
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
-        delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta_Wf2 = cp.dot(h1.T, delta2)
 
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
