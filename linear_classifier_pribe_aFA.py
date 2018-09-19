@@ -72,6 +72,7 @@ def softmax(x):
     x = x - cp.max(x)
     return cp.exp(x) / cp.sum(cp.exp(x))
 
+
 def cross_entropy_error(y, t):
     if y.ndim == 1:
         t = t.reshape(1, t.size)
@@ -103,6 +104,8 @@ def softmax(x):
 
     x = x - cp.max(x)
     return cp.exp(x) / cp.sum(cp.exp(x))
+
+
 hidden_unit = 1000
 
 BP_W1 = np.loadtxt("./0822/FA_cifarW1.txt")
@@ -288,7 +291,6 @@ for i in range(100000):
         train_accuracy = cp.sum(y == t) / 50000
         print(int(i / 100), accuracy, train_accuracy)
 
-
 train_size = x_train.shape[0]
 batch_size = 100
 # iter_per_epoch = 100
@@ -342,4 +344,3 @@ for i in range(100000):
         t = cp.argmax(t_train, axis=1)
         train_accuracy = cp.sum(y == t) / 50000
         print(int(i / 100), accuracy, train_accuracy)
-
