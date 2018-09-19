@@ -104,9 +104,10 @@ class MLP:
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.dot(h2, self.W_f3)
-        h3 = cp.tanh(h2_)
-        output = softmax(h3)
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        output = softmax(h3_)
 
         delta3 = (output - target) / 100
         delta_Wf3 = cp.dot(h2_.T, delta3)
@@ -126,9 +127,10 @@ class MLP:
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.dot(h2, self.W_f3)
-        h3 = cp.tanh(h2_)
-        output = softmax(h3)
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        output = softmax(h3_)
 
         delta3 = (output - target) / 100
         delta_Wf3 = cp.dot(h2_.T, delta3)
