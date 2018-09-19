@@ -108,28 +108,6 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
-    def feedback_alignment(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        output = softmax(h2)
-
-        delta2 = (output - target) / 100
-        delta_Wf2 = cp.dot(h1_.T, delta2)
-
-        delta2 = tanh_grad(h1) * cp.dot(delta2, self.fB3)
-        delta_Wf2 = cp.dot(h1_.T, delta2)
-
-        # delta1_fa = tanh_grad(h1) * cp.dot(delta2, self.fB2)
-        delta1_direct = tanh_grad(h1) * cp.dot(delta3, self.dB)
-        # delta1 = (delta1_fa + delta1_direct)/2
-        delta_Wf1 = cp.dot(x.T, delta1_direct)
-
-        alpha = 0.1
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
-
 
 mlp = MLP()
 train_loss_list = []
