@@ -109,7 +109,7 @@ class MLP:
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
         delta_Wf2 = cp.dot(h1.T, delta2)
 
-        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta1 = cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
