@@ -97,23 +97,18 @@ class MLP:
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
         h2_ = cp.tanh(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = cp.tanh(h3)
-        output = softmax(h3_)
+        output = softmax(h2_)
 
-        delta3 = (output - target) / 100
-        delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta2 = (output - target) / 100
+        delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta2 = cp.dot(delta3, self.W_f3.T)
-        delta_Wf2 = cp.dot(h1_.T, tanh_grad(h2) * delta2)
-
-        delta1 = cp.dot(delta2, self.W_f2.T)
-        delta_Wf1 = cp.dot(x.T, tanh_grad(h1) * delta1)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
+
 
     def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
@@ -151,12 +146,12 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 100
 print("epoch", "\t", "train_acc", "\t", "test_acc", "train_loss", "test_loss")
-for i in range(10000):
+for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
-    # mlp.gradient(x_batch, t_batch)
-    mlp.feedback_alignment(x_batch, t_batch)
+    mlp.gradient(x_batch, t_batch)
+    # mlp.feedback_alignment(x_batch, t_batch)
 
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_train, t_train)
