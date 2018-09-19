@@ -96,8 +96,7 @@ class MLP:
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.tanh(h2)
-        output = softmax(h2_)
+        output = softmax(h2)
 
         delta2 = (output - target) / 100
         delta_Wf2 = cp.dot(h1_.T, delta2)
@@ -109,20 +108,16 @@ class MLP:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
-
     def feedback_alignment(self, x, target):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.tanh(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = cp.tanh(h3)
-        output = softmax(h3_)
+        output = softmax(h2)
 
-        delta3 = (output - target) / 100
-        delta_Wf3 = cp.dot(h2_.T, delta3)
+        delta2 = (output - target) / 100
+        delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta2 = tanh_grad(h2) * cp.dot(delta3, self.fB3)
+        delta2 = tanh_grad(h1) * cp.dot(delta2, self.fB3)
         delta_Wf2 = cp.dot(h1_.T, delta2)
 
         # delta1_fa = tanh_grad(h1) * cp.dot(delta2, self.fB2)
