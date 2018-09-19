@@ -75,7 +75,7 @@ class MLP:
 
     def predict(self, x):
         h1 = cp.dot(x, self.W_f1)
-        h1 = cp.tanh(h1)
+        # h1 = cp.tanh(h1)
         h2 = cp.dot(h1, self.W_f2)
         output = softmax(h2)
         return output
@@ -94,14 +94,14 @@ class MLP:
 
     def gradient(self, x, target):
         h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
-        h2 = cp.dot(h1_, self.W_f2)
+        # h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1, self.W_f2)
         output = softmax(h2)
 
         delta2 = (output - target) / 100
-        delta_Wf2 = cp.dot(h1_.T, delta2)
+        delta_Wf2 = cp.dot(h1.T, delta2)
 
-        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta1 = cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
