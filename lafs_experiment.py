@@ -218,16 +218,16 @@ batch_size = 100
 
 iter_per_epoch = 100
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-batch_mask = cp.random.choice(train_size, 50000, replace=False)
+batch_mask = cp.random.choice(train_size, 50000, replace=True)
 x_batch_ = x_train[batch_mask]
 t_batch_ = t_train[batch_mask]
 for i in range(100000):
-    batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
+    batch_mask_ = cp.random.choice(train_size, batch_size, replace=True)
     x_batch = x_batch_[batch_mask_]
     t_batch = t_batch_[batch_mask_]
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     if i % iter_per_epoch == 0:
-        train_acc = mlp.accuracy(x_batch, t_batch)
+        train_acc = mlp.accuracy(x_batch_, t_batch_)
         test_acc = mlp.accuracy(x_test, t_test)
         hidden_train_acc = [0, 0, 0, 0]
         hidden_test_acc = [0, 0, 0, 0]
