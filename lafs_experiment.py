@@ -234,5 +234,5 @@ for i in range(100000):
         angle2 = mlp.angle2(x_train, t_train)
         print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
         print('hidden_train_acc: ', hidden_train_acc)
-        print('angle1: ', angle1, 'angle2: ', angle2)
+        print('angle2: ', angle2)
 
