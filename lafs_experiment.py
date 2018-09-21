@@ -84,10 +84,10 @@ class MLP:
         self.W_f5 = cp.zeros([hidden_unit, 10])
         """
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        self.W_f1 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f1 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f1 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        self.W_f1 = weight_init_std * cp.random.randn(hidden_unit, 10)
+        self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
+        self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
+        self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
+        self.W_f5 = weight_init_std * cp.random.randn(hidden_unit, 10)
 
         self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
 
