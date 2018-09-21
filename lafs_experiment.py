@@ -144,7 +144,7 @@ class MLP:
         h5 = cp.dot(h4_, self.W_f5)
         output = softmax(h5)
 
-        delta5 = (output - target) / 500
+        delta5 = (output - target) / 10
         delta_Wf5 = cp.dot(h4_.T, delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
