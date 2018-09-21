@@ -85,7 +85,7 @@ class MLP:
         self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
 
     def predict(self, x):
-        self.h[0] = cp.dot(x, self.W_f1)
+        self.h = cp.dot(x, self.W_f1)
         self.h[0] = cp.tanh(self.h[0])
         self.h[1] = cp.dot(self.h[0], self.W_f2)
         self.h[1] = cp.tanh(self.h[1])
