@@ -230,7 +230,7 @@ for i in range(100000):
         for j in range(4):
             hidden_train_acc[j] = mlp.hidden_acc(x_train, j, t_train)
             # hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
-        angle1 = mlp.angle1(x_train, t_train)
+        # angle1 = mlp.angle1(x_train, t_train)
         angle2 = mlp.angle2(x_train, t_train)
         print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
         print('hidden_train_acc: ', hidden_train_acc)
