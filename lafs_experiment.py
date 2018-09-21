@@ -126,7 +126,7 @@ class MLP:
         C = cp.linalg.norm(b)
         t = A/(B*C)
         s = cp.arccos(t)
-        return (s/cp.pi)*180
+        return (s/np.pi)*180
 
     def loss(self, x, t):
         y = self.predict(x)
