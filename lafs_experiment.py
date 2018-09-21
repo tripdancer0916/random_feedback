@@ -132,7 +132,7 @@ class MLP:
         y = self.predict(x)
         return cross_entropy_error(y, t)
 
-    def direct_feedback_alignment(self, x, target):
+    def direct_feedback_alignment(self, x, target, batch_size):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -144,7 +144,7 @@ class MLP:
         h5 = cp.dot(h4_, self.W_f5)
         output = softmax(h5)
 
-        delta5 = (output - target) / 1000
+        delta5 = (output - target) / batch_size
         delta_Wf5 = cp.dot(h4_.T, delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
@@ -225,7 +225,7 @@ for i in range(100000):
     batch_mask_ = cp.random.choice(train_size, batch_size)
     x_batch = x_batch_[batch_mask_]
     t_batch = t_batch_[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch, t_batch)
+    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     if i % iter_per_epoch == 0:
         train_acc = mlp.accuracy(x_batch, t_batch)
         test_acc = mlp.accuracy(x_test, t_test)
