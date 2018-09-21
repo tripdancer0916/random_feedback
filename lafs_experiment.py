@@ -218,7 +218,7 @@ batch_size = 1000
 
 iter_per_epoch = 100
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-batch_mask = cp.random.choice(train_size, 50000)
+batch_mask = cp.random.choice(train_size, 3000)
 x_batch_ = x_train[batch_mask]
 t_batch_ = t_train[batch_mask]
 for i in range(100000):
