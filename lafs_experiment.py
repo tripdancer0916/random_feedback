@@ -120,6 +120,14 @@ class MLP:
         accuracy = cp.sum(y == t) / float(x.shape[0])
         return accuracy
 
+    def angle(self, a, b):
+        A = cp.dot(a,b)
+        B = cp.linalg.norm(a)
+        C = cp.linalg.norm(b)
+        t = A/(B*C)
+        s = cp.arccos(t)
+        return (s/cp.pi)*180
+
     def loss(self, x, t):
         y = self.predict(x)
         return cross_entropy_error(y, t)
@@ -155,6 +163,49 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
+    def angle1(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        h4_ = cp.tanh(h4)
+        h5 = cp.dot(h4_, self.W_f5)
+        output = softmax(h5)
+
+        delta5 = (output - target) / 100
+        delta4_BP = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
+        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        angle1 = 0
+        for i in range(x.shape[0]):
+            angle1 = angle1 + self.angle(delta4_BP, delta1)
+        return angle1 / x.shape[0]
+
+    def angle2(self, x, target):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        h4_ = cp.tanh(h4)
+        h5 = cp.dot(h4_, self.W_f5)
+        output = softmax(h5)
+
+        delta5 = (output - target) / 100
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
+        delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
+        delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        delta1_DFA = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        angle2 = 0
+        for i in range(x.shape[0]):
+            angle2 = angle2 + self.angle(delta1, delta1_DFA)
+        return angle2 / x.shape[0]
+
 
 mlp = MLP()
 train_loss_list = []
@@ -164,7 +215,7 @@ test_acc_list = []
 
 train_size = x_train.shape[0]
 batch_size = 100
-iter_per_epoch = 100
+iter_per_epoch = 10
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
 for i in range(100000):
     batch_mask = cp.random.choice(train_size, batch_size)
@@ -178,8 +229,10 @@ for i in range(100000):
         hidden_test_acc = [0, 0, 0, 0]
         for j in range(4):
             hidden_train_acc[j] = mlp.hidden_acc(x_train, j, t_train)
-            hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
+            # hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
+        angle1 = mlp.angle1(x_train, t_train)
+        angle2 = mlp.angle2(x_train, t_train)
         print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
         print('hidden_train_acc: ', hidden_train_acc)
-        print('hidden_test_acc: ', hidden_test_acc)
+        print('angle1: ', angle1, 'angle2: ', angle2)
 
