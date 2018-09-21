@@ -76,7 +76,7 @@ hidden_unit = 800
 class MLP:
     def __init__(self, weight_init_std=0.032):
         self.h = [0, 0, 0, 0]
-        """
+
         self.W_f1 = cp.zeros([784, hidden_unit])
         self.W_f2 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f3 = cp.zeros([hidden_unit, hidden_unit])
@@ -88,8 +88,9 @@ class MLP:
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f5 = weight_init_std * cp.random.randn(hidden_unit, 10)
+        """
 
-        self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
+        self.dB = weight_init_std * cp.random.randn(10, hidden_unit)
 
     def predict(self, x):
         self.h[0] = cp.dot(x, self.W_f1)
@@ -147,13 +148,13 @@ class MLP:
         delta5 = (output - target) / 100
         delta_Wf5 = cp.dot(h4_.T, delta5)
 
-        delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB)
         delta_Wf4 = cp.dot(h3_.T, delta4)
-        delta3 = tanh_grad(h3) * cp.dot(delta5, self.dB[2])
+        delta3 = tanh_grad(h3) * cp.dot(delta5, self.dB)
         delta_Wf3 = cp.dot(h2_.T, delta3)
-        delta2 = tanh_grad(h2) * cp.dot(delta5, self.dB[1])
+        delta2 = tanh_grad(h2) * cp.dot(delta5, self.dB)
         delta_Wf2 = cp.dot(h1_.T, delta2)
-        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
@@ -177,7 +178,7 @@ class MLP:
 
         delta5 = (output - target) / 100
         delta4_BP = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
-        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB)
         angle1 = 0
         for i in range(x.shape[0]):
             angle1 = angle1 + self.angle(delta4_BP[i], delta1[i])
@@ -200,7 +201,7 @@ class MLP:
         delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
-        delta1_DFA = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        delta1_DFA = tanh_grad(h1) * cp.dot(delta5, self.dB)
         angle2 = 0
         for i in range(x.shape[0]):
             angle2 = angle2 + self.angle(delta1[i], delta1_DFA[i])
