@@ -224,12 +224,12 @@ for i in range(100000):
     t_batch = t_train[batch_mask]
     mlp.direct_feedback_alignment(x_batch, t_batch)
     if i % iter_per_epoch == 0:
-        train_acc = mlp.accuracy(x_train, t_train)
+        train_acc = mlp.accuracy(x_batch, t_batch)
         test_acc = mlp.accuracy(x_test, t_test)
         hidden_train_acc = [0, 0, 0, 0]
         hidden_test_acc = [0, 0, 0, 0]
         for j in range(4):
-            hidden_train_acc[j] = mlp.hidden_acc(x_train, j, t_train)
+            hidden_train_acc[j] = mlp.hidden_acc(x_batch, j, t_batch)
             # hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
         # angle1 = mlp.angle1(x_train, t_train)
         # angle2 = mlp.angle2(x_train, t_train)
