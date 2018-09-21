@@ -114,7 +114,7 @@ class MLP:
 
     def hidden_acc(self, x, i, t):
         self.predict(x)
-        y = cp.dot(self.h[i], self.dB[i].T)
+        y = cp.dot(self.h[i], self.dB.T)
         y = softmax(y)
         y = cp.argmax(y, axis=1)
         t = cp.argmax(t, axis=1)
