@@ -232,7 +232,7 @@ for i in range(100000):
         hidden_train_acc = [0, 0, 0, 0]
         hidden_test_acc = [0, 0, 0, 0]
         for j in range(4):
-            hidden_train_acc[j] = mlp.hidden_acc(x_batch, j, t_batch)
+            hidden_train_acc[j] = mlp.hidden_acc(x_batch_, j, t_batch_)
             # hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
         # angle1 = mlp.angle1(x_train, t_train)
         # angle2 = mlp.angle2(x_train, t_train)
