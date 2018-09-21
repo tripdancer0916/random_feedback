@@ -106,7 +106,7 @@ class MLP:
 
     def hidden_acc(self, x, i, t):
         self.predict(x)
-        y = cp.dot(self.h[i], self.dB[0].T)
+        y = cp.dot(self.h[i], self.dB[i].T)
         y = softmax(y)
         y = cp.argmax(y, axis=1)
         t = cp.argmax(t, axis=1)
@@ -172,6 +172,7 @@ for i in range(100000):
         for j in range(4):
             hidden_train_acc[j] = mlp.hidden_acc(x_train, j, t_train)
             hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
-        print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc,
-              'hidden_train_acc: ', hidden_train_acc, 'hidden_test_acc: ', hidden_test_acc)
+        print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
+        print('hidden_train_acc: ', hidden_train_acc)
+        print('hidden_test_acc: ', hidden_test_acc)
 
