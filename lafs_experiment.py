@@ -144,7 +144,7 @@ class MLP:
         h5 = cp.dot(h4_, self.W_f5)
         output = softmax(h5)
 
-        delta5 = (output - target) / 10
+        delta5 = (output - target) / 1000
         delta_Wf5 = cp.dot(h4_.T, delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
@@ -214,11 +214,11 @@ train_acc_list = []
 test_acc_list = []
 
 train_size = x_train.shape[0]
-batch_size = 10
+batch_size = 1000
 
 iter_per_epoch = 100
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-batch_mask = cp.random.choice(train_size, 5000)
+batch_mask = cp.random.choice(train_size, 50000)
 x_batch_ = x_train[batch_mask]
 t_batch_ = t_train[batch_mask]
 for i in range(100000):
