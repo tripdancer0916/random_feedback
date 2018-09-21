@@ -217,8 +217,9 @@ train_size = x_train.shape[0]
 batch_size = 100
 iter_per_epoch = 10
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
+batch_mask = cp.random.choice(train_size, batch_size)
 for i in range(100000):
-    batch_mask = cp.random.choice(train_size, batch_size)
+
     x_batch = x_train[batch_mask]
     t_batch = t_train[batch_mask]
     mlp.direct_feedback_alignment(x_batch, t_batch)
