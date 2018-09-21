@@ -75,7 +75,7 @@ hidden_unit = 800
 
 class MLP:
     def __init__(self, weight_init_std=0.032):
-        self.h = cp.zeros(5)
+        self.h = [0, 0, 0, 0]
         self.W_f1 = cp.zeros([784, hidden_unit])
         self.W_f2 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f3 = cp.zeros([hidden_unit, hidden_unit])
@@ -85,7 +85,7 @@ class MLP:
         self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
 
     def predict(self, x):
-        self.h = cp.dot(x, self.W_f1)
+        self.h[0] = cp.dot(x, self.W_f1)
         self.h[0] = cp.tanh(self.h[0])
         self.h[1] = cp.dot(self.h[0], self.W_f2)
         self.h[1] = cp.tanh(self.h[1])
@@ -93,8 +93,8 @@ class MLP:
         self.h[2] = cp.tanh(self.h[2])
         self.h[3] = cp.dot(self.h[2], self.W_f4)
         self.h[3] = cp.tanh(self.h[3])
-        self.h[4] = cp.dot(self.h[3], self.W_f5)
-        output = softmax(self.h[4])
+        self.h = cp.dot(self.h[3], self.W_f5)
+        output = softmax(self.h)
         return output
 
     def accuracy(self, x, t):
