@@ -214,7 +214,7 @@ train_acc_list = []
 test_acc_list = []
 
 train_size = x_train.shape[0]
-batch_size = 500
+batch_size = 10
 
 iter_per_epoch = 100
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
