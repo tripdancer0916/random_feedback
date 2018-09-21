@@ -175,7 +175,7 @@ class MLP:
         h5 = cp.dot(h4_, self.W_f5)
         output = softmax(h5)
 
-        delta5 = (output - target) / 100
+        delta5 = (output - target) / 500
         delta4_BP = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         angle1 = 0
