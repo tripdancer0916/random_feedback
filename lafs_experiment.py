@@ -93,8 +93,8 @@ class MLP:
         self.h[2] = cp.tanh(self.h[2])
         self.h[3] = cp.dot(self.h[2], self.W_f4)
         self.h[3] = cp.tanh(self.h[3])
-        self.h = cp.dot(self.h[3], self.W_f5)
-        output = softmax(self.h)
+        h = cp.dot(self.h[3], self.W_f5)
+        output = softmax(h)
         return output
 
     def accuracy(self, x, t):
