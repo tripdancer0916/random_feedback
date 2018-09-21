@@ -180,7 +180,7 @@ class MLP:
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         angle1 = 0
         for i in range(x.shape[0]):
-            angle1 = angle1 + self.angle(delta4_BP, delta1)
+            angle1 = angle1 + self.angle(delta4_BP[i], delta1[i])
         return angle1 / x.shape[0]
 
     def angle2(self, x, target):
@@ -203,7 +203,7 @@ class MLP:
         delta1_DFA = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         angle2 = 0
         for i in range(x.shape[0]):
-            angle2 = angle2 + self.angle(delta1, delta1_DFA)
+            angle2 = angle2 + self.angle(delta1[i], delta1_DFA[i])
         return angle2 / x.shape[0]
 
 
