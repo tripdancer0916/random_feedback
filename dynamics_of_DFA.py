@@ -187,7 +187,7 @@ if __name__ == '__main__':
     t_batch = t_train[batch_mask_]
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
-    for i in range(100000):
+    for i in range(100):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
@@ -206,7 +206,7 @@ if __name__ == '__main__':
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
-    plt.title('dynamics of DFA')
+    plt.title('batch_size={}'.format(int(args.batch_size)))
     plt.legend()
 
     plt.savefig('dynamics_of_DFA.png')
