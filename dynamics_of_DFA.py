@@ -18,6 +18,8 @@ import PIL
 import matplotlib as mpl
 import argparse
 
+cp.random.seed(100)
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -187,7 +189,7 @@ if __name__ == '__main__':
     t_batch = t_train[batch_mask_]
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
-    for i in range(100000):
+    for i in range(1000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
@@ -202,6 +204,7 @@ if __name__ == '__main__':
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+    plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
     plt.xlabel('epoch')
@@ -209,5 +212,5 @@ if __name__ == '__main__':
     plt.title('batch_size={}'.format(int(args.batch_size)))
     plt.legend()
 
-    plt.savefig('dynamics_of_DFA.png', dpi=300)
+    plt.savefig('batch_size_{}.png'.format(int(args.batch_size)), dpi=300)
 
