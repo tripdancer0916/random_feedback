@@ -198,10 +198,10 @@ if __name__ == '__main__':
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][i])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][i])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][i])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][i])
+            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
+            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
+            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
+            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
     plt.xlabel('epoch')
