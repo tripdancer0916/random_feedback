@@ -189,6 +189,7 @@ if __name__ == '__main__':
     t_batch = t_train[batch_mask_]
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
+    train_acc_list = [mlp.accuracy(x_train, t_train)]
     for i in range(1000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
@@ -196,6 +197,7 @@ if __name__ == '__main__':
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
+            train_acc_list.append(train_acc)
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
@@ -207,6 +209,8 @@ if __name__ == '__main__':
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
+    plt.plot(train_acc_list, label='train_acc')
+    plt.plot()
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
     plt.title('batch_size={}'.format(int(args.batch_size)))
