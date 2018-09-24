@@ -209,7 +209,7 @@ if __name__ == '__main__':
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
-    plt.plot(train_acc_list, label='train_acc')
+    plt.plot(train_acc_list, label='train_acc', linestyle='--')
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
     plt.title('batch_size={}'.format(int(args.batch_size)))
