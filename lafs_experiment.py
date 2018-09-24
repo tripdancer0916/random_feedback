@@ -16,6 +16,7 @@ import chainer.links as L
 from chainer.training import extensions
 import PIL
 import matplotlib as mpl
+import argparse
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -207,6 +208,12 @@ class MLP:
         return angle2 / x.shape[0]
 
 
+parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
+parser.add_argument('--batch_size', type=int)
+parser.add_argument('--used_data', type=int)
+
+args = parser.parse_args()
+
 mlp = MLP()
 train_loss_list = []
 test_loss_list = []
@@ -214,11 +221,11 @@ train_acc_list = []
 test_acc_list = []
 
 train_size = x_train.shape[0]
-batch_size = 100
+batch_size = args.batch_size
 
 iter_per_epoch = 100
 print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-batch_mask = cp.random.choice(train_size, 5000, replace=False)
+batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
 x_batch_ = x_train[batch_mask]
 t_batch_ = t_train[batch_mask]
 for i in range(100000):
@@ -232,7 +239,7 @@ for i in range(100000):
         hidden_train_acc = [0, 0, 0, 0]
         hidden_test_acc = [0, 0, 0, 0]
         for j in range(4):
-            hidden_train_acc[j] = mlp.hidden_acc(x_batch_, j, t_batch_)
+            hidden_train_acc[j] = float(mlp.hidden_acc(x_batch_, j, t_batch_))
             # hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
         # angle1 = mlp.angle1(x_train, t_train)
         # angle2 = mlp.angle2(x_train, t_train)
