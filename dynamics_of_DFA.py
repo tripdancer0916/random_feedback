@@ -215,5 +215,5 @@ if __name__ == '__main__':
     plt.title('batch_size={}'.format(int(args.batch_size)))
     plt.legend()
 
-    plt.savefig('batch_size_{}.png'.format(int(args.batch_size)), dpi=300)
+    plt.savefig('batch_size_{}long.png'.format(int(args.batch_size)), dpi=300)
 
