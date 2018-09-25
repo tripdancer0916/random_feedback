@@ -18,6 +18,8 @@ import PIL
 import matplotlib as mpl
 import argparse
 
+cp.random.seed(100)
+
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
@@ -208,42 +210,53 @@ class MLP:
         return angle2 / x.shape[0]
 
 
-parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
-parser.add_argument('--batch_size', type=int)
-parser.add_argument('--used_data', type=int)
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
+    parser.add_argument('--batch_size', type=int)
+    parser.add_argument('--used_data', type=int)
 
-args = parser.parse_args()
+    args = parser.parse_args()
 
-mlp = MLP()
-train_loss_list = []
-test_loss_list = []
-train_acc_list = []
-test_acc_list = []
+    mlp = MLP()
+    train_loss_list = []
+    test_loss_list = []
+    train_acc_list = []
+    test_acc_list = []
 
-train_size = x_train.shape[0]
-batch_size = args.batch_size
+    train_size = x_train.shape[0]
+    batch_size = args.batch_size
 
-iter_per_epoch = 100
-print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
-x_batch_ = x_train[batch_mask]
-t_batch_ = t_train[batch_mask]
-for i in range(100000):
-    batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
-    x_batch = x_batch_[batch_mask_]
-    t_batch = t_batch_[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
-    if i % iter_per_epoch == 0:
-        train_acc = mlp.accuracy(x_batch_, t_batch_)
-        test_acc = mlp.accuracy(x_test, t_test)
-        hidden_train_acc = [0, 0, 0, 0]
-        hidden_test_acc = [0, 0, 0, 0]
-        for j in range(4):
-            hidden_train_acc[j] = float(mlp.hidden_acc(x_batch_, j, t_batch_))
-            # hidden_test_acc[j] = mlp.hidden_acc(x_test, j, t_test)
-        # angle1 = mlp.angle1(x_train, t_train)
-        # angle2 = mlp.angle2(x_train, t_train)
-        print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-        print('hidden_train_acc: ', hidden_train_acc)
-        # print('angle2: ', angle2)
+    iter_per_epoch = 50
+    print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
+    batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
+    x_batch_ = x_train[batch_mask]
+    t_batch_ = t_train[batch_mask]
+    mlp.direct_feedback_alignment(x_batch_, t_batch_, batch_size)
+    hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
+    train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
+    for i in range(500000):
+        batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
+        x_batch = x_batch_[batch_mask_]
+        t_batch = t_batch_[batch_mask_]
+        mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+        if i % iter_per_epoch == 0:
+            train_acc = mlp.accuracy(x_train, t_train)
+            train_acc_list.append(float(train_acc))
+            test_acc = mlp.accuracy(x_test, t_test)
+            for j in range(4):
+                hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
+            print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
+            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
+            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
+            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
+            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+    plt.xscale('log')
+    for i in range(4):
+        plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
+    plt.plot(train_acc_list, label='train_acc', linestyle='--')
+    plt.xlabel('epoch')
+    plt.ylabel('train_acc')
+    plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
+    plt.legend()
 
+    plt.savefig('batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
