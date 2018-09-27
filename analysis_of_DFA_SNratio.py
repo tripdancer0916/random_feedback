@@ -127,7 +127,7 @@ class MLP:
             W = cp.dot(cp.expand_dims(h[i], axis=1), cp.expand_dims(delta[i], axis=0))*h.shape[0]
             batch.append(W)
         for i in range(h.shape[0]):
-            batch[i] = batch[i] - mean
+            batch[i] = cuda.to_cpu(batch[i] - mean)
         batch = np.array(batch)
         return np.linalg.norm(batch) / batch.shape[0]*batch.shape[1]*batch.shape[2]
 
