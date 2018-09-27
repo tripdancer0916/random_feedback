@@ -123,6 +123,7 @@ class MLP:
         std = 0
         mean_norm =cp.linalg.norm(mean)
         for i in range(h.shape[0]):
+            print(batch[i], mean_norm)
             std = std + (batch[i] - mean_norm)**2
         return cp.sqrt(std/h.shape[0])/cp.linalg.norm(mean)
 
