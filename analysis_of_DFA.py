@@ -181,7 +181,9 @@ if __name__ == '__main__':
     x_batch = x_train[batch_mask_]
     t_batch = t_train[batch_mask_]
     if args.data_aug:
-        x_batch = x_batch + cp.random.randn(batch_size, 784) * 0.01
+        if cp.random.rand() > 0.5:
+            noise_rate = cp.random.rand()*0.01
+            x_batch = x_batch + cp.random.randn(batch_size, 784) * noise_rate
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
@@ -190,7 +192,9 @@ if __name__ == '__main__':
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
         if args.data_aug:
-            x_batch = x_batch + cp.random.randn(batch_size, 784) * 0.01
+            if cp.random.rand() > 0.5:
+                noise_rate = cp.random.rand() * 0.01
+                x_batch = x_batch + cp.random.randn(batch_size, 784) * noise_rate
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
