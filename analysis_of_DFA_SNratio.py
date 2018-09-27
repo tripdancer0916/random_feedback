@@ -123,7 +123,7 @@ class MLP:
     def calc_std(self, h, delta):
         mean = cp.dot(h.T, delta)
         batch = []
-        W_ = cp.zeros([h.shape[0], h.shape[0]])
+        W_ = cp.zeros([h.shape[0], 10])
         for i in range(h.shape[0]):
             W = cp.dot(cp.expand_dims(h[i], axis=1), cp.expand_dims(delta[i], axis=0))*h.shape[0]
             print(W.shape)
