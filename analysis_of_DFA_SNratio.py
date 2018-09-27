@@ -118,11 +118,12 @@ class MLP:
         mean = cp.dot(h.T, delta)
         batch = []
         for i in range(h.shape[0]):
-            W = cp.dot(cp.expand_dims(h[i], axis=1), cp.expand_dims(delta[i], axis=0))
-            batch.append(W*h.shape[0])
+            W = cp.dot(cp.expand_dims(h[i], axis=1), cp.expand_dims(delta[i], axis=0))*h.shape[0]
+            batch.append(cp.linalg.norm(W))
         std = 0
+        mean_norm =cp.linalg.norm(mean)
         for i in range(h.shape[0]):
-            std = std + cp.linalg.norm(batch[i] - mean)**2
+            std = std + (batch[i] - mean_norm)**2
         return cp.sqrt(std)/cp.linalg.norm(mean)
 
     def mean_and_std(self, x, target, batch_size):
