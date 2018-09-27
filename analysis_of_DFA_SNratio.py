@@ -123,15 +123,12 @@ class MLP:
     def calc_std(self, h, delta):
         mean = cp.dot(h.T, delta)
         batch = []
-        W_ = cp.zeros([800, 10])
         for i in range(h.shape[0]):
             W = cp.dot(cp.expand_dims(h[i], axis=1), cp.expand_dims(delta[i], axis=0))*h.shape[0]
-            print(W.shape)
-            W_ = W_ + W
             batch.append(cp.linalg.norm(W))
         std = 0
         mean_norm =cp.linalg.norm(mean)
-        print(W_/100, mean)
+        print(mean_norm, np.mean(batch))
         for i in range(h.shape[0]):
             # print(batch[i], mean_norm)
             std = std + (batch[i] - mean_norm)**2
