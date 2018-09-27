@@ -73,11 +73,8 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 800
-
-
 class MLP:
-    def __init__(self, weight_init_std=0.032):
+    def __init__(self, hidden_unit, weight_init_std=0.032):
         self.h = [0, 0, 0, 0]
 
         self.W_f1 = cp.zeros([784, hidden_unit])
@@ -166,58 +163,15 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
-    def angle1(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.tanh(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = cp.tanh(h3)
-        h4 = cp.dot(h3_, self.W_f4)
-        h4_ = cp.tanh(h4)
-        h5 = cp.dot(h4_, self.W_f5)
-        output = softmax(h5)
-
-        delta5 = (output - target) / 100
-        delta4_BP = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
-        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
-        angle1 = 0
-        for i in range(x.shape[0]):
-            angle1 = angle1 + self.angle(delta4_BP[i], delta1[i])
-        return angle1 / x.shape[0]
-
-    def angle2(self, x, target):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
-        h2 = cp.dot(h1_, self.W_f2)
-        h2_ = cp.tanh(h2)
-        h3 = cp.dot(h2_, self.W_f3)
-        h3_ = cp.tanh(h3)
-        h4 = cp.dot(h3_, self.W_f4)
-        h4_ = cp.tanh(h4)
-        h5 = cp.dot(h4_, self.W_f5)
-        output = softmax(h5)
-
-        delta5 = (output - target) / 100
-        delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
-        delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
-        delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
-        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
-        delta1_DFA = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
-        angle2 = 0
-        for i in range(x.shape[0]):
-            angle2 = angle2 + self.angle(delta1[i], delta1_DFA[i])
-        return angle2 / x.shape[0]
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int)
-    parser.add_argument('--used_data', type=int)
+    parser.add_argument('--hidden_unit', type=int)
 
     args = parser.parse_args()
 
-    mlp = MLP()
+    mlp = MLP(args.hidden_unit)
     train_loss_list = []
     test_loss_list = []
     train_acc_list = []
@@ -228,26 +182,23 @@ if __name__ == '__main__':
 
     iter_per_epoch = 50
     print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-    batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
-    x_batch_ = x_train[batch_mask]
-    t_batch_ = t_train[batch_mask]
-    batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
-    x_batch_tmp = x_batch_[batch_mask_]
-    t_batch_tmp = t_batch_[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch_tmp, t_batch_tmp, batch_size)
-    hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
+    batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
+    x_batch = x_train[batch_mask_]
+    t_batch = t_train[batch_mask_]
+    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+    hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(500000):
-        batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
-        x_batch = x_batch_[batch_mask_]
-        t_batch = t_batch_[batch_mask_]
+        batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
+        x_batch = x_train[batch_mask_]
+        t_batch = t_train[batch_mask_]
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
-                hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
+                hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
             print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
@@ -259,7 +210,8 @@ if __name__ == '__main__':
     plt.plot(train_acc_list, label='train_acc', linestyle='--')
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
-    plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
+    plt.title('batch_size={}'.format(int(args.batch_size)))
     plt.legend()
 
-    plt.savefig('batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
+    plt.savefig('batch_size_{0}_hidden_unit_{1}.png'.format(int(args.batch_size), int(args.hidden_unit)), dpi=300)
+
