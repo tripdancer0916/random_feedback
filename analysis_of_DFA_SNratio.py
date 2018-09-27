@@ -126,6 +126,7 @@ class MLP:
         W_ = cp.zeros([h.shape[0], h.shape[0]])
         for i in range(h.shape[0]):
             W = cp.dot(cp.expand_dims(h[i], axis=1), cp.expand_dims(delta[i], axis=0))*h.shape[0]
+            print(W.shape)
             W_ = W_ + W
             batch.append(cp.linalg.norm(W))
         std = 0
