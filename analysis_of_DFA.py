@@ -83,12 +83,6 @@ class MLP:
         self.W_f4 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f5 = cp.zeros([hidden_unit, 10])
 
-        # self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit, 10)
-
         self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
 
     def predict(self, x):
@@ -168,6 +162,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int)
     parser.add_argument('--hidden_unit', type=int)
+    parser.add_argument('--data_aug', type=bool)
 
     args = parser.parse_args()
 
@@ -185,6 +180,8 @@ if __name__ == '__main__':
     batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
     x_batch = x_train[batch_mask_]
     t_batch = t_train[batch_mask_]
+    if args.data_aug:
+        x_batch = x_batch + cp.random.randn(batch_size, 784) * 0.01
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
@@ -192,6 +189,8 @@ if __name__ == '__main__':
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
+        if args.data_aug:
+            x_batch = x_batch + cp.random.randn(batch_size, 784) * 0.01
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
