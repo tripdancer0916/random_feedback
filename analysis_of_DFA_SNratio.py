@@ -128,7 +128,8 @@ class MLP:
             batch.append(W)
         for i in range(h.shape[0]):
             batch[i] = batch[i] - mean
-        return cp.linalg.norm(batch) / batch.shape[0]*batch.shape[1]*batch.shape[2]
+        batch = np.array(batch)
+        return np.linalg.norm(batch) / batch.shape[0]*batch.shape[1]*batch.shape[2]
 
     def mean_and_std(self, x, target, batch_size):
         h1 = cp.dot(x, self.W_f1)
