@@ -164,11 +164,11 @@ class MLP:
         W_f2_mean = W_f2_mean / cp.linalg.norm(self.W_f2)
         W_f1_mean = cp.linalg.norm(delta_Wf1)
         W_f1_mean = W_f1_mean / cp.linalg.norm(self.W_f1)
-        W_f5_std = self.calc_std(h4_, delta5)
-        W_f4_std = self.calc_std(h3_, delta4)
-        W_f3_std = self.calc_std(h2_, delta3)
-        W_f2_std = self.calc_std(h1_, delta2)
-        W_f1_std = self.calc_std(x, delta1)
+        W_f5_std = self.calc_std(h4_, delta5) / cp.linalg.norm(self.W_f5)
+        W_f4_std = self.calc_std(h3_, delta4) / cp.linalg.norm(self.W_f4)
+        W_f3_std = self.calc_std(h2_, delta3) / cp.linalg.norm(self.W_f3)
+        W_f2_std = self.calc_std(h1_, delta2) / cp.linalg.norm(self.W_f2)
+        W_f1_std = self.calc_std(x, delta1) / cp.linalg.norm(self.W_f1)
         return [[W_f5_mean, W_f4_mean, W_f3_mean, W_f2_mean, W_f1_mean], [W_f5_std, W_f4_std, W_f3_std, W_f2_std, W_f1_std]]
 
     def loss(self, x, t):
