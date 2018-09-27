@@ -124,7 +124,7 @@ class MLP:
         mean_norm =cp.linalg.norm(mean)
         for i in range(h.shape[0]):
             std = std + (batch[i] - mean_norm)**2
-        return cp.sqrt(std)/cp.linalg.norm(mean)
+        return cp.sqrt(std/h.shape[0])/cp.linalg.norm(mean)
 
     def mean_and_std(self, x, target, batch_size):
         h1 = cp.dot(x, self.W_f1)
