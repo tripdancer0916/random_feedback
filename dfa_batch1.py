@@ -118,7 +118,7 @@ class MLP:
         return accuracy
 
     def angle(self, a, b):
-        A = cp.dot(a,b)
+        A = cp.dot(a, b)
         B = cp.linalg.norm(a)
         C = cp.linalg.norm(b)
         t = A/(B*C)
@@ -152,6 +152,7 @@ class MLP:
         delta_Wf2 = cp.dot(h1_.T, delta2)
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         delta_Wf1 = cp.dot(x.T, delta1)
+        print(delta_Wf1.shape)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
