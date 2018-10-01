@@ -226,7 +226,7 @@ if __name__ == '__main__':
     train_size = x_train.shape[0]
     batch_size = args.batch_size
 
-    iter_per_epoch = 50
+    iter_per_epoch = 500
     print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
     batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
     x_batch_ = x_train[batch_mask]
