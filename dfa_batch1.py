@@ -152,6 +152,8 @@ class MLP:
         delta_Wf2 = cp.dot(h1_.T, delta2)
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         delta_Wf1 = cp.dot(x.T, delta1)
+        print(delta1.shape)
+        print(x.shape)
         print(delta_Wf1.shape)
 
         alpha = 0.1
