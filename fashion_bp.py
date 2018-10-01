@@ -222,18 +222,19 @@ if __name__ == '__main__':
     batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
     x_batch_tmp = x_batch_[batch_mask_]
     t_batch_tmp = t_batch_[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch_tmp, t_batch_tmp, batch_size)
+    mlp.back_propagation(x_batch_tmp, t_batch_tmp, batch_size)
     hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(500000):
         batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
         x_batch = x_batch_[batch_mask_]
         t_batch = t_batch_[batch_mask_]
-        mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+        mlp.back_propagation(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
+            """
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
@@ -241,6 +242,7 @@ if __name__ == '__main__':
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+            """
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
