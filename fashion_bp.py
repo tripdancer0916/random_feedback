@@ -215,7 +215,7 @@ if __name__ == '__main__':
     batch_size = args.batch_size
 
     iter_per_epoch = 50
-    print("measure accuracy of hidden-layer in the dynamics of Back propagation.")
+    print("the dynamics of Back propagation.")
     batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
     x_batch_ = x_train[batch_mask]
     t_batch_ = t_train[batch_mask]
@@ -234,6 +234,7 @@ if __name__ == '__main__':
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
+            print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
             """
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
@@ -243,13 +244,13 @@ if __name__ == '__main__':
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
             """
-    plt.xscale('log')
-    for i in range(4):
-        plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
-    plt.plot(train_acc_list, label='train_acc', linestyle='--')
-    plt.xlabel('epoch')
-    plt.ylabel('train_acc')
-    plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
-    plt.legend()
+    # plt.xscale('log')
+    # for i in range(4):
+    #     plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
+    # plt.plot(train_acc_list, label='train_acc', linestyle='--')
+    # plt.xlabel('epoch')
+    # plt.ylabel('train_acc')
+    # plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
+    # plt.legend()
 
-    plt.savefig('bp_fashion-mnist_batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
+    # plt.savefig('bp_fashion-mnist_batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
