@@ -207,7 +207,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    mlp = MLP()
+    mlp = LAFS()
     train_loss_list = []
     test_loss_list = []
     train_acc_list = []
