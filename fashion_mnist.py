@@ -212,8 +212,9 @@ class MLP:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
-    parser.add_argument('--batch_size', type=int)
-    parser.add_argument('--used_data', type=int)
+    parser.add_argument('--batch_size', type=int, default=100)
+    parser.add_argument('--used_data', type=int, default=60000)
+    parser.add_argument('--iter_per_epoch', type=int, default=500)
 
     args = parser.parse_args()
 
@@ -226,7 +227,7 @@ if __name__ == '__main__':
     train_size = x_train.shape[0]
     batch_size = args.batch_size
 
-    iter_per_epoch = 500
+    iter_per_epoch = args.iter_per_epoch
     print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
     batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
     x_batch_ = x_train[batch_mask]
