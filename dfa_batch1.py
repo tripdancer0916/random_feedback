@@ -152,9 +152,9 @@ class MLP:
         delta_Wf2 = cp.dot(h1_.T, delta2)
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         delta_Wf1 = cp.dot(x.T, delta1)
-        print(delta1.shape)
-        print(x.shape)
-        print(delta_Wf1.shape)
+        # print(delta1.shape)
+        # print(x.shape)
+        # print(delta_Wf1.shape)
 
         alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
@@ -189,8 +189,8 @@ if __name__ == '__main__':
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(1000000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
-        x_batch = cp.expand_dims(x_train[batch_mask_], axis=0)
-        t_batch = cp.expand_dims(t_train[batch_mask_], axis=0)
+        x_batch = x_train[batch_mask_]
+        t_batch = t_train[batch_mask_]
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
