@@ -200,7 +200,7 @@ class LAFS:
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
+    parser = argparse.ArgumentParser(description='Linear Aligned Feedback Systems.')
     parser.add_argument('--batch_size', type=int)
     parser.add_argument('--used_data', type=int)
 
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     batch_size = args.batch_size
 
     iter_per_epoch = 50
-    print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
+    print("measure accuracy of hidden-layer in the dynamics of LAFS.")
     batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
     x_batch_ = x_train[batch_mask]
     t_batch_ = t_train[batch_mask]
