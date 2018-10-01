@@ -181,13 +181,13 @@ class MLP:
         delta5 = (output - target) / batch_size
         delta_Wf5 = cp.dot(h4_.T, delta5)
 
-        delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f4.T)
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
         delta_Wf4 = cp.dot(h3_.T, delta4)
-        delta3 = tanh_grad(h3) * cp.dot(delta5, self.W_f3.T)
+        delta3 = tanh_grad(h3) * cp.dot(delta5, self.W_f4.T)
         delta_Wf3 = cp.dot(h2_.T, delta3)
-        delta2 = tanh_grad(h2) * cp.dot(delta5, self.W_f2.T)
+        delta2 = tanh_grad(h2) * cp.dot(delta5, self.W_f3.T)
         delta_Wf2 = cp.dot(h1_.T, delta2)
-        delta1 = tanh_grad(h1) * cp.dot(delta5, self.W_f1.T)
+        delta1 = tanh_grad(h1) * cp.dot(delta5, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
