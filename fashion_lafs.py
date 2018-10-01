@@ -215,7 +215,7 @@ if __name__ == '__main__':
     train_size = x_train.shape[0]
     batch_size = args.batch_size
 
-    iter_per_epoch = 50
+    iter_per_epoch = 300
     print("measure accuracy of hidden-layer in the dynamics of LAFS.")
     batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
     x_batch_ = x_train[batch_mask]
@@ -242,6 +242,11 @@ if __name__ == '__main__':
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+
+            print('hidden_test_acc_1: ', float(mlp.hidden_acc(x_test, 0, t_test)))
+            print('hidden_test_acc_2: ', float(mlp.hidden_acc(x_test, 1, t_test)))
+            print('hidden_test_acc_3: ', float(mlp.hidden_acc(x_test, 2, t_test)))
+            print('hidden_test_acc_4: ', float(mlp.hidden_acc(x_test, 3, t_test)))
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
