@@ -86,12 +86,6 @@ class MLP:
         self.W_f4 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f5 = cp.zeros([hidden_unit, 10])
 
-        # self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit, 10)
-
         self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
 
     def predict(self, x):
@@ -250,10 +244,16 @@ if __name__ == '__main__':
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
+
+            cp.save('./fashion_model/dfa_W_f1_{}'.format(int(i / iter_per_epoch)), mlp.W_f1)
+            cp.save('./fashion_model/dfa_W_f2_{}'.format(int(i / iter_per_epoch)), mlp.W_f2)
+            cp.save('./fashion_model/dfa_W_f3_{}'.format(int(i / iter_per_epoch)), mlp.W_f3)
+            cp.save('./fashion_model/dfa_W_f4_{}'.format(int(i / iter_per_epoch)), mlp.W_f4)
+            cp.save('./fashion_model/dfa_W_f5_{}'.format(int(i / iter_per_epoch)), mlp.W_f5)
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
