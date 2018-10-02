@@ -248,12 +248,19 @@ if __name__ == '__main__':
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
+        if i % iter_per_epoch == 0 and i < 10000:
+            cp.save('./fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
+            cp.save('./fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
+            cp.save('./fashion_model/dfa_{}_W_f3'.format(int(i)), mlp.W_f3)
+            cp.save('./fashion_model/dfa_{}_W_f4'.format(int(i)), mlp.W_f4)
+            cp.save('./fashion_model/dfa_{}_W_f5'.format(int(i)), mlp.W_f5)
 
-            cp.save('./fashion_model/dfa_W_f1_{}'.format(int(i / iter_per_epoch)), mlp.W_f1)
-            cp.save('./fashion_model/dfa_W_f2_{}'.format(int(i / iter_per_epoch)), mlp.W_f2)
-            cp.save('./fashion_model/dfa_W_f3_{}'.format(int(i / iter_per_epoch)), mlp.W_f3)
-            cp.save('./fashion_model/dfa_W_f4_{}'.format(int(i / iter_per_epoch)), mlp.W_f4)
-            cp.save('./fashion_model/dfa_W_f5_{}'.format(int(i / iter_per_epoch)), mlp.W_f5)
+        elif i % (10*iter_per_epoch) == 0:
+            cp.save('./fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
+            cp.save('./fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
+            cp.save('./fashion_model/dfa_{}_W_f3'.format(int(i)), mlp.W_f3)
+            cp.save('./fashion_model/dfa_{}_W_f4'.format(int(i)), mlp.W_f4)
+            cp.save('./fashion_model/dfa_{}_W_f5'.format(int(i)), mlp.W_f5)
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
