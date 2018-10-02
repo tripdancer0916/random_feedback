@@ -127,7 +127,7 @@ if __name__ == '__main__':
         delta_b_lin = cp.dot(cp.ones(batch_size), delta)
         W_lin -= alpha * delta_W_lin
         b_lin -= alpha * delta_b_lin
-        if i % 100 == 0:
+        if i % iter_per_epoch == 0:
             h = cp.dot(x_test, dfa_W1)
             h = cp.tanh(h)
             output = softmax(cp.dot(h, W_lin) + b_lin)
@@ -199,7 +199,7 @@ if __name__ == '__main__':
         delta_b_lin = cp.dot(cp.ones(batch_size), delta)
         W_lin -= alpha * delta_W_lin
         b_lin -= alpha * delta_b_lin
-        if i % 100 == 0:
+        if i % iter_per_epoch == 0:
             h = cp.dot(x_test, dfa_W1)
             h = cp.tanh(h)
             h = cp.dot(h, dfa_W2)
@@ -245,7 +245,7 @@ if __name__ == '__main__':
         delta_b_lin = cp.dot(cp.ones(batch_size), delta)
         W_lin -= alpha * delta_W_lin
         b_lin -= alpha * delta_b_lin
-        if i % 100 == 0:
+        if i % iter_per_epoch == 0:
             h = cp.dot(x_test, dfa_W1)
             h = cp.tanh(h)
             h = cp.dot(h, dfa_W2)
