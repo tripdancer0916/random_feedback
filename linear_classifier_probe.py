@@ -152,12 +152,16 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
-    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    h = cp.dot(x_test, dfa_W1)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_test, axis=1)
     accuracy = cp.sum(y == t) / 10000
 
-    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    h = cp.dot(x_train, dfa_W1)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_train, axis=1)
     train_accuracy = cp.sum(y == t) / 60000
@@ -199,12 +203,20 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
-    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    h = cp.dot(x_test, dfa_W1)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W2)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_test, axis=1)
     accuracy = cp.sum(y == t) / 10000
 
-    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    h = cp.dot(x_train, dfa_W1)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W2)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_train, axis=1)
     train_accuracy = cp.sum(y == t) / 60000
@@ -252,12 +264,24 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
-    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    h = cp.dot(x_test, dfa_W1)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W2)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W3)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_test, axis=1)
     accuracy = cp.sum(y == t) / 10000
 
-    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    h = cp.dot(x_train, dfa_W1)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W2)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W3)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_train, axis=1)
     train_accuracy = cp.sum(y == t) / 60000
@@ -312,12 +336,28 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
-    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    h = cp.dot(x_test, dfa_W1)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W2)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W3)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W4)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_test, axis=1)
     accuracy = cp.sum(y == t) / 10000
 
-    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    h = cp.dot(x_train, dfa_W1)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W2)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W3)
+    h = cp.tanh(h)
+    h = cp.dot(h, dfa_W4)
+    h = cp.tanh(h)
+    output = softmax(cp.dot(h, W_lin) + b_lin)
     y = cp.argmax(output, axis=1)
     t = cp.argmax(t_train, axis=1)
     train_accuracy = cp.sum(y == t) / 60000
