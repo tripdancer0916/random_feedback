@@ -111,6 +111,16 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
+    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_test, axis=1)
+    accuracy = cp.sum(y == t) / 10000
+
+    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_train, axis=1)
+    train_accuracy = cp.sum(y == t) / 60000
+    print(int(i / iter_per_epoch), accuracy, train_accuracy)
 
     print("Linear classifier probe:hidden_layer1")
     W_lin = weight_init_std * cp.random.randn(hidden_unit, 10)
@@ -142,6 +152,16 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
+    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_test, axis=1)
+    accuracy = cp.sum(y == t) / 10000
+
+    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_train, axis=1)
+    train_accuracy = cp.sum(y == t) / 60000
+    print(int(i / iter_per_epoch), accuracy, train_accuracy)
 
     print("Linear classifier probe:hidden_layer2")
     W_lin = weight_init_std * cp.random.randn(hidden_unit, 10)
@@ -179,6 +199,16 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
+    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_test, axis=1)
+    accuracy = cp.sum(y == t) / 10000
+
+    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_train, axis=1)
+    train_accuracy = cp.sum(y == t) / 60000
+    print(int(i / iter_per_epoch), accuracy, train_accuracy)
 
     print("Linear classifier probe:hidden_layer3")
     W_lin = weight_init_std * cp.random.randn(hidden_unit, 10)
@@ -222,6 +252,16 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
+    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_test, axis=1)
+    accuracy = cp.sum(y == t) / 10000
+
+    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_train, axis=1)
+    train_accuracy = cp.sum(y == t) / 60000
+    print(int(i / iter_per_epoch), accuracy, train_accuracy)
 
     print("Linear classifier probe:hidden_layer4")
     W_lin = weight_init_std * cp.random.randn(hidden_unit, 10)
@@ -272,4 +312,14 @@ if __name__ == '__main__':
             t = cp.argmax(t_train, axis=1)
             train_accuracy = cp.sum(y == t) / 60000
             print(int(i / iter_per_epoch), accuracy, train_accuracy)
+    output = softmax(cp.dot(x_test, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_test, axis=1)
+    accuracy = cp.sum(y == t) / 10000
+
+    output = softmax(cp.dot(x_train, W_lin) + b_lin)
+    y = cp.argmax(output, axis=1)
+    t = cp.argmax(t_train, axis=1)
+    train_accuracy = cp.sum(y == t) / 60000
+    print(int(i / iter_per_epoch), accuracy, train_accuracy)
 
