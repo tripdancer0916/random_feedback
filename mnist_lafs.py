@@ -23,8 +23,8 @@ cp.random.seed(100)
 mpl.use('Agg')
 import matplotlib.pyplot as plt
 
-# Load the MNIST dataset
-train, test = chainer.datasets.get_mnist()
+# Load the fashion-MNIST dataset
+train, test = chainer.datasets.get_fashion_mnist()
 x_train, t_train = train._datasets
 x_test, t_test = test._datasets
 
@@ -76,7 +76,7 @@ def softmax(x):
 hidden_unit = 800
 
 
-class MLP:
+class LAFS:
     def __init__(self, weight_init_std=0.032):
         self.h = [0, 0, 0, 0]
 
@@ -85,12 +85,6 @@ class MLP:
         self.W_f3 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f4 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f5 = cp.zeros([hidden_unit, 10])
-
-        # self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
-        # self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f4 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
-        # self.W_f5 = weight_init_std * cp.random.randn(hidden_unit, 10)
 
         self.dB = weight_init_std * cp.random.randn(4, 10, hidden_unit)
 
@@ -166,14 +160,54 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
+    def lafs(self, x, target, batch_size):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = cp.tanh(h1)
+        output1 = softmax(cp.dot(h1_, self.dB[0].T))
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = cp.tanh(h2)
+        output2 = softmax(cp.dot(h2_, self.dB[1].T))
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        output3 = softmax(cp.dot(h3_, self.dB[2].T))
+        h4 = cp.dot(h3_, self.W_f4)
+        h4_ = cp.tanh(h4)
+        output4 = softmax(cp.dot(h4_, self.dB[3].T))
+        h5 = cp.dot(h4_, self.W_f5)
+        output = softmax(h5)
+
+        delta5 = (output - target) / batch_size
+        delta_Wf5 = cp.dot(h4_.T, delta5)
+
+        delta4 = tanh_grad(h4) * cp.dot((output4 - target) / batch_size, self.dB[3])
+        delta_Wf4 = cp.dot(h3_.T, delta4)
+
+        delta3 = tanh_grad(h3) * cp.dot((output3 - target) / batch_size, self.dB[2])
+        delta_Wf3 = cp.dot(h2_.T, delta3)
+
+        delta2 = tanh_grad(h2) * cp.dot((output2 - target) / batch_size, self.dB[1])
+        delta_Wf2 = cp.dot(h1_.T, delta2)
+
+        delta1 = tanh_grad(h1) * cp.dot((output1 - target) / batch_size, self.dB[0])
+        delta_Wf1 = cp.dot(x.T, delta1)
+
+        alpha = 0.1
+        self.W_f1 -= alpha * delta_Wf1
+        self.W_f2 -= alpha * delta_Wf2
+        self.W_f3 -= alpha * delta_Wf3
+        self.W_f4 -= alpha * delta_Wf4
+        self.W_f5 -= alpha * delta_Wf5
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
-    parser.add_argument('--batch_size', type=int)
+    parser.add_argument('--batch_size', type=int, default=100)
+    parser.add_argument('--used_data', type=int, default=60000)
+    parser.add_argument('--iter_per_epoch', type=int, default=500)
 
     args = parser.parse_args()
 
-    mlp = MLP()
+    mlp = LAFS()
     train_loss_list = []
     test_loss_list = []
     train_acc_list = []
@@ -182,38 +216,45 @@ if __name__ == '__main__':
     train_size = x_train.shape[0]
     batch_size = args.batch_size
 
-    iter_per_epoch = 50
-    print("measure accuracy of hidden-layer in the dynamics of DFA learning.")
-    batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
-    x_batch = x_train[batch_mask_]
-    t_batch = t_train[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
-    hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
+    iter_per_epoch = args.iter_per_epoch
+    print("measure accuracy of hidden-layer in the dynamics of LAFS.")
+    batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
+    x_batch_ = x_train[batch_mask]
+    t_batch_ = t_train[batch_mask]
+    batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
+    x_batch_tmp = x_batch_[batch_mask_]
+    t_batch_tmp = t_batch_[batch_mask_]
+    mlp.lafs(x_batch_tmp, t_batch_tmp, batch_size)
+    hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(100000):
-        batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
-        x_batch = x_train[batch_mask_]
-        t_batch = t_train[batch_mask_]
-        mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+        batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
+        x_batch = x_batch_[batch_mask_]
+        t_batch = t_batch_[batch_mask_]
+        mlp.lafs(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
-                hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
+                hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
+            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
+            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
+            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+
+            print('hidden_test_acc_1: ', float(mlp.hidden_acc(x_test, 0, t_test)))
+            print('hidden_test_acc_2: ', float(mlp.hidden_acc(x_test, 1, t_test)))
+            print('hidden_test_acc_3: ', float(mlp.hidden_acc(x_test, 2, t_test)))
+            print('hidden_test_acc_4: ', float(mlp.hidden_acc(x_test, 3, t_test)))
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
     plt.plot(train_acc_list, label='train_acc', linestyle='--')
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
-    plt.title('batch_size={}'.format(int(args.batch_size)))
+    plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
     plt.legend()
 
-    plt.savefig('batch_size_{}long.png'.format(int(args.batch_size)), dpi=300)
-
+    plt.savefig('fashion-mnist_lafs_batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
