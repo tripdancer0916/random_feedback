@@ -86,7 +86,7 @@ if __name__ == '__main__':
     hidden_unit = 800
     weight_init_std = 0.032
     alpha = 0.01
-
+    """
     print("Linear classifier probe: input")
     W_lin = weight_init_std * cp.random.randn(784, 10)
     b_lin = cp.zeros(10)
@@ -121,6 +121,7 @@ if __name__ == '__main__':
     t = cp.argmax(t_train, axis=1)
     train_accuracy = cp.sum(y == t) / 60000
     print(accuracy, train_accuracy)
+    """
 
     print("Linear classifier probe:hidden_layer1")
     W_lin = weight_init_std * cp.random.randn(hidden_unit, 10)
