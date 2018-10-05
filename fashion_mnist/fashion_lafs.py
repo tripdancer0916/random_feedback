@@ -118,12 +118,12 @@ class LAFS:
         return accuracy
 
     def angle(self, a, b):
-        A = cp.dot(a,b)
+        A = cp.dot(a, b)
         B = cp.linalg.norm(a)
         C = cp.linalg.norm(b)
-        t = A/(B*C)
+        t = A / (B * C)
         s = cp.arccos(t)
-        return (s/np.pi)*180
+        return (s / np.pi) * 180
 
     def loss(self, x, t):
         y = self.predict(x)
@@ -239,18 +239,31 @@ if __name__ == '__main__':
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
+            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
 
             print('hidden_test_acc_1: ', float(mlp.hidden_acc(x_test, 0, t_test)))
             print('hidden_test_acc_2: ', float(mlp.hidden_acc(x_test, 1, t_test)))
             print('hidden_test_acc_3: ', float(mlp.hidden_acc(x_test, 2, t_test)))
             print('hidden_test_acc_4: ', float(mlp.hidden_acc(x_test, 3, t_test)))
+        if i % iter_per_epoch == 0 and i < 10000:
+            cp.save('./fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
+            cp.save('./fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
+            cp.save('./fashion_model/dfa_{}_W_f3'.format(int(i)), mlp.W_f3)
+            cp.save('./fashion_model/dfa_{}_W_f4'.format(int(i)), mlp.W_f4)
+            cp.save('./fashion_model/dfa_{}_W_f5'.format(int(i)), mlp.W_f5)
+
+        elif i % (10*iter_per_epoch) == 0:
+            cp.save('./fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
+            cp.save('./fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
+            cp.save('./fashion_model/dfa_{}_W_f3'.format(int(i)), mlp.W_f3)
+            cp.save('./fashion_model/dfa_{}_W_f4'.format(int(i)), mlp.W_f4)
+            cp.save('./fashion_model/dfa_{}_W_f5'.format(int(i)), mlp.W_f5)
     plt.xscale('log')
     for i in range(4):
-        plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
+        plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i + 1)))
     plt.plot(train_acc_list, label='train_acc', linestyle='--')
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
