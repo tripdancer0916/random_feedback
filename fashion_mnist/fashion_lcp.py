@@ -74,11 +74,11 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    dfa_W1 = cp.load("../fashion_model/dfa_{}_W_f1.npy".format(args.use_epoch))
-    dfa_W2 = cp.load("../fashion_model/dfa_{}_W_f2.npy".format(args.use_epoch))
-    dfa_W3 = cp.load("../fashion_model/dfa_{}_W_f3.npy".format(args.use_epoch))
-    dfa_W4 = cp.load("../fashion_model/dfa_{}_W_f4.npy".format(args.use_epoch))
-    dfa_W5 = cp.load("../fashion_model/dfa_{}_W_f5.npy".format(args.use_epoch))
+    dfa_W1 = cp.load("./fashion_model/dfa_{}_W_f1.npy".format(args.use_epoch))
+    dfa_W2 = cp.load("./fashion_model/dfa_{}_W_f2.npy".format(args.use_epoch))
+    dfa_W3 = cp.load("./fashion_model/dfa_{}_W_f3.npy".format(args.use_epoch))
+    dfa_W4 = cp.load("./fashion_model/dfa_{}_W_f4.npy".format(args.use_epoch))
+    dfa_W5 = cp.load("./fashion_model/dfa_{}_W_f5.npy".format(args.use_epoch))
 
     train_size = x_train.shape[0]
     batch_size = args.batch_size
