@@ -18,7 +18,7 @@ import PIL
 import matplotlib as mpl
 import argparse
 
-cp.random.seed(100)
+cp.random.seed(105)
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
