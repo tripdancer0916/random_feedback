@@ -1,6 +1,6 @@
 #! /bin/sh
 
-ARRAY=(1 2 3 4 5 6 7 10 20 30 40 50 80 100 200 300 400 500)
+ARRAY=(50 80 100 200 300 400 500)
 
 for batch_size in ${ARRAY[@]}; do
   echo $batch_size
