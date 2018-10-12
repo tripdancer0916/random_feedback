@@ -203,7 +203,7 @@ if __name__ == '__main__':
     plt.plot(train_acc_list, label='train_acc', linestyle='--')
     plt.xlabel('epoch')
     plt.ylabel('train_acc')
-    plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
+    plt.title('lafs batch_size={0}'.format(int(args.batch_size)))
     plt.legend()
 
-    plt.savefig('batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
+    plt.savefig('lafs_batch_size_{0}.png'.format(int(args.batch_size)), dpi=300)
