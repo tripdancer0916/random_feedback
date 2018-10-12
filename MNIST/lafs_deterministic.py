@@ -174,6 +174,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--iter_per_epoch', type=int, default=50)
+    parser.add_argument('--epochs', type=int, default=10000)
     args = parser.parse_args()
 
     mlp = MLP()
@@ -193,7 +194,7 @@ if __name__ == '__main__':
     print(mlp.lafs(x_batch_tmp, t_batch_tmp, batch_size))
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(100000):
+    for i in range(args.epochs):
         a, b, c, d, e = mlp.lafs(x_batch_tmp, t_batch_tmp, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
