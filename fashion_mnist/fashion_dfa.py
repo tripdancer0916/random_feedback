@@ -173,7 +173,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    mlp = MLP(args.n_unit)
+    mlp = MLP(weight_init_std=0.032, hidden_unit=args.n_unit)
     train_loss_list = []
     test_loss_list = []
     train_acc_list = []

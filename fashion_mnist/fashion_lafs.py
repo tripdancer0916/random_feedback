@@ -207,7 +207,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    mlp = LAFS(args.n_unit)
+    mlp = LAFS(weight_init_std=0.032, hidden_unit=args.n_unit)
     train_loss_list = []
     test_loss_list = []
     train_acc_list = []
@@ -243,11 +243,6 @@ if __name__ == '__main__':
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
-
-            # print('hidden_test_acc_1: ', float(mlp.hidden_acc(x_test, 0, t_test)))
-            # print('hidden_test_acc_2: ', float(mlp.hidden_acc(x_test, 1, t_test)))
-            # print('hidden_test_acc_3: ', float(mlp.hidden_acc(x_test, 2, t_test)))
-            # print('hidden_test_acc_4: ', float(mlp.hidden_acc(x_test, 3, t_test)))
         if i % iter_per_epoch == 0 and i < 10000:
             cp.save('../fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
             cp.save('../fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
