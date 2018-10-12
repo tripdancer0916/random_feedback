@@ -73,11 +73,10 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 200
 
 
 class MLP:
-    def __init__(self, weight_init_std=0.032):
+    def __init__(self, weight_init_std=0.032, hidden_unit=200):
         self.h = [0, 0, 0, 0]
 
         self.W_f1 = cp.zeros([784, hidden_unit])
@@ -170,10 +169,11 @@ class MLP:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int, default=100)
+    parser.add_argument('--n_unit', type=int, default=200)
 
     args = parser.parse_args()
 
-    mlp = MLP()
+    mlp = MLP(args.n_unit)
     train_loss_list = []
     test_loss_list = []
     train_acc_list = []
