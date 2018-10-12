@@ -73,7 +73,7 @@ def softmax(x):
 
 
 # Network definition
-hidden_unit = 800
+hidden_unit = 200
 
 
 class LAFS:
