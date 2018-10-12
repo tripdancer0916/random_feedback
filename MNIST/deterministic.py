@@ -166,6 +166,8 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
+        return delta5
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
@@ -188,15 +190,16 @@ if __name__ == '__main__':
     batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
     x_batch = x_train[batch_mask_]
     t_batch = t_train[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+    print(mlp.direct_feedback_alignment(x_batch, t_batch, batch_size))
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(100000):
-        mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+        a = mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
+            print(a)
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch, j, t_batch)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)

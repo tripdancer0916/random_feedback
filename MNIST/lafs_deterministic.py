@@ -129,28 +129,35 @@ class MLP:
         y = self.predict(x)
         return cross_entropy_error(y, t)
 
-    def direct_feedback_alignment(self, x, target, batch_size):
+    def lafs(self, x, target, batch_size):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
+        output1 = softmax(cp.dot(h1_, self.dB[0].T))
         h2 = cp.dot(h1_, self.W_f2)
         h2_ = cp.tanh(h2)
+        output2 = softmax(cp.dot(h2_, self.dB[1].T))
         h3 = cp.dot(h2_, self.W_f3)
         h3_ = cp.tanh(h3)
+        output3 = softmax(cp.dot(h3_, self.dB[2].T))
         h4 = cp.dot(h3_, self.W_f4)
         h4_ = cp.tanh(h4)
+        output4 = softmax(cp.dot(h4_, self.dB[3].T))
         h5 = cp.dot(h4_, self.W_f5)
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
         delta_Wf5 = cp.dot(h4_.T, delta5)
 
-        delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
+        delta4 = tanh_grad(h4) * cp.dot((output4 - target) / batch_size, self.dB[3])
         delta_Wf4 = cp.dot(h3_.T, delta4)
-        delta3 = tanh_grad(h3) * cp.dot(delta5, self.dB[2])
+
+        delta3 = tanh_grad(h3) * cp.dot((output3 - target) / batch_size, self.dB[2])
         delta_Wf3 = cp.dot(h2_.T, delta3)
-        delta2 = tanh_grad(h2) * cp.dot(delta5, self.dB[1])
+
+        delta2 = tanh_grad(h2) * cp.dot((output2 - target) / batch_size, self.dB[1])
         delta_Wf2 = cp.dot(h1_.T, delta2)
-        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+
+        delta1 = tanh_grad(h1) * cp.dot((output1 - target) / batch_size, self.dB[0])
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
@@ -159,6 +166,8 @@ class MLP:
         self.W_f3 -= alpha * delta_Wf3
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
+
+        return delta5, (output4 - target) / batch_size, (output3 - target) / batch_size, (output2 - target) / batch_size, (output1 - target) / batch_size
 
 
 if __name__ == '__main__':
@@ -181,15 +190,16 @@ if __name__ == '__main__':
     batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
     x_batch_tmp = x_train[batch_mask_]
     t_batch_tmp = t_train[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch_tmp, t_batch_tmp, batch_size)
+    print(mlp.lafs(x_batch_tmp, t_batch_tmp, batch_size))
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(100000):
-        mlp.direct_feedback_alignment(x_batch_tmp, t_batch_tmp, batch_size)
+        a, b, c, d, e = mlp.lafs(x_batch_tmp, t_batch_tmp, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
+            print(a, b, c, d, e)
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_tmp, j, t_batch_tmp)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
