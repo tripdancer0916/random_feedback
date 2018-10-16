@@ -134,7 +134,7 @@ class MLP:
         y = self.predict(x)
         return cross_entropy_error(y, t)
 
-    def direct_feedback_alignment(self, x, target, batch_size):
+    def direct_feedback_alignment(self, x, target, batch_size, alpha):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -158,7 +158,6 @@ class MLP:
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
@@ -170,6 +169,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--n_unit', type=int, default=800)
+    parser.add_argument('--learning_rate', type=float, default=0.1)
 
     args = parser.parse_args()
 
@@ -187,14 +187,14 @@ if __name__ == '__main__':
     batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
     x_batch = x_train[batch_mask_]
     t_batch = t_train[batch_mask_]
-    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+    mlp.direct_feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(500000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
-        mlp.direct_feedback_alignment(x_batch, t_batch, batch_size)
+        mlp.direct_feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
