@@ -76,7 +76,7 @@ def softmax(x):
 
 
 class LAFS:
-    def __init__(self, weight_init_std=0.032, hidden_unit=200):
+    def __init__(self, weight_init_std=0.032, hidden_unit=800):
         self.h = [0, 0, 0, 0]
 
         self.W_f1 = cp.zeros([784, hidden_unit])
@@ -115,14 +115,6 @@ class LAFS:
         t = cp.argmax(t, axis=1)
         accuracy = cp.sum(y == t) / float(x.shape[0])
         return accuracy
-
-    def angle(self, a, b):
-        A = cp.dot(a, b)
-        B = cp.linalg.norm(a)
-        C = cp.linalg.norm(b)
-        t = A / (B * C)
-        s = cp.arccos(t)
-        return (s / np.pi) * 180
 
     def loss(self, x, t):
         y = self.predict(x)
@@ -203,7 +195,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--used_data', type=int, default=60000)
     parser.add_argument('--iter_per_epoch', type=int, default=500)
-    parser.add_argument('--n_unit', type=int, default=200)
+    parser.add_argument('--n_unit', type=int, default=800)
 
     args = parser.parse_args()
 
