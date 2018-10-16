@@ -169,7 +169,7 @@ class MLP:
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int, default=100)
-    parser.add_argument('--n_unit', type=int, default=200)
+    parser.add_argument('--n_unit', type=int, default=800)
 
     args = parser.parse_args()
 
