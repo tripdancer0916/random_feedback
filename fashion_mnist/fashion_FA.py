@@ -85,8 +85,8 @@ class MLP:
         self.W_f4 = cp.zeros([hidden_unit, hidden_unit])
         self.W_f5 = cp.zeros([hidden_unit, 10])
 
-        self.dB = [weight_init_std * cp.random.randn(10, hidden_unit), weight_init_std * cp.random.randn(hidden_unit, hidden_unit),
-                   weight_init_std * cp.random.randn(hidden_unit, hidden_unit), weight_init_std * cp.random.randn(hidden_unit, hidden_unit)]
+        self.dB = [weight_init_std * cp.random.randn(hidden_unit, hidden_unit), weight_init_std * cp.random.randn(hidden_unit, hidden_unit),
+                   weight_init_std * cp.random.randn(hidden_unit, hidden_unit), weight_init_std * cp.random.randn(10, hidden_unit)]
 
     def predict(self, x):
         self.h[0] = cp.dot(x, self.W_f1)
