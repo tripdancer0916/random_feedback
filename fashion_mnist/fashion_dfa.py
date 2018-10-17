@@ -158,10 +158,10 @@ class MLP:
         delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
         delta_Wf1 = cp.dot(x.T, delta1)
 
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-        self.W_f3 -= alpha * delta_Wf3
-        self.W_f4 -= alpha * delta_Wf4
+        self.W_f1 -= alpha*0.2 * delta_Wf1
+        self.W_f2 -= alpha*0.4 * delta_Wf2
+        self.W_f3 -= alpha*0.4 * delta_Wf3
+        self.W_f4 -= alpha*0.7 * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
 
