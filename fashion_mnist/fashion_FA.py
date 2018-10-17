@@ -115,21 +115,21 @@ class MLP:
         self.predict(x)
         if i == 0:
             y = cp.dot(self.h[0], self.dB[0].T)
-            y = cp.tanh(y)
+            # y = cp.tanh(y)
             y = cp.dot(y, self.dB[1].T)
-            y = cp.tanh(y)
+            # y = cp.tanh(y)
             y = cp.dot(y, self.dB[2].T)
-            y = cp.tanh(y)
+            # y = cp.tanh(y)
             y = cp.dot(y, self.dB[3].T)
         if i == 1:
             y = cp.dot(self.h[1], self.dB[1].T)
-            y = cp.tanh(y)
+            # y = cp.tanh(y)
             y = cp.dot(y, self.dB[2].T)
-            y = cp.tanh(y)
+            # y = cp.tanh(y)
             y = cp.dot(y, self.dB[3].T)
         if i == 2:
             y = cp.dot(self.h[2], self.dB[2].T)
-            y = cp.tanh(y)
+            # y = cp.tanh(y)
             y = cp.dot(y, self.dB[3].T)
         if i == 3:
             y = cp.dot(self.h[3], self.dB[3].T)
