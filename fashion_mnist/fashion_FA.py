@@ -109,7 +109,7 @@ class MLP:
         return accuracy
 
     def cross_entropy(self, batch_size, y_pred, y_target):
-        return -(1.0/batch_size) * cp.sum(y_target*cp.log(y_pred) + (1-y_target)*cp.log(1-y_pred))
+        return -cp.mean(y_target*cp.log(y_pred) + (1-y_target)*cp.log(1-y_pred))
 
     def hidden_acc(self, x, i, t, batch_size):
         self.predict(x)
