@@ -108,7 +108,10 @@ class MLP:
         accuracy = cp.sum(y == t) / float(x.shape[0])
         return accuracy
 
-    def hidden_acc(self, x, i, t):
+    def cross_entropy(self, batch_size, y_pred, y_target):
+        return -(1.0/batch_size) * cp.sum(y_target*cp.log(y_pred) + (1-y_target)*cp.log(1-y_pred))
+
+    def hidden_acc(self, x, i, t, batch_size):
         self.predict(x)
         if i == 0:
             y = cp.dot(self.h[0], self.dB[0].T)
@@ -131,10 +134,11 @@ class MLP:
         if i == 3:
             y = cp.dot(self.h[3], self.dB[3].T)
         y = softmax(y)
+        loss = self.cross_entropy(batch_size, y, t)
         y = cp.argmax(y, axis=1)
         t = cp.argmax(t, axis=1)
         accuracy = cp.sum(y == t) / float(x.shape[0])
-        return accuracy
+        return accuracy, loss
 
     def loss(self, x, t):
         y = self.predict(x)
@@ -194,7 +198,7 @@ if __name__ == '__main__':
     x_batch = x_train[batch_mask_]
     t_batch = t_train[batch_mask_]
     mlp.feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
-    hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
+    hidden_train_acc = [[(float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1]))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(5000000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
@@ -206,12 +210,12 @@ if __name__ == '__main__':
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
-                hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
+                hidden_train_acc[j].append((float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1])))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
+            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1][0], hidden_train_acc[0][int(i / iter_per_epoch)+1][1])
+            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1][0], hidden_train_acc[1][int(i / iter_per_epoch)+1][1])
+            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1][0], hidden_train_acc[2][int(i / iter_per_epoch)+1][1])
+            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1][0], hidden_train_acc[3][int(i / iter_per_epoch)+1][1])
 
     # cp.save('./weights/fa_batch_size_{}_W_f1'.format(int(batch_size)), mlp.W_f1)
     # cp.save('./weights/fa_batch_size_{}_W_f2'.format(int(batch_size)), mlp.W_f2)
