@@ -214,9 +214,19 @@ if __name__ == '__main__':
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
 
-    cp.save('./weights/dfa_batch_size_{}_W_f1'.format(int(batch_size)), mlp.W_f1)
-    cp.save('./weights/dfa_batch_size_{}_W_f2'.format(int(batch_size)), mlp.W_f2)
-    cp.save('./weights/dfa_batch_size_{}_W_f3'.format(int(batch_size)), mlp.W_f3)
-    cp.save('./weights/dfa_batch_size_{}_W_f4'.format(int(batch_size)), mlp.W_f4)
-    cp.save('./weights/dfa_batch_size_{}_W_f5'.format(int(batch_size)), mlp.W_f5)
+    # cp.save('./weights/fa_batch_size_{}_W_f1'.format(int(batch_size)), mlp.W_f1)
+    # cp.save('./weights/fa_batch_size_{}_W_f2'.format(int(batch_size)), mlp.W_f2)
+    # cp.save('./weights/fa_batch_size_{}_W_f3'.format(int(batch_size)), mlp.W_f3)
+    # cp.save('./weights/fa_batch_size_{}_W_f4'.format(int(batch_size)), mlp.W_f4)
+    # cp.save('./weights/fa_batch_size_{}_W_f5'.format(int(batch_size)), mlp.W_f5)
+    plt.xscale('log')
+    for i in range(4):
+        plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i + 1)))
+    plt.plot(train_acc_list, label='train_acc', linestyle='--')
+    plt.xlabel('epoch')
+    plt.ylabel('train_acc')
+    plt.title('batch_size={}'.format(int(args.batch_size)))
+    plt.legend()
+
+    plt.savefig('feedback_alignment.png', dpi=300)
 
