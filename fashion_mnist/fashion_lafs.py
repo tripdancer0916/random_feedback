@@ -195,7 +195,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--used_data', type=int, default=60000)
     parser.add_argument('--iter_per_epoch', type=int, default=500)
-    parser.add_argument('--model_save', type=bool, default=False)
+    # parser.add_argument('--model_save', type=bool, default=False)
     parser.add_argument('--n_unit', type=int, default=800)
 
     args = parser.parse_args()
@@ -211,51 +211,30 @@ if __name__ == '__main__':
 
     iter_per_epoch = args.iter_per_epoch
     print("measure accuracy of hidden-layer in the dynamics of LAFS.")
-    batch_mask = cp.random.choice(train_size, args.used_data, replace=False)
-    x_batch_ = x_train[batch_mask]
-    t_batch_ = t_train[batch_mask]
-    batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
-    x_batch_tmp = x_batch_[batch_mask_]
-    t_batch_tmp = t_batch_[batch_mask_]
-    mlp.lafs(x_batch_tmp, t_batch_tmp, batch_size)
-    hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
+    batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
+    x_batch = x_train[batch_mask_]
+    t_batch = t_train[batch_mask_]
+    mlp.lafs(x_batch, t_batch, batch_size)
+    hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(500000):
+    for i in range(1000000):
         batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
-        x_batch = x_batch_[batch_mask_]
-        t_batch = t_batch_[batch_mask_]
+        x_batch = x_train[batch_mask_]
+        t_batch = t_train[batch_mask_]
         mlp.lafs(x_batch, t_batch, batch_size)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
-                hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
+                hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
             print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
-        if args.model_save:
-            if i % iter_per_epoch == 0 and i < 10000:
-                cp.save('../fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
-                cp.save('../fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
-                cp.save('../fashion_model/dfa_{}_W_f3'.format(int(i)), mlp.W_f3)
-                cp.save('../fashion_model/dfa_{}_W_f4'.format(int(i)), mlp.W_f4)
-                cp.save('../fashion_model/dfa_{}_W_f5'.format(int(i)), mlp.W_f5)
-            elif i % (10*iter_per_epoch) == 0:
-                cp.save('../fashion_model/dfa_{}_W_f1'.format(int(i)), mlp.W_f1)
-                cp.save('../fashion_model/dfa_{}_W_f2'.format(int(i)), mlp.W_f2)
-                cp.save('../fashion_model/dfa_{}_W_f3'.format(int(i)), mlp.W_f3)
-                cp.save('../fashion_model/dfa_{}_W_f4'.format(int(i)), mlp.W_f4)
-                cp.save('../fashion_model/dfa_{}_W_f5'.format(int(i)), mlp.W_f5)
-    plt.xscale('log')
-    for i in range(4):
-        plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i + 1)))
-    plt.plot(train_acc_list, label='train_acc', linestyle='--')
-    plt.xlabel('epoch')
-    plt.ylabel('train_acc')
-    plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
-    plt.legend()
-
-    plt.savefig('fashion-mnist_lafs_batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
+    cp.save('./weights/lafs_batch_size_{}_W_f1'.format(int(batch_size)), mlp.W_f1)
+    cp.save('./weights/lafs_batch_size_{}_W_f2'.format(int(batch_size)), mlp.W_f2)
+    cp.save('./weights/lafs_batch_size_{}_W_f3'.format(int(batch_size)), mlp.W_f3)
+    cp.save('./weights/lafs_batch_size_{}_W_f4'.format(int(batch_size)), mlp.W_f4)
+    cp.save('./weights/lafs_batch_size_{}_W_f5'.format(int(batch_size)), mlp.W_f5)
