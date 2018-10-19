@@ -207,9 +207,9 @@ if __name__ == '__main__':
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
 
-        cp.save('./1019/weights/dfa_epoch_{}_W_f1'.format(int(i/iter_per_epoch)), mlp.W_f1)
-        cp.save('./1019/weights/dfa_epoch_{}_W_f2'.format(int(i/iter_per_epoch)), mlp.W_f2)
-        cp.save('./1019/weights/dfa_epoch_{}_W_f3'.format(int(i/iter_per_epoch)), mlp.W_f3)
-        cp.save('./1019/weights/dfa_epoch_{}_W_f4'.format(int(i/iter_per_epoch)), mlp.W_f4)
-        cp.save('./1019/weights/dfa_epoch_{}_W_f5'.format(int(i/iter_per_epoch)), mlp.W_f5)
+            cp.save('./1019/weights/dfa_epoch_{}_W_f1'.format(int(i/iter_per_epoch)), mlp.W_f1)
+            cp.save('./1019/weights/dfa_epoch_{}_W_f2'.format(int(i/iter_per_epoch)), mlp.W_f2)
+            cp.save('./1019/weights/dfa_epoch_{}_W_f3'.format(int(i/iter_per_epoch)), mlp.W_f3)
+            cp.save('./1019/weights/dfa_epoch_{}_W_f4'.format(int(i/iter_per_epoch)), mlp.W_f4)
+            cp.save('./1019/weights/dfa_epoch_{}_W_f5'.format(int(i/iter_per_epoch)), mlp.W_f5)
 
