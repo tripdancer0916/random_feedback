@@ -200,11 +200,11 @@ class MLP:
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
         self.delta_Wf4_fa = cp.dot(h3_.T, delta4)
-        delta3 = tanh_grad(h3) * cp.dot(delta5, self.dB[2])
+        delta3 = tanh_grad(h3) * cp.dot(delta4, self.dB[2])
         self.delta_Wf3_fa = cp.dot(h2_.T, delta3)
-        delta2 = tanh_grad(h2) * cp.dot(delta5, self.dB[1])
+        delta2 = tanh_grad(h2) * cp.dot(delta3, self.dB[1])
         self.delta_Wf2_fa = cp.dot(h1_.T, delta2)
-        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.dB[0])
         self.delta_Wf1_fa = cp.dot(x.T, delta1)
 
     def calculate_bp(self, x, target, batch_size):
