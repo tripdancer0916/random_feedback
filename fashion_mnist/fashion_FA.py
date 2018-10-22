@@ -216,7 +216,7 @@ if __name__ == '__main__':
     mlp.feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
     hidden_train_acc = [[(float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1]))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(5000000):
+    for i in range(500000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
