@@ -117,12 +117,12 @@ class MLP:
         return accuracy
 
     def angle(self, a, b):
-        A = a * b
-        A = cp.linalg.norm(A)
-        B = cp.linalg.norm(a)
-        C = cp.linalg.norm(b)
-        t = A/(B*C)
-        s = cp.arccos(t)
+        fp = a * b
+        fp = cp.sum(fp)
+        norm_a = cp.sqrt(cp.sum(a * a))
+        norm_b = cp.sqrt(cp.sum(b * b))
+        cos_theta = fp / (norm_a * norm_b)
+        s = cp.arccos(cos_theta)
         return (s/np.pi)*180
 
     def loss(self, x, t):
