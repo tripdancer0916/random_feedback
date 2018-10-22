@@ -268,6 +268,7 @@ if __name__ == '__main__':
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
                 hidden_train_acc[j].append((float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1])))
+            print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
             mlp.calculate_bp(x_batch, t_batch, batch_size)
             mlp.calculate_fa(x_batch, t_batch, batch_size)
             # print(mlp.delta_Wf1_bp)
