@@ -98,15 +98,6 @@ class LAFS:
         accuracy = cp.sum(y == t) / float(x.shape[0])
         return accuracy
 
-    def hidden_acc(self, x, i, t):
-        self.predict(x)
-        y = cp.dot(self.h[i], self.dB[i].T)
-        y = softmax(y)
-        y = cp.argmax(y, axis=1)
-        t = cp.argmax(t, axis=1)
-        accuracy = cp.sum(y == t) / float(x.shape[0])
-        return accuracy
-
     def loss(self, x, t):
         y = self.predict(x)
         return cross_entropy_error(y, t)
@@ -114,7 +105,7 @@ class LAFS:
     def lafs(self, x, target, batch_size):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
-        output1 = softmax(cp.dot(h1_, self.dB[0].T))
+        output1 = softmax(cp.dot(h1_, self.dB.T))
 
         h = cp.dot(h1_, self.W_f2)
         output = softmax(h)
@@ -122,7 +113,7 @@ class LAFS:
         delta = (output - target) / batch_size
         delta_Wf2 = cp.dot(h1_.T, delta)
 
-        delta1 = tanh_grad(h1) * cp.dot((output1 - target) / batch_size, self.dB[0])
+        delta1 = tanh_grad(h1) * cp.dot((output1 - target) / batch_size, self.dB)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
