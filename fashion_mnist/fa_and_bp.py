@@ -145,6 +145,7 @@ class MLP:
         A = cp.linalg.norm(A)
         B = cp.linalg.norm(a)
         C = cp.linalg.norm(b)
+        print(A, B, C)
         t = A/(B*C)
         s = cp.arccos(t)
         return (s/np.pi)*180
