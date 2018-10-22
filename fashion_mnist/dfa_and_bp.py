@@ -158,6 +158,54 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
+    def calculate_dfa(self, x, target, batch_size):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        h4_ = cp.tanh(h4)
+        h5 = cp.dot(h4_, self.W_f5)
+        output = softmax(h5)
+
+        delta5 = (output - target) / batch_size
+        self.delta_Wf5_dfa = cp.dot(h4_.T, delta5)
+
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
+        self.delta_Wf4_dfa = cp.dot(h3_.T, delta4)
+        delta3 = tanh_grad(h3) * cp.dot(delta5, self.dB[2])
+        self.delta_Wf3_dfa = cp.dot(h2_.T, delta3)
+        delta2 = tanh_grad(h2) * cp.dot(delta5, self.dB[1])
+        self.delta_Wf2_dfa = cp.dot(h1_.T, delta2)
+        delta1 = tanh_grad(h1) * cp.dot(delta5, self.dB[0])
+        self.delta_Wf1_dfa = cp.dot(x.T, delta1)
+
+    def calculate_bp(self, x, target, batch_size):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = cp.tanh(h1)
+        h2 = cp.dot(h1_, self.W_f2)
+        h2_ = cp.tanh(h2)
+        h3 = cp.dot(h2_, self.W_f3)
+        h3_ = cp.tanh(h3)
+        h4 = cp.dot(h3_, self.W_f4)
+        h4_ = cp.tanh(h4)
+        h5 = cp.dot(h4_, self.W_f5)
+        output = softmax(h5)
+
+        delta5 = (output - target) / batch_size
+        self.delta_Wf5_bp = cp.dot(h4_.T, delta5)
+
+        delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
+        self.delta_Wf4_bp = cp.dot(h3_.T, delta4)
+        delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
+        self.delta_Wf3_bp = cp.dot(h2_.T, delta3)
+        delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
+        self.delta_Wf2_bp = cp.dot(h1_.T, delta2)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
+        self.delta_Wf1_bp = cp.dot(x.T, delta1)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
@@ -200,10 +248,12 @@ if __name__ == '__main__':
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1])
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
+            mlp.calculate_bp(x_batch, t_batch, batch_size)
+            mlp.calculate_dfa(x_batch, t_batch, batch_size)
+            print('angle_layer_1: ', mlp.angle(mlp.delta_Wf1_bp, mlp.delta_Wf1_dfa))
+            print('angle_layer_2: ', mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_dfa))
+            print('angle_layer_3: ', mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_dfa))
+            print('angle_layer_4: ', mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_dfa))
 
-            cp.save('./1019/weights/dfa_epoch_{}_W_f1'.format(int(i/iter_per_epoch)), mlp.W_f1)
-            cp.save('./1019/weights/dfa_epoch_{}_W_f2'.format(int(i/iter_per_epoch)), mlp.W_f2)
-            cp.save('./1019/weights/dfa_epoch_{}_W_f3'.format(int(i/iter_per_epoch)), mlp.W_f3)
-            cp.save('./1019/weights/dfa_epoch_{}_W_f4'.format(int(i/iter_per_epoch)), mlp.W_f4)
-            cp.save('./1019/weights/dfa_epoch_{}_W_f5'.format(int(i/iter_per_epoch)), mlp.W_f5)
+
 
