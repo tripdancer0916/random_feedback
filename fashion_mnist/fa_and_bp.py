@@ -262,7 +262,7 @@ if __name__ == '__main__':
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
         mlp.feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
-        if i % iter_per_epoch == 0 and i > 0:
+        if i % iter_per_epoch == 0 and i > 1:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
@@ -277,4 +277,4 @@ if __name__ == '__main__':
             print('angle_layer_2: ', mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_fa))
             print('angle_layer_3: ', mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_fa))
             print('angle_layer_4: ', mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_fa))
-            print('angle_layer_5: ', mlp.angle(mlp.delta_Wf5_bp, mlp.delta_Wf5_fa))
+            # print('angle_layer_5: ', mlp.angle(mlp.delta_Wf5_bp, mlp.delta_Wf5_fa))
