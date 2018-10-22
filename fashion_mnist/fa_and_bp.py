@@ -278,4 +278,4 @@ if __name__ == '__main__':
             print('angle_layer_2: ', mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_fa))
             print('angle_layer_3: ', mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_fa))
             print('angle_layer_4: ', mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_fa))
-            print('angle_layer_5: ', mlp.angle(mlp.delta_Wf5_bp, mlp.delta_Wf5_bp))
+            print('angle_layer_5: ', mlp.angle(mlp.delta_Wf5_bp, mlp.delta_Wf5_fa))
