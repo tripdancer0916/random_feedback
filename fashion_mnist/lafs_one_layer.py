@@ -82,12 +82,12 @@ class LAFS:
         self.W_f1 = cp.zeros([784, hidden_unit])
         self.W_f2 = cp.zeros([hidden_unit, 10])
 
-        self.dB = weight_init_std * cp.random.randn(10, hidden_unit)
+        # self.dB = weight_init_std * cp.random.randn(10, hidden_unit)
 
     def predict(self, x):
-        self.h[0] = cp.dot(x, self.W_f1)
-        self.h[0] = cp.tanh(self.h[0])
-        h = cp.dot(self.h[0], self.W_f2)
+        h = cp.dot(x, self.W_f1)
+        h = cp.tanh(h)
+        h = cp.dot(h, self.W_f2)
         output = softmax(h)
         return output
 
@@ -102,24 +102,6 @@ class LAFS:
         y = self.predict(x)
         return cross_entropy_error(y, t)
 
-    def lafs(self, x, target, batch_size):
-        h1 = cp.dot(x, self.W_f1)
-        h1_ = cp.tanh(h1)
-        output1 = softmax(cp.dot(h1_, self.dB.T))
-
-        h = cp.dot(h1_, self.W_f2)
-        output = softmax(h)
-
-        delta = (output - target) / batch_size
-        delta_Wf2 = cp.dot(h1_.T, delta)
-
-        delta1 = tanh_grad(h1) * cp.dot((output1 - target) / batch_size, self.dB)
-        delta_Wf1 = cp.dot(x.T, delta1)
-
-        alpha = 0.1
-        self.W_f1 -= alpha * delta_Wf1
-        self.W_f2 -= alpha * delta_Wf2
-
     def back_prop(self, x, target, batch_size):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
@@ -128,10 +110,10 @@ class LAFS:
         h2 = cp.dot(h1_, self.W_f2)
         output = softmax(h2)
 
-        delta = (output - target) / batch_size
-        delta_Wf2 = cp.dot(h1_.T, delta)
+        delta2 = (output - target) / batch_size
+        delta_Wf2 = cp.dot(h1_.T, delta2)
 
-        delta1 = tanh_grad(h1) * cp.dot(delta, self.W_f2.T)
+        delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
 
         alpha = 0.1
