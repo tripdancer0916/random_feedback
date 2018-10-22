@@ -108,6 +108,22 @@ class MLP:
         accuracy = cp.sum(y == t) / float(x.shape[0])
         return accuracy
 
+    def linear_predict(self, x):
+        self.h[0] = cp.dot(x, self.W_f1)
+        self.h[1] = cp.dot(self.h[0], self.W_f2)
+        self.h[2] = cp.dot(self.h[1], self.W_f3)
+        self.h[3] = cp.dot(self.h[2], self.W_f4)
+        h = cp.dot(self.h[3], self.W_f5)
+        output = softmax(h)
+        return output
+
+    def linear_accuracy(self, x, t):
+        y = self.linear_predict(x)
+        y = cp.argmax(y, axis=1)
+        t = cp.argmax(t, axis=1)
+        accuracy = cp.sum(y == t) / float(x.shape[0])
+        return accuracy
+
     def cross_entropy(self, batch_size, y_pred, y_target):
         return -cp.mean(y_target*cp.log(y_pred) + (1-y_target)*cp.log(1-y_pred))
 
@@ -207,11 +223,14 @@ if __name__ == '__main__':
         mlp.feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
+            linear_train_acc = mlp.linear_accuracy(x_train, t_train)
+            linear_test_acc = mlp.linear_accuracy(x_test, t_test)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             for j in range(4):
                 hidden_train_acc[j].append((float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1])))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
+            print(int(i / iter_per_epoch), 'linear_train_acc: ', linear_train_acc, 'linear_test_acc: ', linear_test_acc)
             print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1][0], hidden_train_acc[0][int(i / iter_per_epoch)+1][1])
             print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1][0], hidden_train_acc[1][int(i / iter_per_epoch)+1][1])
             print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1][0], hidden_train_acc[2][int(i / iter_per_epoch)+1][1])
