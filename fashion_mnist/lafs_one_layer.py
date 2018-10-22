@@ -120,6 +120,24 @@ class LAFS:
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
 
+    def back_prop(self, x, target, batch_size):
+        h1 = cp.dot(x, self.W_f1)
+        h1_ = cp.tanh(h1)
+        # output1 = softmax(cp.dot(h1_, self.dB.T))
+
+        h2 = cp.dot(h1_, self.W_f2)
+        output = softmax(h2)
+
+        delta = (output - target) / batch_size
+        delta_Wf2 = cp.dot(h1_.T, delta)
+
+        delta1 = tanh_grad(h1) * cp.dot(delta, self.W_f2.T)
+        delta_Wf1 = cp.dot(x.T, delta1)
+
+        alpha = 0.1
+        self.W_f1 -= alpha * delta_Wf1
+        self.W_f2 -= alpha * delta_Wf2
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
