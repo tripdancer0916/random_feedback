@@ -145,8 +145,8 @@ if __name__ == '__main__':
     x_batch = x_train[batch_mask_]
     t_batch = t_train[batch_mask_]
     mlp.lafs(x_batch, t_batch, batch_size)
-    hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
-    train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
+    # hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
+    # train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(1000000):
         batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
