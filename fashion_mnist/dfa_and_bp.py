@@ -117,7 +117,7 @@ class MLP:
         return accuracy
 
     def angle(self, a, b):
-        A = cp.dot(a, b)
+        A = a * b
         B = cp.linalg.norm(a)
         C = cp.linalg.norm(b)
         t = A/(B*C)
@@ -250,9 +250,9 @@ if __name__ == '__main__':
             print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1])
             mlp.calculate_bp(x_batch, t_batch, batch_size)
             mlp.calculate_dfa(x_batch, t_batch, batch_size)
-            print(mlp.delta_Wf1_bp.shape)
-            print(mlp.delta_Wf1_dfa.shape)
-            print(cp.dot(mlp.delta_Wf1_dfa, mlp.delta_Wf1_bp))
+            # print(mlp.delta_Wf1_bp.shape)
+            # print(mlp.delta_Wf1_dfa.shape)
+            # print(cp.dot(mlp.delta_Wf1_dfa, mlp.delta_Wf1_bp))
             print('angle_layer_1: ', mlp.angle(mlp.delta_Wf1_bp, mlp.delta_Wf1_dfa))
             print('angle_layer_2: ', mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_dfa))
             print('angle_layer_3: ', mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_dfa))
