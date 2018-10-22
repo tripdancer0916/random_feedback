@@ -196,7 +196,7 @@ class MLP:
         output = softmax(h5)
 
         delta5 = (output - target) / batch_size
-        self.delta_Wf5_dfa = cp.dot(h4_.T, delta5)
+        self.delta_Wf5_fa = cp.dot(h4_.T, delta5)
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.dB[3])
         self.delta_Wf4_fa = cp.dot(h3_.T, delta4)
@@ -262,7 +262,7 @@ if __name__ == '__main__':
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
         mlp.feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
-        if i % iter_per_epoch == 0:
+        if i % iter_per_epoch == 0 and i > 0:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
