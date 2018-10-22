@@ -236,7 +236,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Feedback Alignment.')
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--n_unit', type=int, default=800)
-    parser.add_argument('--learning_rate', type=float, default=0.01)
+    parser.add_argument('--learning_rate', type=float, default=0.1)
 
     args = parser.parse_args()
 
