@@ -80,7 +80,7 @@ class LAFS:
         self.h = [0, 0]
 
         self.W_f1 = cp.zeros([784, hidden_unit])
-        self.W_f2 = cp.zeros([hidden_unit, hidden_unit])
+        self.W_f2 = cp.zeros([hidden_unit, 10])
 
         self.dB = weight_init_std * cp.random.randn(10, hidden_unit)
 
