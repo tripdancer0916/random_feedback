@@ -248,5 +248,4 @@ if __name__ == '__main__':
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
             print(int(i / iter_per_epoch), 'linear_train_acc: ', linear_train_acc, 'linear_test_acc: ', linear_test_acc)
