@@ -80,12 +80,6 @@ class MLP:
     def __init__(self, weight_init_std=0.032):
         self.h = [0, 0, 0, 0]
 
-        # self.W_f1 = cp.zeros([784, hidden_unit])
-        # self.W_f2 = cp.zeros([hidden_unit, hidden_unit])
-        # self.W_f3 = cp.zeros([hidden_unit, hidden_unit])
-        # self.W_f4 = cp.zeros([hidden_unit, hidden_unit])
-        # self.W_f5 = cp.zeros([hidden_unit, 10])
-
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
         self.W_f2 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
         self.W_f3 = weight_init_std * cp.random.randn(hidden_unit, hidden_unit)
@@ -109,6 +103,22 @@ class MLP:
 
     def accuracy(self, x, t):
         y = self.predict(x)
+        y = cp.argmax(y, axis=1)
+        t = cp.argmax(t, axis=1)
+        accuracy = cp.sum(y == t) / float(x.shape[0])
+        return accuracy
+
+    def linear_predict(self, x):
+        self.h[0] = cp.dot(x, self.W_f1)
+        self.h[1] = cp.dot(self.h[0], self.W_f2)
+        self.h[2] = cp.dot(self.h[1], self.W_f3)
+        self.h[3] = cp.dot(self.h[2], self.W_f4)
+        h = cp.dot(self.h[3], self.W_f5)
+        output = softmax(h)
+        return output
+
+    def linear_accuracy(self, x, t):
+        y = self.linear_predict(x)
         y = cp.argmax(y, axis=1)
         t = cp.argmax(t, axis=1)
         accuracy = cp.sum(y == t) / float(x.shape[0])
@@ -166,7 +176,7 @@ class MLP:
         self.W_f4 -= alpha * delta_Wf4
         self.W_f5 -= alpha * delta_Wf5
 
-    def back_propagation(self, x, target, batch_size):
+    def back_propagation(self, x, target, batch_size, alpha):
         h1 = cp.dot(x, self.W_f1)
         h1_ = cp.tanh(h1)
         h2 = cp.dot(h1_, self.W_f2)
@@ -190,7 +200,6 @@ class MLP:
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
 
-        alpha = 0.1
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
         self.W_f3 -= alpha * delta_Wf3
@@ -203,6 +212,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--used_data', type=int, default=60000)
     parser.add_argument('--iter_per_epoch', type=int, default=500)
+    parser.add_argument('--learning_rate', type=float, default=0.01)
 
     args = parser.parse_args()
 
@@ -223,35 +233,20 @@ if __name__ == '__main__':
     batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
     x_batch_tmp = x_batch_[batch_mask_]
     t_batch_tmp = t_batch_[batch_mask_]
-    mlp.back_propagation(x_batch_tmp, t_batch_tmp, batch_size)
+    mlp.back_propagation(x_batch_tmp, t_batch_tmp, batch_size, args.learning_rate)
     hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
     for i in range(500000):
         batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
         x_batch = x_batch_[batch_mask_]
         t_batch = t_batch_[batch_mask_]
-        mlp.back_propagation(x_batch, t_batch, batch_size)
+        mlp.back_propagation(x_batch, t_batch, batch_size, args.learning_rate)
         if i % iter_per_epoch == 0:
             train_acc = mlp.accuracy(x_train, t_train)
+            linear_train_acc = mlp.linear_accuracy(x_train, t_train)
+            linear_test_acc = mlp.linear_accuracy(x_test, t_test)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            """
-            for j in range(4):
-                hidden_train_acc[j].append(float(mlp.hidden_acc(x_batch_, j, t_batch_)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
-            """
-    # plt.xscale('log')
-    # for i in range(4):
-    #     plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i+1)))
-    # plt.plot(train_acc_list, label='train_acc', linestyle='--')
-    # plt.xlabel('epoch')
-    # plt.ylabel('train_acc')
-    # plt.title('batch_size={0}, num datas={1}'.format(int(args.batch_size), int(args.used_data)))
-    # plt.legend()
-
-    # plt.savefig('bp_fashion-mnist_batch_size_{0}_{1}.png'.format(int(args.batch_size), int(args.used_data)), dpi=300)
+            print(int(i / iter_per_epoch), 'linear_train_acc: ', linear_train_acc, 'linear_test_acc: ', linear_test_acc)
