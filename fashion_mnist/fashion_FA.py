@@ -131,21 +131,21 @@ class MLP:
         self.predict(x)
         if i == 0:
             y = cp.dot(self.h[0], self.dB[0].T)
-            # y = cp.tanh(y)
+            y = cp.tanh(y)
             y = cp.dot(y, self.dB[1].T)
-            # y = cp.tanh(y)
+            y = cp.tanh(y)
             y = cp.dot(y, self.dB[2].T)
-            # y = cp.tanh(y)
+            y = cp.tanh(y)
             y = cp.dot(y, self.dB[3].T)
         if i == 1:
             y = cp.dot(self.h[1], self.dB[1].T)
-            # y = cp.tanh(y)
+            y = cp.tanh(y)
             y = cp.dot(y, self.dB[2].T)
-            # y = cp.tanh(y)
+            y = cp.tanh(y)
             y = cp.dot(y, self.dB[3].T)
         if i == 2:
             y = cp.dot(self.h[2], self.dB[2].T)
-            # y = cp.tanh(y)
+            y = cp.tanh(y)
             y = cp.dot(y, self.dB[3].T)
         if i == 3:
             y = cp.dot(self.h[3], self.dB[3].T)
@@ -216,7 +216,7 @@ if __name__ == '__main__':
     mlp.feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
     hidden_train_acc = [[(float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1]))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(5000000):
+    for i in range(500000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
@@ -231,16 +231,17 @@ if __name__ == '__main__':
                 hidden_train_acc[j].append((float(mlp.hidden_acc(x_train, j, t_train, batch_size)[0]), float(mlp.hidden_acc(x_train, j, t_train, batch_size)[1])))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
             print(int(i / iter_per_epoch), 'linear_train_acc: ', linear_train_acc, 'linear_test_acc: ', linear_test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1][0], hidden_train_acc[0][int(i / iter_per_epoch)+1][1])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1][0], hidden_train_acc[1][int(i / iter_per_epoch)+1][1])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1][0], hidden_train_acc[2][int(i / iter_per_epoch)+1][1])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1][0], hidden_train_acc[3][int(i / iter_per_epoch)+1][1])
+            # print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)+1][0], hidden_train_acc[0][int(i / iter_per_epoch)+1][1])
+            # print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)+1][0], hidden_train_acc[1][int(i / iter_per_epoch)+1][1])
+            # print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)+1][0], hidden_train_acc[2][int(i / iter_per_epoch)+1][1])
+            # print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)+1][0], hidden_train_acc[3][int(i / iter_per_epoch)+1][1])
 
     # cp.save('./weights/fa_batch_size_{}_W_f1'.format(int(batch_size)), mlp.W_f1)
     # cp.save('./weights/fa_batch_size_{}_W_f2'.format(int(batch_size)), mlp.W_f2)
     # cp.save('./weights/fa_batch_size_{}_W_f3'.format(int(batch_size)), mlp.W_f3)
     # cp.save('./weights/fa_batch_size_{}_W_f4'.format(int(batch_size)), mlp.W_f4)
     # cp.save('./weights/fa_batch_size_{}_W_f5'.format(int(batch_size)), mlp.W_f5)
+    """
     plt.xscale('log')
     for i in range(4):
         plt.plot(hidden_train_acc[i], label='hidden_layer_{}'.format(int(i + 1)))
@@ -251,4 +252,11 @@ if __name__ == '__main__':
     plt.legend()
 
     plt.savefig('feedback_alignment.png', dpi=300)
+    """
+
+    cp.save('./weights_fa_W_f1', mlp.W_f1)
+    cp.save('./weights_fa_W_f2', mlp.W_f2)
+    cp.save('./weights_fa_W_f3', mlp.W_f3)
+    cp.save('./weights_fa_W_f4', mlp.W_f4)
+    cp.save('./weights_fa_W_f5', mlp.W_f5)
 
