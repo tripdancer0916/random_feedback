@@ -176,7 +176,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Direct Feedback Alignment.')
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--n_unit', type=int, default=800)
-    parser.add_argument('--learning_rate', type=float, default=0.01)
+    parser.add_argument('--learning_rate', type=float, default=0.02)
 
     args = parser.parse_args()
 
@@ -197,7 +197,7 @@ if __name__ == '__main__':
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(2000000):
+    for i in range(500000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
