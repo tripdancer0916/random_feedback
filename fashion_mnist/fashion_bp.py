@@ -2,9 +2,7 @@
 
 import numpy as np
 import os
-import keras
-from keras import backend as K
-from keras.datasets import cifar10
+
 import cupy as cp
 import chainer
 from chainer.backends import cuda
