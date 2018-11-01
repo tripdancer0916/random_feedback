@@ -36,3 +36,8 @@ print(cp.var(h1))
 print(cp.var(h2))
 print(cp.var(h3))
 print(cp.var(h4))
+
+print(cp.mean(h1))
+print(cp.mean(h2))
+print(cp.mean(h3))
+print(cp.mean(h4))
