@@ -17,11 +17,11 @@ t_test = cp.identity(10)[t_test.astype(int)]
 def relu(x):
     return cp.maximum(0, x)
 
-W_f1 = cp.load('weights_dfa_relu_W_f1.npy')
-W_f2 = cp.load('weights_dfa_relu_W_f2.npy')
-W_f3 = cp.load('weights_dfa_relu_W_f3.npy')
-W_f4 = cp.load('weights_dfa_relu_W_f4.npy')
-W_f5 = cp.load('weights_dfa_relu_W_f5.npy')
+W_f1 = cp.load('weights_fa_relu_W_f1.npy')
+W_f2 = cp.load('weights_fa_relu_W_f2.npy')
+W_f3 = cp.load('weights_fa_relu_W_f3.npy')
+W_f4 = cp.load('weights_fa_relu_W_f4.npy')
+W_f5 = cp.load('weights_fa_relu_W_f5.npy')
 
 x = x_train
 h1 = cp.dot(x, W_f1)
