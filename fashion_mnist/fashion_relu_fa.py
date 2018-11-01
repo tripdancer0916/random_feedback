@@ -16,7 +16,7 @@ import PIL
 import matplotlib as mpl
 import argparse
 
-cp.random.seed(100)
+cp.random.seed(110)
 
 mpl.use('Agg')
 import matplotlib.pyplot as plt
@@ -74,7 +74,7 @@ def softmax(x):
 
 
 class MLP:
-    def __init__(self, weight_init_std=0.032, hidden_unit=200):
+    def __init__(self, weight_init_std=0.032, hidden_unit=800):
         self.h = [0, 0, 0, 0]
 
         self.W_f1 = weight_init_std * cp.random.randn(784, hidden_unit)
@@ -235,4 +235,3 @@ if __name__ == '__main__':
     cp.save('./weights_fa_relu_W_f3', mlp.W_f3)
     cp.save('./weights_fa_relu_W_f4', mlp.W_f4)
     cp.save('./weights_fa_relu_W_f5', mlp.W_f5)
-
