@@ -247,7 +247,7 @@ if __name__ == '__main__':
     mlp.back_propagation(x_batch_tmp, t_batch_tmp, batch_size, args.learning_rate)
     hidden_train_acc = [[float(mlp.hidden_acc(x_batch_, j, t_batch_))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(500000):
+    for i in range(100000):
         batch_mask_ = cp.random.choice(args.used_data, batch_size, replace=False)
         x_batch = x_batch_[batch_mask_]
         t_batch = t_batch_[batch_mask_]
