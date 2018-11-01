@@ -242,16 +242,18 @@ if __name__ == '__main__':
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
-        mlp.calculate_bp(x_batch, t_batch, batch_size)
-        mlp.calculate_dfa(x_batch, t_batch, batch_size)
-        angle_layer_1_list.append(mlp.angle(mlp.delta_Wf1_bp, mlp.delta_Wf1_dfa))
-        angle_layer_2_list.append(mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_dfa))
-        angle_layer_3_list.append(mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_dfa))
-        angle_layer_4_list.append(mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_dfa))
+
         if i % iter_per_epoch == 0 and i > 1:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
+            mlp.calculate_bp(x_batch, t_batch, batch_size)
+            mlp.calculate_dfa(x_batch, t_batch, batch_size)
+            angle_layer_1_list.append(mlp.angle(mlp.delta_Wf1_bp, mlp.delta_Wf1_dfa))
+            angle_layer_2_list.append(mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_dfa))
+            angle_layer_3_list.append(mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_dfa))
+            angle_layer_4_list.append(mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_dfa))
+
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
