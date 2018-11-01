@@ -269,7 +269,7 @@ if __name__ == '__main__':
 
     plt.xlabel('epoch')
     plt.ylabel('angle')
-    plt.title('angle between delta_DFA & delta_BP'))
+    plt.title('angle between delta_DFA & delta_BP')
     plt.legend()
 
     plt.savefig('angle_bp_dfa.png', dpi=300)
