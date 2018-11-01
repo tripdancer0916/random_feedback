@@ -222,6 +222,12 @@ if __name__ == '__main__':
     train_acc_list = []
     test_acc_list = []
 
+    angle_layer_1_list = []
+    angle_layer_2_list = []
+    angle_layer_3_list = []
+    angle_layer_4_list = []
+
+
     train_size = x_train.shape[0]
     batch_size = args.batch_size
 
@@ -233,11 +239,17 @@ if __name__ == '__main__':
     mlp.direct_feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
     hidden_train_acc = [[float(mlp.hidden_acc(x_train, j, t_train))] for j in range(4)]
     train_acc_list.append(float(mlp.accuracy(x_train, t_train)))
-    for i in range(500000):
+    for i in range(1000):
         batch_mask_ = cp.random.choice(train_size, batch_size, replace=False)
         x_batch = x_train[batch_mask_]
         t_batch = t_train[batch_mask_]
         mlp.direct_feedback_alignment(x_batch, t_batch, batch_size, args.learning_rate)
+        mlp.calculate_bp(x_batch, t_batch, batch_size)
+        mlp.calculate_dfa(x_batch, t_batch, batch_size)
+        angle_layer_1_list.append(mlp.angle(mlp.delta_Wf1_bp, mlp.delta_Wf1_dfa))
+        angle_layer_2_list.append(mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_dfa))
+        angle_layer_3_list.append(mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_dfa))
+        angle_layer_4_list.append(mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_dfa))
         if i % iter_per_epoch == 0 and i > 1:
             train_acc = mlp.accuracy(x_train, t_train)
             train_acc_list.append(float(train_acc))
@@ -245,19 +257,19 @@ if __name__ == '__main__':
             for j in range(4):
                 hidden_train_acc[j].append(float(mlp.hidden_acc(x_train, j, t_train)))
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print('hidden_train_acc_1: ', hidden_train_acc[0][int(i / iter_per_epoch)])
-            print('hidden_train_acc_2: ', hidden_train_acc[1][int(i / iter_per_epoch)])
-            print('hidden_train_acc_3: ', hidden_train_acc[2][int(i / iter_per_epoch)])
-            print('hidden_train_acc_4: ', hidden_train_acc[3][int(i / iter_per_epoch)])
-            mlp.calculate_bp(x_batch, t_batch, batch_size)
-            mlp.calculate_dfa(x_batch, t_batch, batch_size)
-            # print(mlp.delta_Wf1_bp)
-            # print(mlp.delta_Wf1_dfa)
-            # print(cp.dot(mlp.delta_Wf1_dfa, mlp.delta_Wf1_bp))
             print('angle_layer_1: ', mlp.angle(mlp.delta_Wf1_bp, mlp.delta_Wf1_dfa))
             print('angle_layer_2: ', mlp.angle(mlp.delta_Wf2_bp, mlp.delta_Wf2_dfa))
             print('angle_layer_3: ', mlp.angle(mlp.delta_Wf3_bp, mlp.delta_Wf3_dfa))
             print('angle_layer_4: ', mlp.angle(mlp.delta_Wf4_bp, mlp.delta_Wf4_dfa))
 
+    plt.plot(angle_layer_1_list, label='layer_1')
+    plt.plot(angle_layer_2_list, label='layer_2')
+    plt.plot(angle_layer_3_list, label='layer_3')
+    plt.plot(angle_layer_4_list, label='layer_4')
 
+    plt.xlabel('epoch')
+    plt.ylabel('angle')
+    plt.title('angle between delta_DFA & delta_BP'))
+    plt.legend()
 
+    plt.savefig('angle_bp_dfa.png', dpi=300)
