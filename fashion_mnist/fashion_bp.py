@@ -193,12 +193,23 @@ class MLP:
 
         delta4 = tanh_grad(h4) * cp.dot(delta5, self.W_f5.T)
         delta_Wf4 = cp.dot(h3_.T, delta4)
+        norm_Wf4 = cp.linalg.norm(delta_Wf4)
+        delta_Wf4 += (norm_Wf4/540) * cp.random.randn(800,800)
+
         delta3 = tanh_grad(h3) * cp.dot(delta4, self.W_f4.T)
         delta_Wf3 = cp.dot(h2_.T, delta3)
+        norm_Wf3 = cp.linalg.norm(delta_Wf3)
+        delta_Wf3 += (norm_Wf3/540) * cp.random.randn(800,800)
+
         delta2 = tanh_grad(h2) * cp.dot(delta3, self.W_f3.T)
         delta_Wf2 = cp.dot(h1_.T, delta2)
+        norm_Wf2 = cp.linalg.norm(delta_Wf2)
+        delta_Wf2 += (norm_Wf2/540) * cp.random.randn(800,800)
+
         delta1 = tanh_grad(h1) * cp.dot(delta2, self.W_f2.T)
         delta_Wf1 = cp.dot(x.T, delta1)
+        norm_Wf1 = cp.linalg.norm(delta_Wf1)
+        delta_Wf1 += (norm_Wf1/540) * cp.random.randn(784,800)
 
         self.W_f1 -= alpha * delta_Wf1
         self.W_f2 -= alpha * delta_Wf2
@@ -212,7 +223,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=100)
     parser.add_argument('--used_data', type=int, default=60000)
     parser.add_argument('--iter_per_epoch', type=int, default=500)
-    parser.add_argument('--learning_rate', type=float, default=0.01)
+    parser.add_argument('--learning_rate', type=float, default=0.05)
 
     args = parser.parse_args()
 
@@ -248,4 +259,4 @@ if __name__ == '__main__':
             train_acc_list.append(float(train_acc))
             test_acc = mlp.accuracy(x_test, t_test)
             print(int(i / iter_per_epoch), 'train_acc: ', train_acc, 'test_acc: ', test_acc)
-            print(int(i / iter_per_epoch), 'linear_train_acc: ', linear_train_acc, 'linear_test_acc: ', linear_test_acc)
+            # print(int(i / iter_per_epoch), 'linear_train_acc: ', linear_train_acc, 'linear_test_acc: ', linear_test_acc)
